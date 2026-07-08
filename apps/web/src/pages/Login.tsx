@@ -152,7 +152,8 @@ export const Login: React.FC = () => {
           </div>
 
           {step === 'credentials' ? (
-            <form onSubmit={handleCredentialsSubmit} className="space-y-4">
+            <>
+              <form onSubmit={handleCredentialsSubmit} className="space-y-4">
               <div className="space-y-1">
                 <label className="text-[11px] font-semibold text-slate-500 uppercase tracking-wide">Select Portal Role</label>
                 <div className="relative">
@@ -237,6 +238,79 @@ export const Login: React.FC = () => {
                 <ShieldCheck size={16} /> Authenticate Session
               </Button>
             </form>
+            
+            {/* Quick Demo Login Panel */}
+            <div className="pt-4 border-t border-dashed border-slate-200 dark:border-slate-800 space-y-2">
+              <span className="text-[10px] font-bold text-slate-400 dark:text-slate-500 uppercase tracking-wider block text-center">
+                ✨ Quick Demo Portals (Bypass Backend)
+              </span>
+              <div className="grid grid-cols-3 gap-2">
+                <button
+                  type="button"
+                  onClick={async () => {
+                    setUsername('admin@campusos.org');
+                    setPassword('AdminPassword@123');
+                    setSelectedRole('Admin');
+                    setIsLoading(true);
+                    try {
+                      await login('admin@campusos.org', 'AdminPassword@123', 'Admin');
+                      toast('MFA Provisioned', 'Demo code verification required.', 'info');
+                      setStep('twofactor');
+                    } catch (e) {
+                      toast('Demo Login Error', 'Failed to initialize.', 'error');
+                    } finally {
+                      setIsLoading(false);
+                    }
+                  }}
+                  className="py-1 px-2 border border-slate-200 dark:border-slate-800 rounded-lg text-[10px] font-semibold text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800/40 cursor-pointer text-center"
+                >
+                  Admin
+                </button>
+                <button
+                  type="button"
+                  onClick={async () => {
+                    setUsername('student@campusos.org');
+                    setPassword('StudentPassword@123');
+                    setSelectedRole('Student');
+                    setIsLoading(true);
+                    try {
+                      await login('student@campusos.org', 'StudentPassword@123', 'Student');
+                      toast('MFA Provisioned', 'Demo code verification required.', 'info');
+                      setStep('twofactor');
+                    } catch (e) {
+                      toast('Demo Login Error', 'Failed to initialize.', 'error');
+                    } finally {
+                      setIsLoading(false);
+                    }
+                  }}
+                  className="py-1 px-2 border border-slate-200 dark:border-slate-800 rounded-lg text-[10px] font-semibold text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800/40 cursor-pointer text-center"
+                >
+                  Student
+                </button>
+                <button
+                  type="button"
+                  onClick={async () => {
+                    setUsername('parent@campusos.org');
+                    setPassword('ParentPassword@123');
+                    setSelectedRole('Parent');
+                    setIsLoading(true);
+                    try {
+                      await login('parent@campusos.org', 'ParentPassword@123', 'Parent');
+                      toast('MFA Provisioned', 'Demo code verification required.', 'info');
+                      setStep('twofactor');
+                    } catch (e) {
+                      toast('Demo Login Error', 'Failed to initialize.', 'error');
+                    } finally {
+                      setIsLoading(false);
+                    }
+                  }}
+                  className="py-1 px-2 border border-slate-200 dark:border-slate-800 rounded-lg text-[10px] font-semibold text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800/40 cursor-pointer text-center"
+                >
+                  Parent
+                </button>
+              </div>
+            </div>
+            </>
           ) : (
             <form onSubmit={handleOTPSubmit} className="space-y-6">
               <OTPInput

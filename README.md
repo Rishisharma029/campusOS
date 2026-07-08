@@ -103,6 +103,24 @@ COLLEGE MANAGEMENT SYSTEM/
 └── CONTRIBUTING.md            # Guidelines for filing PRs and reporting bugs
 ```
 
+## 🔑 Test Login Credentials (Demo Access)
+
+CampusOS supports direct testing via online hosted environments (GitHub Pages) or local bootups. 
+
+### 🚀 Online Demo Mode (No Backend Required)
+If you are accessing the static hosted build on [GitHub Pages](https://rishisharma029.github.io/campusos-erp/), the frontend will automatically detect that the backend server is offline and operate in **Demo Mode**. 
+
+To log in:
+* Click any of the **✨ Quick Demo Portals** buttons at the bottom of the login card (**Admin**, **Student**, or **Parent**). This will pre-fill the form and initiate demo authentication.
+* On the subsequent **2FA Verification** page, type any 6-digit OTP code (e.g. `123456`) to access the dashboard workspace.
+
+### 💻 Local Development Access (Requires Backend Run)
+If you are running the FastAPI backend server locally, use the registered admin credentials:
+* **Email/Username**: `i.rishisharma2007@gmail.com`
+* **Password**: `Rishisharma@123`
+* **Assigned Role**: `System Administrator`
+* **2FA OTP Code**: Enter any 6-digit code (e.g. `123456`) to authorize.
+
 ---
 
 ## 🚀 Quickstart Guide

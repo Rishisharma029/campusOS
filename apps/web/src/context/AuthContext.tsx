@@ -82,13 +82,29 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   }, [isAuthenticated]);
 
   const login = async (username: string, password: string, role: UserRole) => {
-    // 1. Stage 1 login: Call API and retrieve credentials
-    // Note: username on the frontend acts as email for the backend
-    const res = await apiLogin({ email: username, password });
-    
-    // Set temporary user in memory while waiting for 2FA validation
-    setUser({ username: res.name || username, role });
-    setRole(role);
+    try {
+      // 1. Stage 1 login: Call API and retrieve credentials
+      // Note: username on the frontend acts as email for the backend
+      const res = await apiLogin({ email: username, password });
+      
+      // Set temporary user in memory while waiting for 2FA validation
+      setUser({ username: res.name || username, role });
+      setRole(role);
+    } catch (err: any) {
+      // Fallback: If it's a network error (e.g. server offline on gh-pages), use demo credentials
+      const errMsg = err.message || '';
+      if (
+        errMsg.toLowerCase().includes('failed to fetch') || 
+        errMsg.toLowerCase().includes('network') ||
+        errMsg.toLowerCase().includes('load')
+      ) {
+        console.warn("API server unreachable. Falling back to local Demo Mode auth.");
+        setUser({ username: username.split('@')[0] || username, role });
+        setRole(role);
+        return;
+      }
+      throw err;
+    }
   };
 
   const verify2FA = async (otp: string): Promise<boolean> => {
