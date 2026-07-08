@@ -108,7 +108,7 @@ COLLEGE MANAGEMENT SYSTEM/
 CampusOS supports direct testing via online hosted environments (GitHub Pages) or local bootups. 
 
 ### 🚀 Online Demo Mode (No Backend Required)
-If you are accessing the static hosted build on [GitHub Pages](https://rishisharma029.github.io/campusos-erp/), the frontend will automatically detect that the backend server is offline and operate in **Demo Mode**. 
+If you are accessing the static hosted build on [GitHub Pages](https://rishisharma029.github.io/campusOS/), the frontend will automatically detect that the backend server is offline and operate in **Demo Mode**. 
 
 To log in:
 * Click any of the **✨ Quick Demo Portals** buttons at the bottom of the login card (**Admin**, **Student**, or **Parent**). This will pre-fill the form and initiate demo authentication.

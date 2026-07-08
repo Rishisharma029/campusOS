@@ -58,7 +58,7 @@ function App() {
             <AuthProvider>
               <DatabaseProvider>
                 <ToastProvider>
-                  <BrowserRouter basename={import.meta.env.DEV ? '/' : '/campusos-erp'}>
+                  <BrowserRouter basename={import.meta.env.DEV ? '/' : '/campusOS'}>
                     <Suspense fallback={<PageSkeleton />}>
                       <Routes>
                         {/* Public Auth Gateway */}
