@@ -58,7 +58,7 @@ function App() {
             <AuthProvider>
               <DatabaseProvider>
                 <ToastProvider>
-                  <BrowserRouter basename={import.meta.env.DEV ? '/' : '/campusOS'}>
+                  <BrowserRouter basename={window.location.hostname.endsWith('github.io') ? '/campusOS' : '/'}>
                     <Suspense fallback={<PageSkeleton />}>
                       <Routes>
                         {/* Public Auth Gateway */}
