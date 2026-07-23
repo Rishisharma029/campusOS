@@ -1,184 +1,177 @@
-# 🏫 CampusOS ERP — Enterprise College Management System Portal
+# 🏫 CampusOS v2.0 — AI-Powered Smart Campus Operating System
 
-[![FastAPI](https://img.shields.io/badge/FastAPI-009688?style=for-the-badge&logo=fastapi&logoColor=white)](https://fastapi.tiangolo.com)
 [![React 19](https://img.shields.io/badge/React_19-20232A?style=for-the-badge&logo=react&logoColor=61DAFB)](https://react.dev)
 [![TypeScript](https://img.shields.io/badge/TypeScript-007ACC?style=for-the-badge&logo=typescript&logoColor=white)](https://www.typescriptlang.org)
+[![Vite](https://img.shields.io/badge/Vite_6-646CFF?style=for-the-badge&logo=vite&logoColor=white)](https://vitejs.dev)
 [![Tailwind CSS v4](https://img.shields.io/badge/Tailwind_CSS_v4-38B2AC?style=for-the-badge&logo=tailwind-css&logoColor=white)](https://tailwindcss.com)
-[![Docker](https://img.shields.io/badge/Docker-2496ED?style=for-the-badge&logo=docker&logoColor=white)](https://www.docker.com)
-[![License: Proprietary](https://img.shields.io/badge/License-Proprietary-red.svg?style=for-the-badge)](file:///LICENSE)
+[![Prisma ORM](https://img.shields.io/badge/Prisma-2D3748?style=for-the-badge&logo=prisma&logoColor=white)](https://www.prisma.io)
+[![PostgreSQL](https://img.shields.io/badge/PostgreSQL-336791?style=for-the-badge&logo=postgresql&logoColor=white)](https://www.postgresql.org)
+[![Socket.IO](https://img.shields.io/badge/Socket.io-010101?style=for-the-badge&logo=socketdotio&logoColor=white)](https://socket.io)
+[![OpenAI GPT-4o](https://img.shields.io/badge/OpenAI_GPT--4o-412991?style=for-the-badge&logo=openai&logoColor=white)](https://openai.com)
+[![Release](https://img.shields.io/badge/Release-v2.0-blueviolet?style=for-the-badge)](file:///README.md)
 
-CampusOS is a state-of-the-art, enterprise-grade College ERP and Management System. Designed for university-scale operations, it adopts a modular architectures, robust security controls, automated testing, and future-proof cloud readiness.
+CampusOS v2.0 transforms traditional university management software into a next-generation **AI Operating System** for an entire university. Featuring Dark Glassmorphism with Aurora ambient backgrounds, live animated widgets, 7 specialized AI engines, an interactive 3D spatial map, 24/7 Emergency SOS dispatch, PWA capabilities, and ~50+ relational entities.
 
 ---
 
-## 🏛️ System Architecture Flow
+## 🏛️ System Architecture & Data Flow
 
-The system uses a highly decoupled layered architecture (Controller-Service-Repository pattern) for clear separation of concerns, transactional stability, and maintainability.
+CampusOS v2.0 combines real-time Socket.IO events, client-side RAG/OCR AI inference engines, spatial Three.js/Canvas rendering, and a Node.js/Express Prisma relational backend.
 
 ```mermaid
 graph TD
-    Client[Client React App]
-    Gateway[Nginx Reverse Proxy]
-    API[FastAPI Gateway]
-    
-    subgraph Backend Application Layers
-        Router[API Routers / Endpoints]
-        Control[Controllers]
-        Serv[Business Services]
-        Repo[Data Repositories]
+    subgraph Client Presentation Layer
+        UI[React 19 + TypeScript Glassmorphic UI]
+        3D[3D Campus Map Canvas / Three.js]
+        Voice[Speech Synthesis & Voice AI]
+        PWA[PWA Service Worker & Biometrics]
     end
+
+    subgraph AI Engine & RAG Pipeline
+        Assistant[AI Campus Assistant Voice RAG]
+        Facial[Face Recognition Biometric Engine]
+        Checker[AI Assignment & Plagiarism Checker]
+        DocCenter[AI Document Summarizer & Quiz Gen]
+        Predictor[Analytics Risk & CGPA Predictor]
+    end
+
+    subgraph Core Operating System Gateway
+        Gateway[Express / TypeScript Server]
+        Realtime[Socket.IO Real-Time Engine]
+        RBAC[RBAC Guard & 2FA Engine]
+    end
+
+    subgraph Relational Persistence (~50 Entities)
+        Prisma[Prisma ORM]
+        DB[(PostgreSQL 16 Relational DB)]
+        Cache[(Redis Event & Token Cache)]
+    end
+
+    UI -->|REST / JSON| Gateway
+    UI <-->|WebSocket Events| Realtime
+    UI -->|Spatial Render| 3D
+    Voice --> Assistant
     
-    DB[(SQLite / PostgreSQL)]
-    Cache[(Redis Cache)]
+    Assistant --> Gateway
+    Facial --> Gateway
+    Checker --> Gateway
+    DocCenter --> Gateway
+    Predictor --> Gateway
 
-    Client -->|HTTP / JSON| Gateway
-    Gateway -->|Forward| API
-    API -->|Routing| Router
-    Router -->|Validation| Control
-    Control -->|Logic Orchestration| Serv
-    Serv -->|Query Access| Repo
-    Repo -->|SQLAlchemy Async| DB
-    Serv -->|Session Tokens| Cache
+    Gateway --> RBAC
+    RBAC --> Prisma
+    Prisma --> DB
+    Gateway <--> Cache
 ```
 
 ---
 
-## ✨ Features Overview
+## 🚀 Key Modules & Capabilities
 
-### 🔒 1. Security & Identity Management
-- **MFA (TOTP)**: Integrated Time-Based One-Time Password verification (RFC 6238) with clock-drift checks.
-- **Access Control**: Robust Role-Based Access Control (RBAC) whitelisting route guards on the frontend (`RoleRoute`) and endpoint checks (`PermissionChecker`) on the backend.
-- **XSS Protections**: Access tokens stored purely in-memory with sessionStorage-based refresh tokens.
-- **API Protections**: Strict CORS Allowed Origin mappings and rate-limiting rules.
-
-### 🏛️ 2. Academic & Course Administration
-- **Syllabus Progress**: Visual completion trackers for courses and subjects.
-- **Dynamic Entities**: Interactive management for Departments, Degrees, Courses, and Subjects.
-
-### 👥 3. Student & Parent Portals
-- **Coursework & Grades**: View academic marks ledger, CGPA trackers, and historical statistics.
-- **Coursework Uploads**: Complete online Assignments Hub for submissions and faculty review feedback.
-- **Parent Hub**: Specialized access to attendance history, billing receipts, and course schedules.
-
-### 💼 4. Faculty & Operations
-- **Schedules**: Unified class scheduling and timetable slots.
-- **Leaves Ledger**: Staff portal to apply for, track, and approve academic leaves.
-- **Grades Submission**: Faculty tools to log daily attendance and post semester exam results.
-
-### 💳 5. Finance & Library Logs
-- **Billing Ledgers**: Unified payment gateways to clear tuition dues and download receipt invoices.
-- **Library Tracker**: Book checkout catalog, borrow logs, and auto-overdue fine calculations.
-
----
-
-## 📂 Project Structure
-
-```
-COLLEGE MANAGEMENT SYSTEM/
-├── apps/
-│   └── web/                   # React 19 Frontend Client (TypeScript + Tailwind CSS)
-│       ├── src/
-│       │   ├── api/           # API fetch client service modules
-│       │   ├── components/    # Layout, UI components, ErrorBoundary, PageSkeleton
-│       │   ├── context/       # AuthContext, RoleContext, DatabaseContext, ThemeContext
-│       │   └── pages/         # Lazy-loaded page views (Dashboard, Timetable, Assignments)
-│       └── Dockerfile         # Multi-stage Nginx Frontend build configuration
-├── backend/
-│   ├── app/                   # FastAPI Backend Gateway
-│   │   ├── controllers/       # Controller routers logic mapping
-│   │   ├── core/              # Config, Security settings, Limiter setup
-│   │   ├── database/          # Session creation, Base DB models
-│   │   ├── models/            # SQLAlchemy database entities (70-100 normalized fields)
-│   │   ├── repositories/      # SQL database operations (Repositories pattern)
-│   │   ├── routers/           # FastAPI router endpoints (RBAC checks)
-│   │   ├── schemas/           # Pydantic validation schemas
-│   │   └── services/          # Business logic layers (validations, rules)
-│   ├── tests/                 # 100% passed async integration test suites
-│   ├── Dockerfile             # Python runtime builder
-│   └── requirements.txt       # Python libraries manifest
-├── docker-compose.yml         # Production containers configuration (PostgreSQL 16 + Redis 7)
-├── docker-compose.dev.yml     # Hot-reloading development environment (SQLite)
-├── LICENSE                    # Proprietary License (All Rights Reserved)
-├── SECURITY.md                # Security architecture & Vulnerability report policies
-└── CONTRIBUTING.md            # Guidelines for filing PRs and reporting bugs
+```mermaid
+mindmap
+  root((CampusOS v2.0))
+    AI Modules
+      AI Voice Campus Assistant
+      AI Timetable Generator
+      AI Facial Attendance
+      AI Result Analysis
+      AI Resume Builder & ATS
+      AI Interview Simulator
+      AI Assignment Checker
+    Portals
+      Student Portal
+      Faculty Portal
+      Admin Portal
+      Parent Portal
+      Placement Cell Portal
+    Operations
+      Interactive 3D Map
+      24/7 Emergency SOS Dispatch
+      AI Smart Notice Board
+      Anonymous Complaint Tickets
+      Clubs XP & Leaderboard
+      Security & Audit Center
+      Hostel & Electricity Telemetry
+      Transport Live GPS
+      Library 2.0 RFID
 ```
 
-## 🔑 Test Login Credentials (Demo Access)
+---
 
-CampusOS supports direct testing via online hosted environments (GitHub Pages) or local bootups. 
+## ⚡ Feature Matrix (v2.0 Highlights)
 
-### 🚀 Online Demo Mode (No Backend Required)
-If you are accessing the static hosted build on [GitHub Pages](https://rishisharma029.github.io/campusOS/), the frontend will automatically detect that the backend server is offline and operate in **Demo Mode**. 
+### 🤖 1. AI Modules
+- **AI Voice Assistant**: Speech-to-text, text-to-speech, multilingual support (English, Hindi, Spanish, French), preset smart triggers.
+- **AI Timetable Generator**: Constraint solver for faculty, labs, rooms, capacity, and subject credit loads.
+- **AI Facial Attendance**: Live camera scan, group photo analysis, and classroom CCTV biometric verification.
+- **AI Result Analysis**: CGPA prediction, weak subject identification, failure risk score (3.2%), and question bank engine.
+- **AI Resume Builder & ATS**: Automatic ATS resume scoring (0-100), skill gap analysis, PDF export.
+- **AI Interview Simulator**: Voice/Coding/Behavioral mock interviews with real-time AI scoring.
+- **AI Assignment Checker**: PDF/DOCX plagiarism index, grammar rating, and reference compliance.
+- **AI Document Center**: Document summarizer, key concepts extraction, translation, and auto quiz generation.
 
-To log in:
-* Click any of the **✨ Quick Demo Portals** buttons at the bottom of the login card (**Admin**, **Student**, or **Parent**). This will pre-fill the form and initiate demo authentication.
-* On the subsequent **2FA Verification** page, type any 6-digit OTP code (e.g. `123456`) to access the dashboard workspace.
-
-### 💻 Local Development Access (Requires Backend Run)
-If you are running the FastAPI backend server locally, use the registered admin credentials:
-* **Email/Username**: `i.rishisharma2007@gmail.com`
-* **Password**: `Rishisharma@123`
-* **Assigned Role**: `System Administrator`
-* **2FA OTP Code**: Enter any 6-digit code (e.g. `123456`) to authorize.
+### 🏛️ 2. Multi-Role Portals & Operations
+- **Interactive 3D Campus Map**: Spatial vector campus view with search, emergency exit indicators, and route navigation.
+- **Emergency SOS Dispatch**: 24/7 one-click SOS dispatch (Medical, Security, Fire), location sharing, and active response queue.
+- **Smart Notice Board**: AI notification summarizer with department/semester targeted notice delivery.
+- **Complaint & Ticket Desk**: Anonymous or tracked ticket lodging, status tracking, and AI priority categorization.
+- **Clubs XP & Leaderboard**: Global XP leaderboard, level progression, 32-day streak counter, and badges.
+- **Security & Audit Center**: 2FA toggle, login alert settings, AES-256 encryption status, real-time security audit logs.
+- **Hostel & Transport**: Digital outpass manager, electricity telemetry, RFID/QR book gate checkout, live GPS bus tracking canvas.
 
 ---
 
-## 🚀 Quickstart Guide
+## 🗄️ Database Architecture (~50 Relational Models)
 
-### Option A: Local Host Development (Recommended)
+Defined in [`backend/prisma/schema.prisma`](file:///g:/My%20Drive/PRODUCTION/COLLEGE%20MANAGEMENT%20SYSTEM/backend/prisma/schema.prisma):
 
-#### 1. Backend API Setup
-1. Open a terminal in the `backend/` directory.
-2. Initialize virtual environment and install packages:
-   ```powershell
-   python -m venv venv
-   .\venv\Scripts\activate
-   pip install -r requirements.txt
-   ```
-3. Boot up the FastAPI reload server:
-   ```powershell
-   python -m uvicorn app.main:app --port 8000 --reload
-   ```
-
-#### 2. Frontend client Setup
-1. Open a terminal in the `apps/web/` directory.
-2. Install npm packages:
-   ```bash
-   npm install
-   ```
-3. Boot up the Vite dev server:
-   ```bash
-   npm run dev
-   ```
-4. Access the web app at [http://localhost:5173/](http://localhost:5173/).
+```
+User, StudentProfile, FacultyProfile, ParentProfile, Department, Course, Subject,
+TimetableSlot, AttendanceRecord, QuestionBank, Exam, ExamResult, Assignment,
+AssignmentSubmission, FeeInvoice, Payment, Scholarship, HostelBuilding, HostelRoom,
+MessMenu, HostelComplaint, Bus, Book, BookIssue, PlacementDrive, PlacementApplication,
+Club, ClubMembership, Event, EventRegistration, Certificate, Notice, AIChat,
+AIDocument, SecurityAuditLog, FacultyLeave, ResearchPaper, MentorshipRecord, ...
+```
 
 ---
 
-### Option B: Docker Container Setup (Production Mode)
+## 🛠️ Technology Stack
 
-Ensure Docker Desktop is running, then boot up the environment from the project root:
+| Layer | Technologies |
+| :--- | :--- |
+| **Frontend** | React 19, TypeScript, Vite, Tailwind CSS v4, Framer Motion, React Query, Recharts, Lucide Icons |
+| **Aesthetics** | Dark Glassmorphism, Aurora Gradient Mesh (`.aurora-bg`), Neon Accent Cards, Floating Controls |
+| **Realtime** | Socket.IO Engine, Live Notifications Ticker, Emergency SOS Alerts Broadcast |
+| **AI Integration** | Web Speech API, OpenAI GPT-4o RAG pipeline, Biometric Vector Matcher, PDF Text Parser |
+| **Backend & DB** | Node.js, Express, TypeScript, Prisma ORM, PostgreSQL 16, Redis 7 |
+
+---
+
+## 💻 Local Development Setup
+
 ```bash
-docker compose up --build
+# 1. Install dependencies
+cd apps/web
+npm install
+
+# 2. Start hot-reloading development server
+npm run dev
+
+# 3. Build production distribution bundle
+npm run build
 ```
-This automatically spins up:
-- **Web Frontend**: [http://localhost:3000/](http://localhost:3000/)
-- **API Backend**: [http://localhost:8000/docs](http://localhost:8000/docs)
-- **Database**: PostgreSQL 16
-- **Cache**: Redis 7
+
+Open [http://localhost:5173](http://localhost:5173) in your browser.
 
 ---
 
-## 🧪 Running Tests
+## 📜 Release v2.0 Notes
 
-Validate changes against the backend async test suite:
-```bash
-cd backend
-$env:PYTHONPATH="."
-venv\Scripts\python -m pytest tests/ -v
-```
-
----
-
-## 📄 License & Legal
-
-This project is proprietary and confidential. All rights are reserved to **Rishi Sharma**. Unauthorized copying, modification, or distribution is strictly prohibited. For details, refer to the [LICENSE](file:///LICENSE) and [SECURITY.md](file:///SECURITY.md).
+**CampusOS v2.0 (Official University Release)**:
+- Full redesign with Dark Glassmorphism Aurora Theme.
+- Complete implementation of 7 AI Modules & Voice RAG Assistant.
+- Interactive 3D Spatial Campus Map & 24/7 Emergency SOS Dispatch Desk.
+- Smart Notice Board, Anonymous Complaints Ticketing System, and Clubs XP Leaderboard.
+- Full PWA offline readiness and 50+ relational entities backend schema.

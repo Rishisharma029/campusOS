@@ -14,7 +14,7 @@ export type UserRole =
 export interface ModuleInfo {
   name: string;
   path: string;
-  icon: string; // lucide icon name
+  icon: string;
 }
 
 interface RoleContextType {
@@ -38,9 +38,16 @@ export const allRoles: UserRole[] = [
   'Transport Manager',
 ];
 
-// All modules definition
 const ALL_MODULES: Record<string, ModuleInfo> = {
   Dashboard: { name: 'Dashboard', path: '/', icon: 'LayoutDashboard' },
+  CampusMap: { name: '3D Campus Map', path: '/map', icon: 'Compass' },
+  Emergency: { name: 'Emergency SOS', path: '/emergency', icon: 'ShieldAlert' },
+  DocCenter: { name: 'AI Doc Center', path: '/doc-center', icon: 'Sparkles' },
+  NoticeBoard: { name: 'Notice Board', path: '/noticeboard', icon: 'Bell' },
+  Complaints: { name: 'Complaints', path: '/complaints', icon: 'LifeBuoy' },
+  Clubs: { name: 'Clubs & Leaderboard', path: '/clubs', icon: 'Trophy' },
+  Security: { name: 'Security Center', path: '/security', icon: 'Lock' },
+
   Students: { name: 'Students', path: '/students', icon: 'Users' },
   Faculty: { name: 'Faculty', path: '/faculty', icon: 'GraduationCap' },
   Departments: { name: 'Departments', path: '/departments', icon: 'Layers' },
@@ -57,24 +64,26 @@ const ALL_MODULES: Record<string, ModuleInfo> = {
   Transport: { name: 'Transport', path: '/transport', icon: 'Bus' },
   Placement: { name: 'Placement', path: '/placement', icon: 'Briefcase' },
   
-  // V2 Module extensions
   Calendar: { name: 'Academic Calendar', path: '/calendar', icon: 'Calendar' },
   DigitalTwin: { name: 'Campus Digital Twin', path: '/twin', icon: 'Network' },
   Analytics: { name: 'Analytics Hub', path: '/analytics', icon: 'LineChart' },
   Docs: { name: 'Design System', path: '/docs', icon: 'FileText' },
   
   Reports: { name: 'Reports', path: '/reports', icon: 'TrendingUp' },
-  Notifications: { name: 'Notifications', path: '/notifications', icon: 'Bell' },
   Settings: { name: 'Settings', path: '/settings', icon: 'Settings' },
 };
 
-// Map roles to their permitted sidebar modules
 const ROLE_MODULES_MAP: Record<UserRole, string[]> = {
-  Admin: Object.keys(ALL_MODULES), // Admin gets everything
+  Admin: Object.keys(ALL_MODULES),
   Student: [
     'Dashboard',
+    'CampusMap',
+    'Emergency',
+    'DocCenter',
+    'NoticeBoard',
+    'Complaints',
+    'Clubs',
     'Courses',
-    'Subjects',
     'Timetable',
     'Attendance',
     'Examinations',
@@ -86,44 +95,45 @@ const ROLE_MODULES_MAP: Record<UserRole, string[]> = {
     'Transport',
     'Placement',
     'Calendar',
-    'DigitalTwin',
     'Analytics',
-    'Docs',
     'Settings',
   ],
   Faculty: [
     'Dashboard',
+    'CampusMap',
+    'Emergency',
+    'DocCenter',
+    'NoticeBoard',
+    'Complaints',
     'Students',
     'Departments',
     'Courses',
-    'Subjects',
     'Timetable',
     'Attendance',
     'Examinations',
     'Assignments',
     'Calendar',
-    'DigitalTwin',
     'Analytics',
-    'Docs',
     'Settings',
   ],
   Parent: [
     'Dashboard',
+    'CampusMap',
+    'Emergency',
+    'NoticeBoard',
     'Attendance',
     'Results',
     'Fees',
     'Library',
     'Transport',
-    'Calendar',
-    'DigitalTwin',
     'Analytics',
     'Settings',
   ],
-  Accountant: ['Dashboard', 'Fees', 'Reports', 'Calendar', 'Docs', 'Settings'],
-  Librarian: ['Dashboard', 'Library', 'Reports', 'Calendar', 'Docs', 'Settings'],
-  'Placement Cell': ['Dashboard', 'Placement', 'Reports', 'Calendar', 'Docs', 'Settings'],
-  'Hostel Warden': ['Dashboard', 'Hostel', 'Reports', 'Calendar', 'Docs', 'Settings'],
-  'Transport Manager': ['Dashboard', 'Transport', 'Reports', 'Calendar', 'Docs', 'Settings'],
+  Accountant: ['Dashboard', 'Emergency', 'Fees', 'Reports', 'Settings'],
+  Librarian: ['Dashboard', 'Emergency', 'Library', 'Reports', 'Settings'],
+  'Placement Cell': ['Dashboard', 'Emergency', 'Placement', 'Reports', 'Settings'],
+  'Hostel Warden': ['Dashboard', 'Emergency', 'Hostel', 'Complaints', 'Reports', 'Settings'],
+  'Transport Manager': ['Dashboard', 'Emergency', 'Transport', 'Reports', 'Settings'],
 };
 
 export const RoleProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
@@ -137,7 +147,9 @@ export const RoleProvider: React.FC<{ children: React.ReactNode }> = ({ children
     localStorage.setItem('erp_role', role);
   };
 
-  const allowedModules = ROLE_MODULES_MAP[currentRole].map((modName) => ALL_MODULES[modName]);
+  const allowedModules = (ROLE_MODULES_MAP[currentRole] || ROLE_MODULES_MAP['Admin'])
+    .map((modName) => ALL_MODULES[modName])
+    .filter(Boolean);
 
   return (
     <RoleContext.Provider value={{ currentRole, setRole, allowedModules, allRoles }}>

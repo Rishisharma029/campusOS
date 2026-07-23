@@ -6,12 +6,13 @@ import { ThemeProvider } from './context/ThemeContext';
 import { RoleProvider, useRole, type UserRole } from './context/RoleContext';
 import { AuthProvider, useAuth } from './context/AuthContext';
 import { DatabaseProvider } from './context/DatabaseContext';
+import { RealtimeProvider } from './context/RealtimeContext';
 import { ToastProvider } from './components/ui/Toast';
 import { DashboardLayout } from './components/layout/DashboardLayout';
 import { PageSkeleton } from './components/PageSkeleton';
 import { ErrorBoundary } from './components/ErrorBoundary';
 
-// Lazy load all 20 pages for route code-splitting
+// Lazy load all pages
 const Dashboard = React.lazy(() => import('./pages/Dashboard').then(m => ({ default: m.Dashboard })));
 const Students = React.lazy(() => import('./pages/Students').then(m => ({ default: m.Students })));
 const FacultyPage = React.lazy(() => import('./pages/Faculty').then(m => ({ default: m.FacultyPage })));
@@ -36,6 +37,15 @@ const UnifiedCalendar = React.lazy(() => import('./pages/UnifiedCalendar').then(
 const DesignSystemDocs = React.lazy(() => import('./pages/DesignSystemDocs').then(m => ({ default: m.DesignSystemDocs })));
 const ErrorViews = React.lazy(() => import('./pages/ErrorViews').then(m => ({ default: m.ErrorViews })));
 
+// CampusOS v2.0 Operational & AI Modules
+const CampusMap3D = React.lazy(() => import('./pages/CampusMap3D').then(m => ({ default: m.CampusMap3D })));
+const EmergencySOS = React.lazy(() => import('./pages/EmergencySOS').then(m => ({ default: m.EmergencySOS })));
+const AIDocumentCenter = React.lazy(() => import('./pages/AIDocumentCenter').then(m => ({ default: m.AIDocumentCenter })));
+const NoticeBoard = React.lazy(() => import('./pages/NoticeBoard').then(m => ({ default: m.NoticeBoard })));
+const Complaints = React.lazy(() => import('./pages/Complaints').then(m => ({ default: m.Complaints })));
+const ClubsAndEvents = React.lazy(() => import('./pages/ClubsAndEvents').then(m => ({ default: m.ClubsAndEvents })));
+const SecurityCenter = React.lazy(() => import('./pages/SecurityCenter').then(m => ({ default: m.SecurityCenter })));
+
 const PrivateRoute: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const { isAuthenticated } = useAuth();
   return isAuthenticated ? <>{children}</> : <Navigate to="/login" replace />;
@@ -57,99 +67,110 @@ function App() {
           <RoleProvider>
             <AuthProvider>
               <DatabaseProvider>
-                <ToastProvider>
-                  <BrowserRouter basename={window.location.hostname.endsWith('github.io') ? '/campusOS' : '/'}>
-                    <Suspense fallback={<PageSkeleton />}>
-                      <Routes>
-                        {/* Public Auth Gateway */}
-                        <Route path="/login" element={<Login />} />
+                <RealtimeProvider>
+                  <ToastProvider>
+                    <BrowserRouter basename={window.location.hostname.endsWith('github.io') ? '/campusOS' : '/'}>
+                      <Suspense fallback={<PageSkeleton />}>
+                        <Routes>
+                          {/* Public Auth Gateway */}
+                          <Route path="/login" element={<Login />} />
 
-                        {/* Protected ERP Workspace */}
-                        <Route
-                          path="/"
-                          element={
-                            <PrivateRoute>
-                              <DashboardLayout />
-                            </PrivateRoute>
-                          }
-                        >
-                          <Route index element={<Dashboard />} />
-                          
-                          {/* Route-level role-based guards */}
-                          <Route 
-                            path="students" 
+                          {/* Protected ERP Workspace */}
+                          <Route
+                            path="/"
                             element={
-                              <RoleRoute allowedRoles={['Admin', 'Faculty']}>
-                                <Students />
-                              </RoleRoute>
-                            } 
-                          />
-                          <Route 
-                            path="faculty" 
-                            element={
-                              <RoleRoute allowedRoles={['Admin', 'Faculty']}>
-                                <FacultyPage />
-                              </RoleRoute>
-                            } 
-                          />
-                          <Route path="departments" element={<Courses />} />
-                          <Route path="courses" element={<Courses />} />
-                          <Route path="subjects" element={<Courses />} />
-                          <Route path="timetable" element={<Timetable />} />
-                          <Route path="attendance" element={<Attendance />} />
-                          <Route path="examinations" element={<Examinations />} />
-                          <Route path="results" element={<Examinations />} />
-                          <Route path="assignments" element={<Assignments />} />
-                          <Route 
-                            path="fees" 
-                            element={
-                              <RoleRoute allowedRoles={['Admin', 'Accountant', 'Student', 'Parent']}>
-                                <Fees />
-                              </RoleRoute>
-                            } 
-                          />
-                          <Route 
-                            path="library" 
-                            element={
-                              <RoleRoute allowedRoles={['Admin', 'Librarian', 'Student', 'Faculty', 'Parent']}>
-                                <Library />
-                              </RoleRoute>
-                            } 
-                          />
-                          <Route path="hostel" element={<Hostel />} />
-                          <Route path="transport" element={<Transport />} />
-                          <Route path="placement" element={<Placement />} />
-                          <Route 
-                            path="reports" 
-                            element={
-                              <RoleRoute allowedRoles={['Admin', 'Accountant', 'Librarian', 'Placement Cell', 'Hostel Warden', 'Transport Manager']}>
-                                <Reports />
-                              </RoleRoute>
-                            } 
-                          />
-                          <Route path="settings" element={<Settings />} />
+                              <PrivateRoute>
+                                <DashboardLayout />
+                              </PrivateRoute>
+                            }
+                          >
+                            <Route index element={<Dashboard />} />
+                            
+                            {/* CampusOS v2.0 New Operational Routes */}
+                            <Route path="map" element={<CampusMap3D />} />
+                            <Route path="emergency" element={<EmergencySOS />} />
+                            <Route path="doc-center" element={<AIDocumentCenter />} />
+                            <Route path="noticeboard" element={<NoticeBoard />} />
+                            <Route path="complaints" element={<Complaints />} />
+                            <Route path="clubs" element={<ClubsAndEvents />} />
+                            <Route path="security" element={<SecurityCenter />} />
 
-                          {/* V2 Protected Portals */}
-                          <Route path="twin" element={<DigitalTwin />} />
-                          <Route 
-                            path="analytics" 
-                            element={
-                              <RoleRoute allowedRoles={['Admin', 'Faculty', 'Student', 'Parent']}>
-                                <AnalyticsHub />
-                              </RoleRoute>
-                            } 
-                          />
-                          <Route path="calendar" element={<UnifiedCalendar />} />
-                          <Route path="docs" element={<DesignSystemDocs />} />
-                          <Route path="errors" element={<ErrorViews />} />
+                            {/* Core ERP Modules */}
+                            <Route 
+                              path="students" 
+                              element={
+                                <RoleRoute allowedRoles={['Admin', 'Faculty']}>
+                                  <Students />
+                                </RoleRoute>
+                              } 
+                            />
+                            <Route 
+                              path="faculty" 
+                              element={
+                                <RoleRoute allowedRoles={['Admin', 'Faculty']}>
+                                  <FacultyPage />
+                                </RoleRoute>
+                              } 
+                            />
+                            <Route path="departments" element={<Courses />} />
+                            <Route path="courses" element={<Courses />} />
+                            <Route path="subjects" element={<Courses />} />
+                            <Route path="timetable" element={<Timetable />} />
+                            <Route path="attendance" element={<Attendance />} />
+                            <Route path="examinations" element={<Examinations />} />
+                            <Route path="results" element={<Examinations />} />
+                            <Route path="assignments" element={<Assignments />} />
+                            <Route 
+                              path="fees" 
+                              element={
+                                <RoleRoute allowedRoles={['Admin', 'Accountant', 'Student', 'Parent']}>
+                                  <Fees />
+                                </RoleRoute>
+                              } 
+                            />
+                            <Route 
+                              path="library" 
+                              element={
+                                <RoleRoute allowedRoles={['Admin', 'Librarian', 'Student', 'Faculty', 'Parent']}>
+                                  <Library />
+                                </RoleRoute>
+                              } 
+                            />
+                            <Route path="hostel" element={<Hostel />} />
+                            <Route path="transport" element={<Transport />} />
+                            <Route path="placement" element={<Placement />} />
+                            <Route 
+                              path="reports" 
+                              element={
+                                <RoleRoute allowedRoles={['Admin', 'Accountant', 'Librarian', 'Placement Cell', 'Hostel Warden', 'Transport Manager']}>
+                                  <Reports />
+                                </RoleRoute>
+                              } 
+                            />
+                            <Route path="settings" element={<Settings />} />
 
-                          {/* Catch-all redirect to Dashboard */}
-                          <Route path="*" element={<Navigate to="/" replace />} />
-                        </Route>
-                      </Routes>
-                    </Suspense>
-                  </BrowserRouter>
-                </ToastProvider>
+                            {/* V2 Protected Portals */}
+                            <Route path="twin" element={<DigitalTwin />} />
+                            <Route 
+                              path="analytics" 
+                              element={
+                                <RoleRoute allowedRoles={['Admin', 'Faculty', 'Student', 'Parent']}>
+                                  <AnalyticsHub />
+                                </RoleRoute>
+                              } 
+                            />
+                            <Route path="calendar" element={<UnifiedCalendar />} />
+                            <Route path="docs" element={<DesignSystemDocs />} />
+                            <Route path="errors" element={<ErrorViews />} />
+
+                            {/* Catch-all redirect to Dashboard */}
+                            <Route path="*" element={<Navigate to="/" replace />} />
+                          </Route>
+                        </Routes>
+                      </Suspense>
+                    </BrowserRouter>
+                  </ToastProvider>
+                </RealtimeProvider>
               </DatabaseProvider>
             </AuthProvider>
           </RoleProvider>

@@ -1,14 +1,15 @@
 import React, { useState } from 'react';
-import { useDatabase, type PlacementDrive } from '../context/DatabaseContext';
+import { useDatabase } from '../context/DatabaseContext';
 import { useRole } from '../context/RoleContext';
 import { useToast } from '../components/ui/Toast';
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '../components/ui/Card';
+import { Card, CardContent } from '../components/ui/Card';
 import { Button } from '../components/ui/Button';
 import { Input } from '../components/ui/Input';
 import { Badge } from '../components/ui/Badge';
-import { DataGrid, type Column } from '../components/ui/Table';
+import { Table, TableHeader, TableBody, TableRow, TableCell, TableHead } from '../components/ui/Table';
 import { Modal } from '../components/ui/Modal';
-import { Plus, Briefcase, CheckCircle } from 'lucide-react';
+import { Tabs, TabList, TabTrigger, TabContent } from '../components/ui/Tabs';
+import { Plus, Sparkles, FileText, Mic, Download } from 'lucide-react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import * as z from 'zod';
@@ -24,15 +25,19 @@ const driveSchema = z.object({
 type DriveFormInputs = z.infer<typeof driveSchema>;
 
 export const Placement: React.FC = () => {
-  const { placements, addPlacementDrive, students } = useDatabase();
+  const { placements, addPlacementDrive } = useDatabase();
   const { currentRole } = useRole();
   const { toast } = useToast();
 
   const [isDriveModalOpen, setIsDriveModalOpen] = useState(false);
   const [registeredDrives, setRegisteredDrives] = useState<string[]>([]);
+  const [atsScore, setAtsScore] = useState<number | null>(88);
+  const [isAnalyzingATS, setIsAnalyzingATS] = useState(false);
+  const [simMode, setSimMode] = useState<'Voice' | 'Coding' | 'Behavioral' | 'HR'>('Voice');
+  const [isSimActive, setIsSimActive] = useState(false);
+  const [simScore, setSimScore] = useState<number | null>(null);
 
   const isStaff = currentRole === 'Placement Cell' || currentRole === 'Admin';
-  const isStudent = currentRole === 'Student' || currentRole === 'Parent';
 
   const {
     register,
@@ -58,136 +63,249 @@ export const Placement: React.FC = () => {
   };
 
   const handleRegister = (companyId: string) => {
-    setRegisteredDrives((prev) => [...prev, companyId]);
-    toast('Application Submitted', 'You registered for this drive successfully.', 'success');
+    if (registeredDrives.includes(companyId)) return;
+    setRegisteredDrives([...registeredDrives, companyId]);
+    toast('Registration Confirmed', 'Resume submitted for screening.', 'success');
   };
 
-  // Student specific CGPA checks
-  const studentCgpa = students[0].cgpa; // Aarav 8.7
+  const handleRunATSCheck = () => {
+    setIsAnalyzingATS(true);
+    setTimeout(() => {
+      setIsAnalyzingATS(false);
+      setAtsScore(92);
+      toast('ATS Score Generated', 'Resume match score updated to 92/100.', 'success');
+    }, 1500);
+  };
 
-  const columns: Column<PlacementDrive>[] = [
-    { key: 'company', label: 'Company', sortable: true },
-    { key: 'role', label: 'Designation Role', sortable: true },
-    { key: 'driveDate', label: 'Drive Date', sortable: true },
-    { key: 'packageOffer', label: 'CTC Package', sortable: true },
-    {
-      key: 'eligibleCgpa',
-      label: 'CGPA Cutoff',
-      render: (row) => (
-        <span className="font-semibold text-slate-800 dark:text-slate-200">
-          {row.eligibleCgpa} CGPA
-        </span>
-      ),
-      sortable: true,
-    },
-    {
-      key: 'status',
-      label: 'Drive Status',
-      render: (row) => {
-        const type = row.status === 'Ongoing' ? 'warning' : row.status === 'Closed' ? 'danger' : 'primary';
-        return <Badge variant={type}>{row.status}</Badge>;
-      },
-      sortable: true,
-    },
-    {
-      key: 'id',
-      label: 'Actions',
-      render: (row) => {
-        const isEligible = studentCgpa >= row.eligibleCgpa;
-        const isRegistered = registeredDrives.includes(row.id);
-
-        if (isStudent) {
-          if (row.status === 'Closed') {
-            return <span className="text-xs text-slate-400">Applications Closed</span>;
-          }
-          if (isRegistered) {
-            return (
-              <Badge variant="success" className="h-8 flex items-center justify-center gap-1.5 px-3">
-                <CheckCircle size={10} /> Registered
-              </Badge>
-            );
-          }
-          return (
-            <Button
-              variant={isEligible ? 'primary' : 'outline'}
-              size="sm"
-              className="h-8 text-xs cursor-pointer"
-              disabled={!isEligible}
-              onClick={() => handleRegister(row.id)}
-            >
-              {isEligible ? 'Apply Now' : 'Not Eligible'}
-            </Button>
-          );
-        }
-        return <span className="text-xs text-slate-500 font-semibold">Staff view only</span>;
-      },
-    },
-  ];
+  const handleStartSim = () => {
+    setIsSimActive(true);
+    setSimScore(null);
+    setTimeout(() => {
+      setIsSimActive(false);
+      setSimScore(94);
+      toast('Mock Interview Complete', 'AI Score: 94/100. Excellent technical articulation!', 'success');
+    }, 3000);
+  };
 
   return (
     <div className="flex flex-col gap-6 animate-fade-in">
       {/* Header */}
-      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
-          <h1 className="text-xl font-bold text-slate-900 dark:text-slate-100 font-display m-0 leading-tight">
-            Placement Cell Portal
+          <h1 className="text-xl font-bold text-slate-900 dark:text-slate-100 font-display m-0 leading-tight flex items-center gap-2">
+            Placement Cell & AI Interview Hub
+            <span className="text-xs px-2.5 py-0.5 rounded-full bg-cyan-500/20 text-cyan-400 border border-cyan-500/30">
+              AI ATS & Interview Simulator
+            </span>
           </h1>
           <p className="text-xs text-slate-500 dark:text-slate-400">
-            Publish hiring drive calendars, register candidate details, and review qualification ratios.
+            Recruitment drives, AI resume ATS analyzer, candidate ranking, and voice mock interviews.
           </p>
         </div>
+
         {isStaff && (
-          <Button onClick={() => setIsDriveModalOpen(true)} className="flex items-center gap-1.5">
-            <Plus size={16} /> Add Placement Drive
+          <Button size="sm" onClick={() => setIsDriveModalOpen(true)} className="gap-1.5 self-start">
+            <Plus size={14} /> Schedule Recruitment Drive
           </Button>
         )}
       </div>
 
-      {isStudent && (
-        <Card className="bg-slate-50 dark:bg-slate-900/30 border border-slate-200 dark:border-slate-800">
-          <CardContent className="p-4 flex items-center gap-3.5 text-xs text-slate-650 dark:text-slate-350">
-            <div className="p-2 bg-blue-50 text-blue-600 dark:bg-blue-900/20 dark:text-blue-400 rounded-lg shrink-0">
-              <Briefcase size={16} />
+      <Tabs defaultValue="drives">
+        <TabList>
+          <TabTrigger value="drives">Active Drives & Companies</TabTrigger>
+          <TabTrigger value="resume">AI Resume Builder & ATS Score</TabTrigger>
+          <TabTrigger value="interview">AI Mock Interview Simulator</TabTrigger>
+        </TabList>
+
+        <TabContent value="drives" className="mt-4">
+          <Card className="p-0">
+            <Table>
+              <TableHeader>
+                <TableRow>
+                  <TableHead>Company</TableHead>
+                  <TableHead>Designation</TableHead>
+                  <TableHead>Package</TableHead>
+                  <TableHead>CGPA Cutoff</TableHead>
+                  <TableHead>Drive Date</TableHead>
+                  <TableHead>Status</TableHead>
+                  <TableHead className="text-right">Action</TableHead>
+                </TableRow>
+              </TableHeader>
+              <TableBody>
+                {placements.map((drive) => {
+                  const isReg = registeredDrives.includes(drive.id);
+                  return (
+                    <TableRow key={drive.id}>
+                      <TableCell className="font-bold text-xs">{drive.company}</TableCell>
+                      <TableCell className="text-xs">{drive.role}</TableCell>
+                      <TableCell className="text-xs font-semibold text-emerald-500">{drive.packageOffer}</TableCell>
+                      <TableCell className="text-xs font-mono">{drive.eligibleCgpa} CGPA</TableCell>
+                      <TableCell className="text-xs">{drive.driveDate}</TableCell>
+                      <TableCell>
+                        <Badge variant="success" className="text-[10px]">{drive.status}</Badge>
+                      </TableCell>
+                      <TableCell className="text-right">
+                        <Button
+                          size="sm"
+                          variant={isReg ? 'outline' : 'primary'}
+                          onClick={() => handleRegister(drive.id)}
+                        >
+                          {isReg ? 'Applied ✓' : 'Apply Now'}
+                        </Button>
+                      </TableCell>
+                    </TableRow>
+                  );
+                })}
+              </TableBody>
+            </Table>
+          </Card>
+        </TabContent>
+
+        <TabContent value="resume" className="mt-4">
+          <Card className="p-6 space-y-6">
+            <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
+              <div>
+                <h3 className="text-base font-bold text-slate-100 flex items-center gap-2">
+                  <FileText className="text-cyan-400" size={20} />
+                  AI Automated Resume Builder & ATS Screener
+                </h3>
+                <p className="text-xs text-slate-400 mt-0.5">
+                  Generates ATS-optimized resume from your student profile and project achievements.
+                </p>
+              </div>
+
+              <div className="flex items-center gap-3">
+                <button
+                  onClick={handleRunATSCheck}
+                  disabled={isAnalyzingATS}
+                  className="px-4 py-2 bg-cyan-600 hover:bg-cyan-500 text-white font-semibold text-xs rounded-xl flex items-center gap-2 shadow-lg"
+                >
+                  <Sparkles size={14} className={isAnalyzingATS ? 'animate-spin' : ''} />
+                  {isAnalyzingATS ? 'Scanning Resume...' : 'Re-Analyze ATS Match'}
+                </button>
+                <button className="px-4 py-2 bg-slate-800 hover:bg-slate-700 text-slate-200 font-semibold text-xs rounded-xl flex items-center gap-1.5 border border-slate-700">
+                  <Download size={14} /> Export PDF
+                </button>
+              </div>
             </div>
-            <div>
-              <span className="font-bold text-slate-800 dark:text-slate-100">Eligible CGPA Verification</span>
-              <p className="text-slate-500 dark:text-slate-400 mt-0.5">
-                Your current average GPA is <span className="font-bold text-blue-600 dark:text-blue-400">{studentCgpa}</span>. You qualify for any drives requiring a cutoff at or below this value.
+
+            {atsScore !== null && (
+              <div className="p-4 rounded-xl bg-slate-900 border border-slate-800 grid grid-cols-1 sm:grid-cols-3 gap-4">
+                <div className="flex items-center gap-3">
+                  <div className="w-14 h-14 rounded-full bg-cyan-500/20 border border-cyan-500/40 text-cyan-400 flex items-center justify-center font-bold text-lg">
+                    {atsScore}%
+                  </div>
+                  <div>
+                    <span className="text-[10px] font-bold uppercase text-slate-400">ATS Screener Rating</span>
+                    <h4 className="text-xs font-bold text-slate-100">Top Tier Candidate Match</h4>
+                  </div>
+                </div>
+
+                <div className="sm:col-span-2 space-y-1 text-xs text-slate-300">
+                  <span className="font-bold text-cyan-400">AI Improvement Tips:</span>
+                  <ul className="list-disc pl-4 space-y-0.5 text-slate-400 text-[11px]">
+                    <li>Include quantified metrics for Computer Vision & LLM projects (+4% ATS match).</li>
+                    <li>Add AWS / Cloud Practitioner certification badge.</li>
+                  </ul>
+                </div>
+              </div>
+            )}
+          </Card>
+        </TabContent>
+
+        <TabContent value="interview" className="mt-4">
+          <Card className="p-6 space-y-6">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+              <div>
+                <h3 className="text-base font-bold text-slate-100 flex items-center gap-2">
+                  <Mic className="text-cyan-400" size={20} />
+                  AI Voice & Technical Interview Simulator
+                </h3>
+                <p className="text-xs text-slate-400 mt-0.5">
+                  Simulate real-world tech & HR rounds with voice evaluation and instant scoring.
+                </p>
+              </div>
+
+              {/* Mode Toggle */}
+              <div className="flex items-center gap-1 bg-slate-900 p-1.5 rounded-xl border border-slate-800">
+                {(['Voice', 'Coding', 'Behavioral', 'HR'] as const).map(mode => (
+                  <button
+                    key={mode}
+                    onClick={() => setSimMode(mode)}
+                    className={`px-3 py-1.5 rounded-lg text-xs font-semibold ${
+                      simMode === mode ? 'bg-cyan-600 text-white shadow' : 'text-slate-400 hover:text-slate-200'
+                    }`}
+                  >
+                    {mode}
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            <div className="p-8 rounded-2xl bg-slate-950 border border-slate-800 text-center space-y-4">
+              <div className="w-16 h-16 rounded-full bg-cyan-600/20 border border-cyan-500/40 text-cyan-400 flex items-center justify-center mx-auto animate-pulse">
+                <Mic size={28} />
+              </div>
+              <h4 className="text-sm font-bold text-slate-100">Ready for {simMode} Interview Round?</h4>
+              <p className="text-xs text-slate-400 max-w-md mx-auto">
+                AI interviewer will ask 5 technical questions based on your profile, record your spoken answer, and evaluate confidence, syntax, and clarity.
               </p>
+
+              <button
+                onClick={handleStartSim}
+                disabled={isSimActive}
+                className="px-6 py-3 bg-gradient-to-r from-cyan-600 to-blue-600 hover:from-cyan-500 hover:to-blue-500 text-white font-bold text-xs rounded-xl shadow-lg shadow-cyan-500/20 inline-flex items-center gap-2"
+              >
+                <Sparkles size={16} className={isSimActive ? 'animate-spin' : ''} />
+                {isSimActive ? 'Interview in Progress... Speak Now' : 'Start Mock Interview Round'}
+              </button>
+
+              {simScore !== null && (
+                <div className="p-3 rounded-xl bg-emerald-950/40 border border-emerald-500/30 text-emerald-300 text-xs inline-block">
+                  🎯 AI Interview Score: <strong>{simScore} / 100</strong> (Strong Hire Rating)
+                </div>
+              )}
             </div>
-          </CardContent>
-        </Card>
-      )}
+          </Card>
+        </TabContent>
+      </Tabs>
 
-      {/* Drives Grid */}
-      <Card>
-        <CardHeader>
-          <div>
-            <CardTitle>Recruitment Drives Calendar</CardTitle>
-            <CardDescription>Scheduled corporate hiring drives details</CardDescription>
-          </div>
-        </CardHeader>
-        <CardContent className="pt-6">
-          <DataGrid columns={columns} data={placements} searchKey="company" searchPlaceholder="Search companies..." />
-        </CardContent>
-      </Card>
-
-      {/* Add Drive Modal */}
-      <Modal isOpen={isDriveModalOpen} onClose={() => setIsDriveModalOpen(false)} title="Log New Placement Drive">
+      {/* Schedule Drive Modal */}
+      <Modal isOpen={isDriveModalOpen} onClose={() => setIsDriveModalOpen(false)} title="Schedule Placement Drive">
         <form onSubmit={handleSubmit(onSubmitDrive)} className="flex flex-col gap-4">
-          <Input label="Company Name" placeholder="e.g. Google" {...register('company', { required: true })} error={errors.company?.message} />
-          <Input label="Designation / Role" placeholder="e.g. SDE-1" {...register('role', { required: true })} error={errors.role?.message} />
-          <div className="grid grid-cols-2 gap-3">
-            <Input label="Drive Date" type="date" {...register('driveDate', { required: true })} error={errors.driveDate?.message} />
-            <Input label="CTC Offer (INR)" placeholder="e.g. 24 LPA" {...register('packageOffer', { required: true })} error={errors.packageOffer?.message} />
+          <div className="flex flex-col gap-1.5">
+            <label className="text-xs font-semibold text-slate-300">Company Name</label>
+            <Input placeholder="e.g. Google Cloud" {...register('company')} />
+            {errors.company && <span className="text-[10px] text-rose-500">{errors.company.message}</span>}
           </div>
-          <Input label="CGPA Cutoff Required" type="number" step="0.1" placeholder="e.g. 8.5" {...register('eligibleCgpa', { required: true })} error={errors.eligibleCgpa?.message} />
 
-          <div className="flex justify-end gap-2 border-t border-slate-100 dark:border-slate-800 pt-4 mt-2">
-            <Button variant="outline" type="button" onClick={() => setIsDriveModalOpen(false)}>
+          <div className="flex flex-col gap-1.5">
+            <label className="text-xs font-semibold text-slate-300">Role Designation</label>
+            <Input placeholder="e.g. Software Engineer (L3)" {...register('role')} />
+            {errors.role && <span className="text-[10px] text-rose-500">{errors.role.message}</span>}
+          </div>
+
+          <div className="grid grid-cols-2 gap-3">
+            <div className="flex flex-col gap-1.5">
+              <label className="text-xs font-semibold text-slate-300">Package Offer</label>
+              <Input placeholder="e.g. 18 LPA" {...register('packageOffer')} />
+            </div>
+            <div className="flex flex-col gap-1.5">
+              <label className="text-xs font-semibold text-slate-300">Minimum CGPA</label>
+              <Input placeholder="e.g. 7.5" {...register('eligibleCgpa')} />
+            </div>
+          </div>
+
+          <div className="flex flex-col gap-1.5">
+            <label className="text-xs font-semibold text-slate-300">Drive Date</label>
+            <Input type="date" {...register('driveDate')} />
+          </div>
+
+          <div className="flex items-center justify-end gap-2 pt-2">
+            <Button type="button" variant="outline" onClick={() => setIsDriveModalOpen(false)}>
               Cancel
             </Button>
-            <Button type="submit">Publish hiring drive</Button>
+            <Button type="submit">Publish Drive</Button>
           </div>
         </form>
       </Modal>

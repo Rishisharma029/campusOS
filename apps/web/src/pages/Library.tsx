@@ -2,14 +2,14 @@ import React, { useState } from 'react';
 import { useDatabase, type Book } from '../context/DatabaseContext';
 import { useRole } from '../context/RoleContext';
 import { useToast } from '../components/ui/Toast';
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '../components/ui/Card';
+import { Card, CardContent, CardHeader } from '../components/ui/Card';
 import { Button } from '../components/ui/Button';
 import { Select } from '../components/ui/Input';
 import { Badge } from '../components/ui/Badge';
-import { DataGrid, type Column, Table, TableHeader, TableBody, TableRow, TableCell, TableHead } from '../components/ui/Table';
+import { Table, TableHeader, TableBody, TableRow, TableCell, TableHead } from '../components/ui/Table';
 import { Modal } from '../components/ui/Modal';
 import { Tabs, TabList, TabTrigger, TabContent } from '../components/ui/Tabs';
-import { Plus, RefreshCw } from 'lucide-react';
+import { Plus, RefreshCw, QrCode, Radio, Sparkles, BookOpen, Download } from 'lucide-react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import * as z from 'zod';
@@ -27,9 +27,9 @@ export const Library: React.FC = () => {
   const { toast } = useToast();
 
   const [isIssueModalOpen, setIsIssueModalOpen] = useState(false);
+  const [isScanningQR, setIsScanningQR] = useState(false);
 
   const isStaff = currentRole === 'Librarian' || currentRole === 'Admin';
-  const isStudent = currentRole === 'Student' || currentRole === 'Parent';
 
   const {
     register,
@@ -59,224 +59,175 @@ export const Library: React.FC = () => {
     toast('Book Returned', 'Returned book check-in completed.', 'success');
   };
 
-  // Student specific borrowed books list
-  const activeStudent = students[0]; // Aarav
-  const borrowedBooks = books.flatMap((bk) =>
-    bk.issuedTo
-      .filter((iss) => iss.studentId === activeStudent.id)
-      .map((iss) => ({
-        ...iss,
-        bookTitle: bk.title,
-        bookAuthor: bk.author,
-        bookId: bk.id,
-      }))
-  );
-
-  const columns: Column<Book>[] = [
-    { key: 'title', label: 'Book Title', sortable: true },
-    { key: 'author', label: 'Author', sortable: true },
-    { key: 'isbn', label: 'ISBN Code' },
-    { key: 'category', label: 'Category', sortable: true },
-    {
-      key: 'availableCopies',
-      label: 'Inventory Available',
-      render: (row) => (
-        <span className="font-semibold text-slate-800 dark:text-slate-200">
-          {row.availableCopies} / {row.totalCopies} copies
-        </span>
-      ),
-      sortable: true,
-    },
-  ];
+  const handleQRScan = () => {
+    setIsScanningQR(true);
+    setTimeout(() => {
+      setIsScanningQR(false);
+      toast('RFID Tag Recognized', 'Book "Introduction to Algorithms (4th Ed)" checked out via RFID gate.', 'success');
+    }, 1500);
+  };
 
   return (
     <div className="flex flex-col gap-6 animate-fade-in">
       {/* Header */}
-      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
-          <h1 className="text-xl font-bold text-slate-900 dark:text-slate-100 font-display m-0 leading-tight">
-            Library Catalog
+          <h1 className="text-xl font-bold text-slate-900 dark:text-slate-100 font-display m-0 leading-tight flex items-center gap-2">
+            Library 2.0 & Digital E-Books
+            <span className="text-xs px-2.5 py-0.5 rounded-full bg-emerald-500/20 text-emerald-400 border border-emerald-500/30">
+              RFID & QR Automated Checkout
+            </span>
           </h1>
           <p className="text-xs text-slate-500 dark:text-slate-400">
-            Browse available text books, check library copies, and manage book borrowings.
+            Catalog search, RFID gate issue/return, fines tracking, and AI book recommendations.
           </p>
         </div>
-        {isStaff && (
-          <Button onClick={() => setIsIssueModalOpen(true)} className="flex items-center gap-1.5">
-            <Plus size={16} /> Issue Book Copy
-          </Button>
-        )}
+
+        <div className="flex items-center gap-2 self-start">
+          <button
+            onClick={handleQRScan}
+            disabled={isScanningQR}
+            className="px-4 py-2 bg-emerald-600 hover:bg-emerald-500 text-white font-semibold text-xs rounded-xl flex items-center gap-2 shadow-lg shadow-emerald-500/20"
+          >
+            <QrCode size={14} className={isScanningQR ? 'animate-spin' : ''} />
+            {isScanningQR ? 'Scanning RFID...' : 'Simulate RFID Gate Checkout'}
+          </button>
+          {isStaff && (
+            <Button size="sm" onClick={() => setIsIssueModalOpen(true)} className="gap-1.5">
+              <Plus size={14} /> Manual Issue Book
+            </Button>
+          )}
+        </div>
       </div>
 
-      {isStudent ? (
-        // STUDENT DASHBOARD
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-          <Card className="lg:col-span-1">
-            <CardHeader>
-              <div>
-                <CardTitle>My Borrows Summary</CardTitle>
-                <CardDescription>Active book check-outs</CardDescription>
-              </div>
-            </CardHeader>
-            <CardContent className="flex flex-col gap-4 text-xs">
-              <div className="flex justify-between items-center py-2 border-b border-slate-100 dark:border-slate-850">
-                <span className="text-slate-400 font-semibold uppercase tracking-wider text-[9px]">Books Checked Out</span>
-                <span className="font-bold text-slate-800 dark:text-slate-200">{borrowedBooks.length} Books</span>
-              </div>
-              <div className="flex justify-between items-center py-2 border-b border-slate-100 dark:border-slate-850">
-                <span className="text-slate-400 font-semibold uppercase tracking-wider text-[9px]">Overdue Penalties</span>
-                <span className="font-bold text-emerald-600 dark:text-emerald-400">₹0.00 (None)</span>
-              </div>
-            </CardContent>
-          </Card>
+      {/* AI Recommendation Banner */}
+      <Card className="glass-card border-emerald-500/30 bg-gradient-to-r from-slate-900 via-slate-900 to-emerald-950/20">
+        <CardContent className="p-5 flex flex-col sm:flex-row items-center justify-between gap-4">
+          <div className="flex items-center gap-3">
+            <div className="p-2.5 rounded-xl bg-emerald-500/20 text-emerald-400">
+              <Sparkles size={20} className="animate-bounce" />
+            </div>
+            <div>
+              <h3 className="text-xs font-bold text-slate-100">AI Reading Recommendation for You</h3>
+              <p className="text-xs text-slate-400">Based on your enrollment in CS301 (Data Structures): "Clean Code & Refactoring by Martin Fowler"</p>
+            </div>
+          </div>
 
-          <Card className="lg:col-span-2">
-            <CardHeader>
-              <div>
-                <CardTitle>My Borrowed Books</CardTitle>
-                <CardDescription>Dues schedules for book returns</CardDescription>
-              </div>
-            </CardHeader>
-            <CardContent className="p-0">
-              <Table>
-                <TableHeader>
-                  <TableRow>
-                    <TableHead>Book ID</TableHead>
-                    <TableHead>Book Title</TableHead>
-                    <TableHead>Issued Date</TableHead>
-                    <TableHead>Due Date</TableHead>
+          <button className="px-4 py-2 bg-slate-800 hover:bg-slate-700 text-emerald-400 font-semibold text-xs rounded-xl border border-slate-700 shrink-0">
+            Open E-Book PDF
+          </button>
+        </CardContent>
+      </Card>
+
+      <Tabs defaultValue="catalog">
+        <TabList>
+          <TabTrigger value="catalog">Book Catalog & RFID Stock</TabTrigger>
+          <TabTrigger value="digital">Digital E-Library Vault</TabTrigger>
+        </TabList>
+
+        <TabContent value="catalog" className="mt-4">
+          <Card className="p-0">
+            <Table>
+              <TableHeader>
+                <TableRow>
+                  <TableHead>Title</TableHead>
+                  <TableHead>Author</TableHead>
+                  <TableHead>ISBN</TableHead>
+                  <TableHead>Category</TableHead>
+                  <TableHead>Copies (Avail / Total)</TableHead>
+                  <TableHead className="text-right">Issued To</TableHead>
+                </TableRow>
+              </TableHeader>
+              <TableBody>
+                {books.map((book) => (
+                  <TableRow key={book.id}>
+                    <TableCell className="font-bold text-xs">{book.title}</TableCell>
+                    <TableCell className="text-xs">{book.author}</TableCell>
+                    <TableCell className="text-xs font-mono">{book.isbn}</TableCell>
+                    <TableCell>
+                      <Badge variant="primary" className="text-[10px]">{book.category}</Badge>
+                    </TableCell>
+                    <TableCell className="text-xs font-semibold">
+                      {book.availableCopies} / {book.totalCopies}
+                    </TableCell>
+                    <TableCell className="text-right">
+                      {book.issuedTo.length > 0 ? (
+                        <div className="flex flex-col items-end text-[10px]">
+                          {book.issuedTo.map((iss) => (
+                            <span key={iss.studentId} className="text-slate-300 font-medium">
+                              {iss.studentName} (Due: {iss.dueDate})
+                              {isStaff && (
+                                <button
+                                  onClick={() => handleReturn(book.id, iss.studentId)}
+                                  className="ml-2 text-emerald-400 hover:underline"
+                                >
+                                  Check In
+                                </button>
+                              )}
+                            </span>
+                          ))}
+                        </div>
+                      ) : (
+                        <span className="text-[10px] text-slate-500">In Shelf</span>
+                      )}
+                    </TableCell>
                   </TableRow>
-                </TableHeader>
-                <TableBody>
-                  {borrowedBooks.length > 0 ? (
-                    borrowedBooks.map((borrow, idx) => (
-                      <TableRow key={idx}>
-                        <TableCell className="font-mono text-xs font-semibold">{borrow.bookId}</TableCell>
-                        <TableCell>
-                          <span className="font-bold text-slate-800 dark:text-slate-200 block">{borrow.bookTitle}</span>
-                          <span className="text-[10px] text-slate-400">{borrow.bookAuthor}</span>
-                        </TableCell>
-                        <TableCell>{borrow.issueDate}</TableCell>
-                        <TableCell>
-                          <Badge variant="warning">{borrow.dueDate}</Badge>
-                        </TableCell>
-                      </TableRow>
-                    ))
-                  ) : (
-                    <TableRow>
-                      <TableCell colSpan={4} className="text-center py-8 text-slate-400">
-                        No checked-out books.
-                      </TableCell>
-                    </TableRow>
-                  )}
-                </TableBody>
-              </Table>
-            </CardContent>
+                ))}
+              </TableBody>
+            </Table>
           </Card>
-        </div>
-      ) : (
-        // STAFF / LIBRARIAN VIEW
-        <Tabs defaultValue="catalog">
-          <TabList>
-            <TabTrigger value="catalog">Books Catalog</TabTrigger>
-            <TabTrigger value="issued">
-              Issued Records Ledger{' '}
-              {books.flatMap((b) => b.issuedTo).length > 0 && (
-                <span className="ml-1 px-1.5 py-0.2 rounded-full bg-blue-600 text-white font-bold text-[9px]">
-                  {books.flatMap((b) => b.issuedTo).length}
-                </span>
-              )}
-            </TabTrigger>
-          </TabList>
+        </TabContent>
 
-          {/* Tab 1: Catalog */}
-          <TabContent value="catalog">
-            <Card>
-              <CardContent className="pt-6">
-                <DataGrid columns={columns} data={books} searchKey="title" searchPlaceholder="Search book titles..." />
-              </CardContent>
-            </Card>
-          </TabContent>
+        <TabContent value="digital" className="mt-4">
+          <Card className="p-6 space-y-4">
+            <h3 className="text-sm font-bold text-slate-100 flex items-center gap-2">
+              <BookOpen className="text-emerald-400" size={18} />
+              University E-Book Vault & Research PDF Repositories
+            </h3>
+            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
+              {['Introduction to Algorithms 4th Edition.pdf', 'Distributed Systems Principles 2025.pdf', 'Neural Networks and Deep Learning.pdf'].map((book, idx) => (
+                <div key={idx} className="p-4 rounded-xl bg-slate-900 border border-slate-800 space-y-2">
+                  <h4 className="text-xs font-bold text-slate-100 truncate">{book}</h4>
+                  <span className="text-[10px] text-slate-400 block">PDF Document &bull; 14.2 MB</span>
+                  <button className="w-full py-1.5 bg-emerald-600/30 text-emerald-300 border border-emerald-500/40 rounded-lg text-xs font-semibold flex items-center justify-center gap-1">
+                    <Download size={12} /> Download PDF
+                  </button>
+                </div>
+              ))}
+            </div>
+          </Card>
+        </TabContent>
+      </Tabs>
 
-          {/* Tab 2: Issued Books */}
-          <TabContent value="issued" className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            {books.flatMap((b) => b.issuedTo).length > 0 ? (
-              books.flatMap((b) =>
-                b.issuedTo.map((iss) => ({
-                  ...iss,
-                  bookTitle: b.title,
-                  bookId: b.id,
-                }))
-              ).map((record, index) => (
-                <Card key={index} hoverable>
-                  <CardHeader className="p-4 flex items-center justify-between">
-                    <div>
-                      <span className="text-[9px] font-mono font-bold text-blue-600 dark:text-blue-400 block mb-0.5">{record.bookId}</span>
-                      <CardTitle className="text-xs">{record.bookTitle}</CardTitle>
-                    </div>
-                  </CardHeader>
-                  <CardContent className="p-4 flex flex-col gap-3 text-xs">
-                    <div className="flex justify-between items-center py-1 border-b border-slate-100 dark:border-slate-800/40">
-                      <span className="text-slate-400">Issued To:</span>
-                      <span className="font-semibold text-slate-800 dark:text-slate-200">
-                        {record.studentName} ({record.studentId})
-                      </span>
-                    </div>
-                    <div className="flex justify-between items-center py-1 border-b border-slate-100 dark:border-slate-800/40">
-                      <span className="text-slate-400">Issue Date:</span>
-                      <span>{record.issueDate}</span>
-                    </div>
-                    <div className="flex justify-between items-center py-1 border-b border-slate-100 dark:border-slate-800/40">
-                      <span className="text-slate-400">Due Date:</span>
-                      <Badge variant="warning">{record.dueDate}</Badge>
-                    </div>
-
-                    <div className="flex justify-end mt-2 pt-2 border-t border-slate-100 dark:border-slate-800/80">
-                      <Button
-                        variant="outline"
-                        size="sm"
-                        className="h-8 text-emerald-600 hover:bg-emerald-50 dark:hover:bg-emerald-950/10 border-emerald-200"
-                        onClick={() => handleReturn(record.bookId, record.studentId)}
-                      >
-                        <RefreshCw size={12} className="mr-1.5" /> Return Check-in
-                      </Button>
-                    </div>
-                  </CardContent>
-                </Card>
-              ))
-            ) : (
-              <div className="md:col-span-2 text-center py-10 text-slate-400 text-xs">
-                No active borrowings recorded.
-              </div>
-            )}
-          </TabContent>
-        </Tabs>
-      )}
-
-      {/* Issue Book Modal */}
-      <Modal isOpen={isIssueModalOpen} onClose={() => setIsIssueModalOpen(false)} title="Issue Library Book">
+      {/* Manual Issue Modal */}
+      <Modal isOpen={isIssueModalOpen} onClose={() => setIsIssueModalOpen(false)} title="Issue Book to Student">
         <form onSubmit={handleSubmit(onSubmitIssue)} className="flex flex-col gap-4">
-          <Select
-            label="Book Title Catalog"
-            options={[
-              { value: '', label: 'Select Book' },
-              ...books.map((b) => ({ value: b.id, label: `${b.title} (${b.availableCopies} Left)` })),
-            ]}
-            {...register('bookId', { required: true })}
-            error={errors.bookId?.message}
-          />
-          <Select
-            label="Student Borrowee"
-            options={[
-              { value: '', label: 'Select Student' },
-              ...students.map((s) => ({ value: s.id, label: `${s.name} (${s.rollNo})` })),
-            ]}
-            {...register('studentId', { required: true })}
-            error={errors.studentId?.message}
-          />
+          <div className="flex flex-col gap-1.5">
+            <label className="text-xs font-semibold text-slate-300">Select Book</label>
+            <Select {...register('bookId')}>
+              <option value="">Select a book...</option>
+              {books.map((b) => (
+                <option key={b.id} value={b.id} disabled={b.availableCopies === 0}>
+                  {b.title} ({b.availableCopies} available)
+                </option>
+              ))}
+            </Select>
+          </div>
 
-          <div className="flex justify-end gap-2 border-t border-slate-100 dark:border-slate-800 pt-4 mt-2">
-            <Button variant="outline" type="button" onClick={() => setIsIssueModalOpen(false)}>
+          <div className="flex flex-col gap-1.5">
+            <label className="text-xs font-semibold text-slate-300">Select Student</label>
+            <Select {...register('studentId')}>
+              <option value="">Select a student...</option>
+              {students.map((s) => (
+                <option key={s.id} value={s.id}>
+                  {s.name} ({s.rollNo})
+                </option>
+              ))}
+            </Select>
+          </div>
+
+          <div className="flex items-center justify-end gap-2 pt-2">
+            <Button type="button" variant="outline" onClick={() => setIsIssueModalOpen(false)}>
               Cancel
             </Button>
             <Button type="submit">Issue Book</Button>

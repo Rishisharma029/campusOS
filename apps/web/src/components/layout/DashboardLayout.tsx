@@ -5,21 +5,21 @@ import { Sidebar } from './Sidebar';
 import { Drawer } from '../ui/Drawer';
 import { CommandPalette } from '../CommandPalette';
 import { useDatabase } from '../../context/DatabaseContext';
-import { DynamicIcon } from '../DynamicIcon';
-import { Check, MailOpen, AlertTriangle, CloudOff, RefreshCw, LogOut, MessageSquare } from 'lucide-react';
-import { Button } from '../ui/Button';
-import { useAuth } from '../../context/AuthContext';
-import { AIChatbot } from './AIChatbot';
+import { useRealtime } from '../../context/RealtimeContext';
+import { Check, ShieldAlert, Bot, X, Wifi } from 'lucide-react';
+import { AIAssistantModal } from '../AIAssistantModal';
 
 export const DashboardLayout: React.FC = () => {
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);
   const [isNotificationsOpen, setIsNotificationsOpen] = useState(false);
   const [isSearchOpen, setIsSearchOpen] = useState(false);
+  const [isAIAssistantOpen, setIsAIAssistantOpen] = useState(false);
+  const [pwaBannerVisible, setPwaBannerVisible] = useState(true);
 
   const navigate = useNavigate();
   const { notifications, markNotificationRead, markAllNotificationsRead } = useDatabase();
+  const { emergencyAlerts } = useRealtime();
 
-  // Listen for Ctrl+K global shortcut
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
       if ((e.ctrlKey || e.metaKey) && e.key === 'k') {
@@ -31,220 +31,108 @@ export const DashboardLayout: React.FC = () => {
     return () => window.removeEventListener('keydown', handleKeyDown);
   }, []);
 
-  const getCategoryColor = (cat: string) => {
-    switch (cat) {
-      case 'fee':
-        return 'bg-amber-100 text-amber-600 dark:bg-amber-900/20 dark:text-amber-450';
-      case 'exam':
-        return 'bg-rose-100 text-rose-600 dark:bg-rose-900/20 dark:text-rose-450';
-      case 'placement':
-        return 'bg-purple-100 text-purple-600 dark:bg-purple-900/20 dark:text-purple-450';
-      case 'academic':
-        return 'bg-blue-100 text-blue-600 dark:bg-blue-900/20 dark:text-blue-450';
-      default:
-        return 'bg-slate-100 text-slate-600 dark:bg-slate-800 dark:text-slate-400';
-    }
-  };
-
-  const getCategoryIcon = (cat: string) => {
-    switch (cat) {
-      case 'fee':
-        return 'CreditCard';
-      case 'exam':
-        return 'FileSpreadsheet';
-      case 'placement':
-        return 'Briefcase';
-      case 'academic':
-        return 'GraduationCap';
-      default:
-        return 'Bell';
-    }
-  };
-
-  const handleNotificationClick = (notif: any) => {
-    if (!notif.read) {
-      markNotificationRead(notif.id);
-    }
-    
-    // Close drawer
-    setIsNotificationsOpen(false);
-
-    // Route dynamically based on category
-    switch (notif.category) {
-      case 'fee':
-        navigate('/fees');
-        break;
-      case 'exam':
-        navigate('/examinations');
-        break;
-      case 'placement':
-        navigate('/placement');
-        break;
-      case 'academic':
-        navigate('/courses');
-        break;
-      default:
-        break;
-    }
-  };
-
-  const [isChatbotOpen, setIsChatbotOpen] = useState(false);
-  const { isOffline, toggleOffline, isSessionWarningOpen, extendSession, logout } = useAuth();
+  const hasActiveSOS = emergencyAlerts.some(a => a.status === 'ACTIVE');
 
   return (
-    <div className="min-h-screen flex flex-col">
-      {/* Offline Alert Banner */}
-      {isOffline && (
-        <div className="bg-red-600 text-white py-1.5 px-4 text-xs font-semibold flex items-center justify-between animate-fade-in z-50">
-          <span className="flex items-center gap-2">
-            <CloudOff size={14} className="animate-pulse" />
-            Workspace running in simulated PWA Offline Mode. Running from local database state.
-          </span>
-          <button onClick={toggleOffline} className="underline text-[10px] hover:text-red-100 focus:outline-none">
-            Reconnect Sync
-          </button>
-        </div>
-      )}
+    <div className="min-h-screen bg-app text-main flex flex-col relative overflow-x-hidden">
+      {/* Ambient Aurora Gradient Background */}
+      <div className="aurora-bg" />
 
-      {/* Inactivity lock popup */}
-      {isSessionWarningOpen && (
-        <div className="fixed inset-0 z-[9999] flex items-center justify-center bg-black/60 backdrop-blur-sm animate-fade-in">
-          <div className="bg-surface border border-main rounded-2xl p-6 max-w-md w-full mx-4 shadow-premium-lg animate-scale-in text-center space-y-4">
-            <div className="w-12 h-12 rounded-full bg-amber-100 text-amber-600 flex items-center justify-center mx-auto dark:bg-amber-900/20 dark:text-amber-455">
-              <AlertTriangle size={24} className="animate-bounce" />
-            </div>
-            <div>
-              <h3 className="text-base font-bold font-display text-slate-900 dark:text-slate-100">Session Expiring Soon</h3>
-              <p className="text-xs text-slate-500 dark:text-slate-400 mt-1">
-                You have been inactive for a while. For security reasons, your active CampusOS portal session will lock soon.
-              </p>
-            </div>
-            <div className="flex gap-2.5">
-              <Button variant="outline" className="flex-1 text-xs" onClick={logout}>
-                <LogOut size={13} className="mr-1.5" /> Log Out
-              </Button>
-              <Button className="flex-1 text-xs" onClick={extendSession}>
-                <RefreshCw size={13} className="mr-1.5" /> Keep Active
-              </Button>
-            </div>
-          </div>
-        </div>
-      )}
-
-      {/* Navbar */}
+      {/* Top Navbar */}
       <Navbar
         onToggleSidebar={() => setIsSidebarOpen((prev) => !prev)}
         onOpenNotifications={() => setIsNotificationsOpen(true)}
         onOpenSearch={() => setIsSearchOpen(true)}
       />
 
-      {/* Main Container */}
-      <div className="flex-1 flex relative">
-        {/* Sidebar */}
+      {/* PWA Offline / Install Banner */}
+      {pwaBannerVisible && (
+        <div className="bg-gradient-to-r from-blue-900 via-indigo-900 to-purple-900 text-white text-xs px-4 py-2 flex items-center justify-between z-40 border-b border-blue-500/30">
+          <div className="flex items-center gap-2">
+            <Wifi size={14} className="text-emerald-400 animate-pulse" />
+            <span><strong>CampusOS PWA Mode:</strong> App ready for offline use. Simulated push notifications & biometric login active.</span>
+          </div>
+          <button onClick={() => setPwaBannerVisible(false)} className="text-slate-400 hover:text-white">
+            <X size={14} />
+          </button>
+        </div>
+      )}
+
+      {/* Active SOS Emergency Banner Alert */}
+      {hasActiveSOS && (
+        <div
+          onClick={() => navigate('/emergency')}
+          className="bg-red-600 hover:bg-red-500 text-white text-xs px-4 py-2 font-bold flex items-center justify-between z-40 cursor-pointer animate-pulse shadow-lg"
+        >
+          <div className="flex items-center gap-2">
+            <ShieldAlert size={18} />
+            <span>CRITICAL SOS ALERT ACTIVE: Emergency Dispatch Response in Progress. Click to open Emergency Operations Desk.</span>
+          </div>
+        </div>
+      )}
+
+      {/* Main Workspace Body */}
+      <div className="flex-1 flex items-stretch">
         <Sidebar isOpen={isSidebarOpen} onToggle={() => setIsSidebarOpen((prev) => !prev)} />
 
-        {/* Content Area */}
-        <main className="flex-1 p-5 md:p-8 overflow-y-auto max-w-full">
+        <main className="flex-1 p-4 md:p-6 lg:p-8 min-w-0 transition-all duration-300">
           <Outlet />
         </main>
       </div>
 
-      {/* Floating AI chatbot trigger */}
+      {/* Floating AI Voice Assistant Button */}
       <button
-        onClick={() => setIsChatbotOpen((prev) => !prev)}
-        aria-label="Open AI assistant"
-        className="fixed bottom-4 right-4 z-40 w-11 h-11 rounded-full bg-primary text-white flex items-center justify-center shadow-premium-lg hover:bg-primary-dark transition-all duration-300 transform hover:scale-105 focus:outline-none cursor-pointer"
+        onClick={() => setIsAIAssistantOpen(true)}
+        className="fixed bottom-6 right-6 z-40 p-4 rounded-full bg-gradient-to-tr from-blue-600 via-indigo-600 to-purple-600 text-white shadow-2xl hover:scale-110 transition-all border border-white/20 flex items-center gap-2 group"
       >
-        <MessageSquare size={18} />
+        <Bot size={24} className="animate-pulse" />
+        <span className="max-w-0 overflow-hidden group-hover:max-w-xs transition-all duration-300 text-xs font-bold whitespace-nowrap">
+          Ask CampusOS AI
+        </span>
       </button>
 
-      {/* AIChatbot Drawer */}
-      <AIChatbot isOpen={isChatbotOpen} onClose={() => setIsChatbotOpen(false)} />
-
-      {/* Ctrl+K Search Palette */}
-      <CommandPalette isOpen={isSearchOpen} onClose={() => setIsSearchOpen(false)} />
+      {/* AI Assistant Modal */}
+      <AIAssistantModal isOpen={isAIAssistantOpen} onClose={() => setIsAIAssistantOpen(false)} />
 
       {/* Notifications Drawer */}
       <Drawer
         isOpen={isNotificationsOpen}
         onClose={() => setIsNotificationsOpen(false)}
-        title="In-App Notifications"
+        title="Campus Notifications"
       >
-        <div className="flex flex-col gap-4 h-full">
-          {notifications.length > 0 && (
-            <div className="flex items-center justify-between border-b border-slate-100 dark:border-slate-800 pb-3">
-              <span className="text-xs text-slate-500 font-medium">
-                {notifications.filter((n) => !n.read).length} Unread notifications
-              </span>
-              <Button
-                variant="ghost"
-                size="sm"
-                className="text-[10px] h-7 px-2"
-                onClick={markAllNotificationsRead}
+        <div className="flex flex-col gap-4">
+          <div className="flex items-center justify-between border-b border-slate-800 pb-3">
+            <span className="text-xs text-slate-400">All alerts & announcements</span>
+            <button
+              onClick={markAllNotificationsRead}
+              className="text-xs text-blue-400 hover:underline flex items-center gap-1 font-semibold"
+            >
+              <Check size={14} /> Mark all read
+            </button>
+          </div>
+
+          <div className="flex flex-col gap-2.5">
+            {notifications.map((n) => (
+              <div
+                key={n.id}
+                onClick={() => markNotificationRead(n.id)}
+                className={`p-3.5 rounded-xl border text-xs cursor-pointer transition-all ${
+                  n.read
+                    ? 'bg-slate-900/40 border-slate-800 text-slate-400'
+                    : 'bg-slate-800/90 border-blue-500/40 text-slate-100 font-semibold shadow-sm'
+                }`}
               >
-                <MailOpen size={12} className="mr-1.5" /> Mark all read
-              </Button>
-            </div>
-          )}
-
-          <div className="flex flex-col gap-3 overflow-y-auto max-h-[75vh] pr-1">
-            {notifications.length > 0 ? (
-              notifications.map((notif) => (
-                <div
-                  key={notif.id}
-                  onClick={() => handleNotificationClick(notif)}
-                  className={`p-3.5 border rounded-xl flex gap-3 items-start transition-all relative cursor-pointer hover:bg-slate-50/40 dark:hover:bg-slate-800/20
-                    ${notif.read
-                      ? 'bg-surface border-slate-200 dark:border-slate-800/80'
-                      : 'bg-blue-50/20 border-blue-200 dark:border-blue-900/30'
-                    }
-                  `}
-                >
-                  {/* Unread dot indicator */}
-                  {!notif.read && (
-                    <span className="absolute top-3.5 right-3.5 w-2 h-2 bg-blue-600 rounded-full" />
-                  )}
-
-                  {/* Icon Circle */}
-                  <div className={`p-2 rounded-lg shrink-0 ${getCategoryColor(notif.category)}`}>
-                    <DynamicIcon name={getCategoryIcon(notif.category)} size={16} />
-                  </div>
-
-                  {/* Text */}
-                  <div className="flex-1 min-w-0 pr-2">
-                    <h4 className="text-xs font-semibold text-slate-900 dark:text-slate-100 leading-snug">
-                      {notif.title}
-                    </h4>
-                    <p className="text-[11px] text-slate-500 dark:text-slate-400 mt-1 leading-normal text-balance">
-                      {notif.message}
-                    </p>
-                    <span className="text-[9px] text-slate-400 dark:text-slate-500 mt-2 block">
-                      {new Date(notif.timestamp).toLocaleString()}
-                    </span>
-
-                    {/* Mark read button */}
-                    {!notif.read && (
-                      <button
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          markNotificationRead(notif.id);
-                        }}
-                        className="mt-2 text-[10px] text-blue-600 dark:text-blue-400 font-semibold hover:underline flex items-center gap-1.5 cursor-pointer"
-                      >
-                        <Check size={10} /> Mark as read
-                      </button>
-                    )}
-                  </div>
-                </div>
-              ))
-            ) : (
-              <div className="text-center py-10 text-slate-400 text-xs">
-                No notifications to display.
+                <h4 className="font-bold text-xs">{n.title}</h4>
+                <p className="text-[11px] opacity-80 mt-1">{n.message}</p>
+                <span className="block text-[10px] text-right text-slate-500 mt-1">{n.timestamp}</span>
               </div>
-            )}
+            ))}
           </div>
         </div>
       </Drawer>
+
+      {/* Command Palette */}
+      <CommandPalette isOpen={isSearchOpen} onClose={() => setIsSearchOpen(false)} />
     </div>
   );
 };

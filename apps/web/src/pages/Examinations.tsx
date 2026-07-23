@@ -7,10 +7,10 @@ import { Button } from '../components/ui/Button';
 import { Input, Select } from '../components/ui/Input';
 import { Badge } from '../components/ui/Badge';
 import { Avatar } from '../components/ui/Avatar';
-import { DataGrid, type Column, Table, TableHeader, TableBody, TableRow, TableCell, TableHead } from '../components/ui/Table';
+import { Table, TableHeader, TableBody, TableRow, TableCell, TableHead } from '../components/ui/Table';
 import { Modal } from '../components/ui/Modal';
 import { Tabs, TabList, TabTrigger, TabContent } from '../components/ui/Tabs';
-import { Printer, Plus, ShieldAlert } from 'lucide-react';
+import { Printer, Plus, ShieldAlert, Sparkles, TrendingUp, BookOpen, Lock, Shuffle } from 'lucide-react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import * as z from 'zod';
@@ -32,6 +32,8 @@ export const Examinations: React.FC = () => {
 
   const [isEntryModalOpen, setIsEntryModalOpen] = useState(false);
   const [isTicketModalOpen, setIsTicketModalOpen] = useState(false);
+  const [showAIAnalysis, setShowAIAnalysis] = useState(true);
+  const [secureBrowserMode, setSecureBrowserMode] = useState(false);
 
   const isStaff = currentRole === 'Faculty' || currentRole === 'Admin';
   const isStudent = currentRole === 'Student' || currentRole === 'Parent';
@@ -60,242 +62,270 @@ export const Examinations: React.FC = () => {
       maxMarks: parseInt(data.maxMarks),
       grade: data.grade,
     });
-    
-    toast('Marks Saved', `Grade logged successfully for ${student.name}.`, 'success');
+
+    toast('Marks Published', `Recorded ${data.subjectName} grade for ${student.name}.`, 'success');
     addNotification({
-      title: 'Exam Grade Reported',
-      message: `${data.subjectName} grades entered for student ${student.name}. Result: ${data.marksObtained}/${data.maxMarks} (${data.grade}).`,
+      title: 'Exam Result Published',
+      message: `Grade ${data.grade} assigned for ${data.subjectName} to student ${student.name}.`,
       category: 'exam',
     });
-    setIsEntryModalOpen(false);
+
     reset();
+    setIsEntryModalOpen(false);
   };
-
-  const examColumns: Column<Exam>[] = [
-    { key: 'subject', label: 'Subject', sortable: true },
-    { key: 'type', label: 'Type', render: (row) => <Badge variant="secondary">{row.type}</Badge> },
-    { key: 'examDate', label: 'Date', sortable: true },
-    { key: 'duration', label: 'Duration' },
-    { key: 'room', label: 'Room', render: (row) => <span className="font-semibold text-slate-800 dark:text-slate-205">{row.room}</span> },
-  ];
-
-  const resultsColumns: Column<Result>[] = [
-    { key: 'studentName', label: 'Student', sortable: true },
-    { key: 'subjectName', label: 'Subject', sortable: true },
-    {
-      key: 'marksObtained',
-      label: 'Marks',
-      render: (row) => (
-        <span className="font-semibold text-slate-800 dark:text-slate-200">
-          {row.marksObtained} / {row.maxMarks}
-        </span>
-      ),
-    },
-    {
-      key: 'grade',
-      label: 'Grade',
-      render: (row) => {
-        const isPass = !['F', 'E'].includes(row.grade);
-        return <Badge variant={isPass ? 'success' : 'danger'}>{row.grade}</Badge>;
-      },
-      sortable: true,
-    },
-  ];
 
   return (
     <div className="flex flex-col gap-6 animate-fade-in">
       {/* Header */}
-      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
-          <h1 className="text-xl font-bold text-slate-900 dark:text-slate-100 font-display m-0 leading-tight">
-            Examinations & Grades
+          <h1 className="text-xl font-bold text-slate-900 dark:text-slate-100 font-display m-0 leading-tight flex items-center gap-2">
+            Examination Engine & AI Result Analytics
+            <span className="text-xs px-2.5 py-0.5 rounded-full bg-purple-500/20 text-purple-400 border border-purple-500/30">
+              AI Analytics & Question Bank
+            </span>
           </h1>
           <p className="text-xs text-slate-500 dark:text-slate-400">
-            Publish midterm timetables, evaluate class subjects, and print student hall tickets.
+            Exam scheduling, secure proctored browser, marks upload, and AI grade prediction.
           </p>
         </div>
-        <div className="flex gap-2">
+
+        <div className="flex items-center gap-2 self-start">
           {isStudent && (
-            <Button variant="outline" onClick={() => setIsTicketModalOpen(true)} className="flex items-center gap-1.5">
-              <Printer size={16} /> Print Hall Ticket
+            <Button size="sm" variant="outline" onClick={() => setIsTicketModalOpen(true)} className="gap-1.5">
+              <Printer size={14} /> Download Hall Ticket PDF
             </Button>
           )}
           {isStaff && (
-            <Button onClick={() => setIsEntryModalOpen(true)} className="flex items-center gap-1.5">
-              <Plus size={16} /> Enter Exam Marks
+            <Button size="sm" onClick={() => setIsEntryModalOpen(true)} className="gap-1.5">
+              <Plus size={14} /> Enter Marks
             </Button>
           )}
         </div>
       </div>
 
+      {/* AI Result Analysis Banner Card */}
+      {showAIAnalysis && (
+        <Card className="glass-card border-purple-500/30 bg-gradient-to-r from-slate-900 via-slate-900 to-purple-950/20">
+          <CardContent className="p-6 space-y-4">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-2.5">
+                <div className="p-2 rounded-xl bg-purple-500/20 text-purple-400">
+                  <Sparkles size={20} className="animate-pulse" />
+                </div>
+                <div>
+                  <h3 className="text-sm font-bold text-slate-100">AI Performance & CGPA Predictive Analysis</h3>
+                  <p className="text-xs text-slate-400">Evaluates historical marks, strength clusters & risk factors</p>
+                </div>
+              </div>
+              <span className="text-xs font-bold text-emerald-400 px-3 py-1 rounded-full bg-emerald-950/40 border border-emerald-500/30">
+                Low Failure Risk Score: 3.2%
+              </span>
+            </div>
+
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 pt-2">
+              <div className="p-3 rounded-xl bg-slate-900/80 border border-slate-800 space-y-1">
+                <span className="text-[10px] font-bold text-slate-400 uppercase">Strongest Subject</span>
+                <h4 className="text-xs font-bold text-emerald-400">Data Structures (92.5%)</h4>
+                <p className="text-[10px] text-slate-400">High problem-solving score</p>
+              </div>
+
+              <div className="p-3 rounded-xl bg-slate-900/80 border border-slate-800 space-y-1">
+                <span className="text-[10px] font-bold text-slate-400 uppercase">Focus Subject (Weakness)</span>
+                <h4 className="text-xs font-bold text-rose-400">Digital Comms (64.0%)</h4>
+                <p className="text-[10px] text-slate-400">Recommend lab revision modules</p>
+              </div>
+
+              <div className="p-3 rounded-xl bg-slate-900/80 border border-slate-800 space-y-1">
+                <span className="text-[10px] font-bold text-slate-400 uppercase">Predicted Semester CGPA</span>
+                <h4 className="text-xs font-bold text-purple-400">8.92 / 10.0</h4>
+                <p className="text-[10px] text-slate-400">Based on mid-term trends</p>
+              </div>
+
+              <div className="p-3 rounded-xl bg-slate-900/80 border border-slate-800 space-y-1">
+                <span className="text-[10px] font-bold text-slate-400 uppercase">AI Recommendation</span>
+                <h4 className="text-xs font-bold text-blue-400">Apply for Honors Thesis</h4>
+                <p className="text-[10px] text-slate-400">Top 5% percentile eligible</p>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+      )}
+
+      {/* Tabs */}
       <Tabs defaultValue="schedule">
         <TabList>
           <TabTrigger value="schedule">Exam Schedules</TabTrigger>
-          <TabTrigger value="results">Academic Results</TabTrigger>
+          <TabTrigger value="results">Semester Grades</TabTrigger>
+          <TabTrigger value="questionbank">Question Bank AI</TabTrigger>
         </TabList>
 
-        {/* Tab 1: Schedules */}
-        <TabContent value="schedule">
-          <Card>
-            <CardContent className="pt-6">
-              <DataGrid columns={examColumns} data={exams} searchKey="subject" searchPlaceholder="Search exam subjects..." />
-            </CardContent>
+        <TabContent value="schedule" className="mt-4">
+          <Card className="p-0">
+            <Table>
+              <TableHeader>
+                <TableRow>
+                  <TableHead>Course</TableHead>
+                  <TableHead>Subject</TableHead>
+                  <TableHead>Date & Time</TableHead>
+                  <TableHead>Exam Type</TableHead>
+                  <TableHead>Location</TableHead>
+                  <TableHead className="text-right">Mode</TableHead>
+                </TableRow>
+              </TableHeader>
+              <TableBody>
+                {exams.map((exam) => (
+                  <TableRow key={exam.id}>
+                    <TableCell className="font-semibold text-xs">{exam.course}</TableCell>
+                    <TableCell className="text-xs">{exam.subject}</TableCell>
+                    <TableCell className="text-xs">
+                      {exam.examDate} ({exam.duration})
+                    </TableCell>
+                    <TableCell>
+                      <Badge variant="primary" className="text-[10px]">
+                        {exam.type}
+                      </Badge>
+                    </TableCell>
+                    <TableCell className="text-xs font-semibold">{exam.room}</TableCell>
+                    <TableCell className="text-right">
+                      <span className="text-[10px] px-2 py-0.5 rounded-full bg-purple-500/20 text-purple-400 border border-purple-500/30 flex items-center gap-1 inline-flex">
+                        <Lock size={10} /> Secure Proctored
+                      </span>
+                    </TableCell>
+                  </TableRow>
+                ))}
+              </TableBody>
+            </Table>
           </Card>
         </TabContent>
 
-        {/* Tab 2: Results */}
-        <TabContent value="results">
-          <Card>
-            <CardContent className="pt-6">
-              <DataGrid columns={resultsColumns} data={results} searchKey="studentName" searchPlaceholder="Search students..." />
-            </CardContent>
+        <TabContent value="results" className="mt-4">
+          <Card className="p-0">
+            <Table>
+              <TableHeader>
+                <TableRow>
+                  <TableHead>Student</TableHead>
+                  <TableHead>Subject</TableHead>
+                  <TableHead>Marks Obtained</TableHead>
+                  <TableHead>Grade</TableHead>
+                  <TableHead className="text-right">Percentage</TableHead>
+                </TableRow>
+              </TableHeader>
+              <TableBody>
+                {results.map((res) => {
+                  const percent = ((res.marksObtained / res.maxMarks) * 100).toFixed(1);
+                  return (
+                    <TableRow key={res.id}>
+                      <TableCell className="font-semibold text-xs">{res.studentName}</TableCell>
+                      <TableCell className="text-xs">{res.subjectName}</TableCell>
+                      <TableCell className="text-xs">
+                        {res.marksObtained} / {res.maxMarks}
+                      </TableCell>
+                      <TableCell>
+                        <Badge variant={res.grade.startsWith('A') || res.grade === 'O' ? 'success' : 'warning'} className="text-[10px]">
+                          Grade {res.grade}
+                        </Badge>
+                      </TableCell>
+                      <TableCell className="text-right font-bold text-xs text-blue-500">
+                        {percent}%
+                      </TableCell>
+                    </TableRow>
+                  );
+                })}
+              </TableBody>
+            </Table>
+          </Card>
+        </TabContent>
+
+        <TabContent value="questionbank" className="mt-4">
+          <Card className="p-6 space-y-4">
+            <div className="flex items-center justify-between">
+              <div>
+                <h3 className="text-sm font-bold text-slate-100 flex items-center gap-2">
+                  <Shuffle className="text-purple-400" size={16} />
+                  AI Automated Question Randomization Engine
+                </h3>
+                <p className="text-xs text-slate-400">Generate 50+ unique exam paper sets with bloom taxonomy weights</p>
+              </div>
+              <button
+                onClick={() => toast('Question Bank Generated', '150 randomized MCQs & theory questions exported.', 'success')}
+                className="px-4 py-2 bg-purple-600 hover:bg-purple-500 text-white font-bold text-xs rounded-xl shadow-lg"
+              >
+                Generate Question Set
+              </button>
+            </div>
           </Card>
         </TabContent>
       </Tabs>
 
       {/* Enter Marks Modal */}
-      <Modal isOpen={isEntryModalOpen} onClose={() => setIsEntryModalOpen(false)} title="Log Course Grades">
+      <Modal isOpen={isEntryModalOpen} onClose={() => setIsEntryModalOpen(false)} title="Upload Exam Marks">
         <form onSubmit={handleSubmit(onSubmitMarks)} className="flex flex-col gap-4">
-          <Select
-            label="Enrolled Student"
-            options={[
-              { value: '', label: 'Select Student' },
-              ...students.map((s) => ({ value: s.id, label: `${s.name} (${s.rollNo})` })),
-            ]}
-            {...register('studentId')}
-            error={errors.studentId?.message}
-          />
-          <Input label="Subject Title" placeholder="e.g. Data Structures" {...register('subjectName')} error={errors.subjectName?.message} />
-          <div className="grid grid-cols-2 gap-3">
-            <Input label="Marks Obtained" type="number" {...register('marksObtained')} error={errors.marksObtained?.message} />
-            <Input label="Max Marks (Out of)" type="number" {...register('maxMarks')} error={errors.maxMarks?.message} />
+          <div className="flex flex-col gap-1.5">
+            <label className="text-xs font-semibold text-slate-300">Select Student</label>
+            <Select {...register('studentId')}>
+              <option value="">Select a student...</option>
+              {students.map((s) => (
+                <option key={s.id} value={s.id}>
+                  {s.name} ({s.rollNo})
+                </option>
+              ))}
+            </Select>
+            {errors.studentId && <span className="text-[10px] text-rose-500">{errors.studentId.message}</span>}
           </div>
-          <Select
-            label="Letter Grade"
-            options={[
-              { value: '', label: 'Select Grade' },
-              { value: 'O', label: 'O (Outstanding)' },
-              { value: 'A+', label: 'A+ (Excellent)' },
-              { value: 'A', label: 'A (Very Good)' },
-              { value: 'B', label: 'B (Good)' },
-              { value: 'C', label: 'C (Average)' },
-              { value: 'F', label: 'F (Fail)' },
-            ]}
-            {...register('grade')}
-            error={errors.grade?.message}
-          />
 
-          <div className="flex justify-end gap-2 border-t border-slate-100 dark:border-slate-800 pt-4 mt-2">
-            <Button variant="outline" type="button" onClick={() => setIsEntryModalOpen(false)}>
+          <div className="flex flex-col gap-1.5">
+            <label className="text-xs font-semibold text-slate-300">Subject Name</label>
+            <Input placeholder="e.g. Data Structures" {...register('subjectName')} />
+            {errors.subjectName && <span className="text-[10px] text-rose-500">{errors.subjectName.message}</span>}
+          </div>
+
+          <div className="grid grid-cols-2 gap-3">
+            <div className="flex flex-col gap-1.5">
+              <label className="text-xs font-semibold text-slate-300">Marks Obtained</label>
+              <Input type="number" placeholder="85" {...register('marksObtained')} />
+              {errors.marksObtained && <span className="text-[10px] text-rose-500">{errors.marksObtained.message}</span>}
+            </div>
+            <div className="flex flex-col gap-1.5">
+              <label className="text-xs font-semibold text-slate-300">Max Marks</label>
+              <Input type="number" placeholder="100" {...register('maxMarks')} />
+            </div>
+          </div>
+
+          <div className="flex flex-col gap-1.5">
+            <label className="text-xs font-semibold text-slate-300">Grade Assigned</label>
+            <Select {...register('grade')}>
+              <option value="O">O (Outstanding)</option>
+              <option value="A+">A+ (Excellent)</option>
+              <option value="A">A (Very Good)</option>
+              <option value="B+">B+ (Good)</option>
+              <option value="B">B (Above Average)</option>
+              <option value="C">C (Pass)</option>
+              <option value="F">F (Fail)</option>
+            </Select>
+          </div>
+
+          <div className="flex items-center justify-end gap-2 pt-2">
+            <Button type="button" variant="outline" onClick={() => setIsEntryModalOpen(false)}>
               Cancel
             </Button>
-            <Button type="submit">Publish Grade</Button>
+            <Button type="submit">Publish Result</Button>
           </div>
         </form>
       </Modal>
 
       {/* Hall Ticket Modal */}
-      <Modal isOpen={isTicketModalOpen} onClose={() => setIsTicketModalOpen(false)} title="Download Admit Card" size="xl">
-        <div className="flex flex-col gap-5">
-          {/* Printable Layout */}
-          <div className="border-2 border-dashed border-slate-300 dark:border-slate-800 rounded-2xl p-6 bg-surface dark:bg-slate-900 text-left flex flex-col gap-6 relative">
-            {/* Stamp water-mark */}
-            <div className="absolute right-6 top-16 opacity-10 rotate-12 select-none border-4 border-emerald-500 text-emerald-500 font-bold p-2 text-sm rounded">
-              APPROVED ADMIT CARD
+      <Modal isOpen={isTicketModalOpen} onClose={() => setIsTicketModalOpen(false)} title="Admit Card / Hall Ticket">
+        <div className="flex flex-col gap-4 text-xs">
+          <div className="p-4 rounded-xl bg-slate-900 border border-slate-800 space-y-2">
+            <div className="flex justify-between font-bold border-b border-slate-800 pb-2 text-slate-200">
+              <span>Student: Rishi Sharma</span>
+              <span>Roll: 2026CSE001</span>
             </div>
-
-            {/* Title Bar */}
-            <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center border-b border-slate-200 dark:border-slate-800 pb-4 gap-4">
-              <div className="flex items-center gap-2">
-                <div className="w-8 h-8 bg-blue-600 flex items-center justify-center text-white font-bold text-sm rounded-lg">
-                  Ω
-                </div>
-                <div>
-                  <h3 className="text-xs font-bold tracking-wider font-display text-slate-800 dark:text-slate-200">
-                    ACADEMIA INSTITUTE OF TECHNOLOGY
-                  </h3>
-                  <span className="text-[9px] text-slate-400 font-semibold block">Affiliated to Central Tech University</span>
-                </div>
-              </div>
-              <Badge variant="primary" className="text-[9px] px-2 py-0.5 uppercase tracking-widest font-mono">
-                Hall Ticket
-              </Badge>
-            </div>
-
-            {/* Student metadata */}
-            <div className="flex gap-4 items-center">
-              <Avatar name="Aarav Mehta" size="lg" className="border border-slate-200 dark:border-slate-800" />
-              <div className="grid grid-cols-2 gap-x-8 gap-y-1.5 text-xs flex-1">
-                <div>
-                  <span className="text-slate-400 font-medium block text-[9px] uppercase">Candidate Name</span>
-                  <span className="font-semibold text-slate-700 dark:text-slate-250">Aarav Mehta</span>
-                </div>
-                <div>
-                  <span className="text-slate-400 font-medium block text-[9px] uppercase">Roll Card Number</span>
-                  <span className="font-mono font-semibold text-slate-700 dark:text-slate-250">2024CS001</span>
-                </div>
-                <div>
-                  <span className="text-slate-400 font-medium block text-[9px] uppercase">Course Stream</span>
-                  <span className="font-semibold text-slate-700 dark:text-slate-250">B.Tech CSE</span>
-                </div>
-                <div>
-                  <span className="text-slate-400 font-medium block text-[9px] uppercase">Semester Term</span>
-                  <span className="font-semibold text-slate-700 dark:text-slate-250">Sem 5</span>
-                </div>
-              </div>
-            </div>
-
-            {/* Subjects table */}
-            <div>
-              <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-2.5 block">Approved Exam Schedule</span>
-              <Table className="border border-slate-100 dark:border-slate-850 rounded-xl overflow-hidden text-xs">
-                <TableHeader>
-                  <TableRow>
-                    <TableHead className="py-2.0">Subject Code</TableHead>
-                    <TableHead className="py-2.0">Paper Name</TableHead>
-                    <TableHead className="py-2.0">Scheduled Date</TableHead>
-                    <TableHead className="py-2.0">Assigned Hall</TableHead>
-                  </TableRow>
-                </TableHeader>
-                <TableBody>
-                  <TableRow>
-                    <TableCell className="py-2.5 font-mono text-[10px]">CS301</TableCell>
-                    <TableCell className="py-2.5 font-medium">Data Structures</TableCell>
-                    <TableCell className="py-2.5">2026-07-15</TableCell>
-                    <TableCell className="py-2.5">LHC-101</TableCell>
-                  </TableRow>
-                  <TableRow>
-                    <TableCell className="py-2.5 font-mono text-[10px]">CS302</TableCell>
-                    <TableCell className="py-2.5 font-medium">Database Systems</TableCell>
-                    <TableCell className="py-2.5">2026-07-17</TableCell>
-                    <TableCell className="py-2.5">LHC-102</TableCell>
-                  </TableRow>
-                </TableBody>
-              </Table>
-            </div>
-
-            {/* Security checklist warnings */}
-            <div className="flex gap-2 p-3 bg-slate-50 dark:bg-slate-850/50 rounded-xl border border-slate-150 dark:border-slate-800 text-[10px] text-slate-500 dark:text-slate-400 items-start leading-relaxed">
-              <ShieldAlert className="text-slate-400 shrink-0 mt-0.5" size={13} />
-              <p>
-                Candidates must carry a valid physical ID card alongside this hall ticket. Mobile phones, smart watches, and unauthorized calculators are strictly banned inside LHC exam halls. Report 30 mins before slots.
-              </p>
-            </div>
+            <p className="text-slate-400">Admit card verified for Mid-Semester Examinations 2026.</p>
           </div>
-
-          <div className="flex justify-end gap-2 border-t border-slate-100 dark:border-slate-800 pt-4 mt-2">
-            <Button variant="outline" onClick={() => setIsTicketModalOpen(false)}>
-              Close
-            </Button>
-            <Button
-              className="flex items-center gap-1.5"
-              onClick={() => {
-                toast('Admit Printing', 'Spooling admit card copy to device printer...', 'success');
-                window.print();
-              }}
-            >
-              <Printer size={14} /> Print Admit Card
-            </Button>
+          <div className="flex justify-end gap-2">
+            <Button onClick={() => setIsTicketModalOpen(false)}>Print PDF</Button>
           </div>
         </div>
       </Modal>
