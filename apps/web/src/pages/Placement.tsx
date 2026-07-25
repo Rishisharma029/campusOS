@@ -361,14 +361,14 @@ export const Placement: React.FC = () => {
                         <TableCell className="text-xs font-mono font-bold text-emerald-400">{drive.packageOffer}</TableCell>
                         <TableCell className="text-xs font-mono text-slate-300">{drive.eligibleCgpa} CGPA</TableCell>
                         <TableCell>
-                          <Badge variant={drive.status === 'Upcoming' ? 'default' : 'secondary'} className="text-[10px]">
+                          <Badge variant={drive.status === 'Upcoming' ? 'primary' : 'secondary'} className="text-[10px]">
                             {drive.status}
                           </Badge>
                         </TableCell>
                         <TableCell>
                           <Button
                             size="sm"
-                            variant={isRegistered ? 'secondary' : 'default'}
+                            variant={isRegistered ? 'secondary' : 'primary'}
                             className="text-xs py-1 h-8"
                             onClick={() => {
                               if (!isRegistered) {
