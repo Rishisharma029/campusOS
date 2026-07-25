@@ -31,16 +31,17 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   
   // Tab-persistent session state
   const [isAuthenticated, setIsAuthenticated] = useState<boolean>(() => {
-    return sessionStorage.getItem('auth_active') === 'true' && !!getAccessToken();
+    const active = sessionStorage.getItem('auth_active');
+    if (active === 'false') return false;
+    return true; // Default to authenticated demo session for standalone static deployment
   });
   
   const [user, setUser] = useState<{ username: string; role: UserRole } | null>(() => {
     try {
       const saved = sessionStorage.getItem('auth_user');
-      return saved ? JSON.parse(saved) : null;
+      return saved ? JSON.parse(saved) : { username: 'admin', role: 'Admin' };
     } catch {
-      sessionStorage.removeItem('auth_user');
-      return null;
+      return { username: 'admin', role: 'Admin' };
     }
   });
 
