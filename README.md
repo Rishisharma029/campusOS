@@ -20,14 +20,14 @@ CampusOS v2.0 combines real-time Socket.IO events, client-side RAG/OCR AI infere
 
 ```mermaid
 graph TD
-    subgraph Client Presentation Layer
+    subgraph ClientPresentation ["Client Presentation Layer"]
         UI[React 19 + TypeScript Glassmorphic UI]
         3D[3D Campus Map Canvas / Three.js]
         Voice[Speech Synthesis & Voice AI]
         PWA[PWA Service Worker & Biometrics]
     end
 
-    subgraph AI Engine & RAG Pipeline
+    subgraph AIEnginePipeline ["AI Engine & RAG Pipeline"]
         Assistant[AI Campus Assistant Voice RAG]
         Facial[Face Recognition Biometric Engine]
         Checker[AI Assignment & Plagiarism Checker]
@@ -35,13 +35,13 @@ graph TD
         Predictor[Analytics Risk & CGPA Predictor]
     end
 
-    subgraph Core Operating System Gateway
+    subgraph GatewayLayer ["Core Operating System Gateway"]
         Gateway[Express / TypeScript Server]
         Realtime[Socket.IO Real-Time Engine]
         RBAC[RBAC Guard & 2FA Engine]
     end
 
-    subgraph Relational Persistence (~50 Entities)
+    subgraph RelationalPersistence ["Relational Persistence (~50 Entities)"]
         Prisma[Prisma ORM]
         DB[(PostgreSQL 16 Relational DB)]
         Cache[(Redis Event & Token Cache)]
