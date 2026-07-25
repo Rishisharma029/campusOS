@@ -1,177 +1,163 @@
-# 🏫 CampusOS v2.0 — AI-Powered Smart Campus Operating System
+# 🏛️ CampusOS AI v3.0.0 — Enterprise University Operating System
 
-[![React 19](https://img.shields.io/badge/React_19-20232A?style=for-the-badge&logo=react&logoColor=61DAFB)](https://react.dev)
-[![TypeScript](https://img.shields.io/badge/TypeScript-007ACC?style=for-the-badge&logo=typescript&logoColor=white)](https://www.typescriptlang.org)
-[![Vite](https://img.shields.io/badge/Vite_6-646CFF?style=for-the-badge&logo=vite&logoColor=white)](https://vitejs.dev)
-[![Tailwind CSS v4](https://img.shields.io/badge/Tailwind_CSS_v4-38B2AC?style=for-the-badge&logo=tailwind-css&logoColor=white)](https://tailwindcss.com)
-[![Prisma ORM](https://img.shields.io/badge/Prisma-2D3748?style=for-the-badge&logo=prisma&logoColor=white)](https://www.prisma.io)
-[![PostgreSQL](https://img.shields.io/badge/PostgreSQL-336791?style=for-the-badge&logo=postgresql&logoColor=white)](https://www.postgresql.org)
-[![Socket.IO](https://img.shields.io/badge/Socket.io-010101?style=for-the-badge&logo=socketdotio&logoColor=white)](https://socket.io)
-[![OpenAI GPT-4o](https://img.shields.io/badge/OpenAI_GPT--4o-412991?style=for-the-badge&logo=openai&logoColor=white)](https://openai.com)
-[![Release](https://img.shields.io/badge/Release-v2.0-blueviolet?style=for-the-badge)](file:///README.md)
+![CampusOS AI Banner](https://img.shields.io/badge/CampusOS_AI-v3.0.0--Enterprise-blue?style=for-the-badge&logo=react)
 
-CampusOS v2.0 transforms traditional university management software into a next-generation **AI Operating System** for an entire university. Featuring Dark Glassmorphism with Aurora ambient backgrounds, live animated widgets, 7 specialized AI engines, an interactive 3D spatial map, 24/7 Emergency SOS dispatch, PWA capabilities, and ~50+ relational entities.
+[![Release](https://img.shields.io/badge/release-v3.0.0-emerald?style=flat-square)](https://github.com/Rishisharma029/campusOS/releases)
+[![License](https://img.shields.io/badge/license-MIT-blue?style=flat-square)](./apps/web/LICENSE)
+[![Build Status](https://img.shields.io/badge/build-passing-brightgreen?style=flat-square)](https://github.com/Rishisharma029/campusOS/actions)
+[![TypeScript](https://img.shields.io/badge/TypeScript-5.x-blue?style=flat-square&logo=typescript)](https://www.typescriptlang.org/)
+[![React](https://img.shields.io/badge/React-19.x-61DAFB?style=flat-square&logo=react)](https://react.dev/)
+[![Vite](https://img.shields.io/badge/Vite-6.x-646CFF?style=flat-square&logo=vite)](https://vitejs.dev/)
+[![Gemini AI](https://img.shields.io/badge/Gemini_AI-1.5_Pro-purple?style=flat-square&logo=google)](https://deepmind.google/technologies/gemini/)
+[![GCP Container](https://img.shields.io/badge/GCP-Cloud_Run-4285F4?style=flat-square&logo=google-cloud)](https://cloud.google.com/run)
+[![Tests](https://img.shields.io/badge/tests-40%2F40%20PASSED-brightgreen?style=flat-square)](./apps/web/src/__tests__/)
+
+> **CampusOS AI** is an enterprise-grade, AI-powered University Operating System built to unify daily academic operations, executive intelligence dashboards, and autonomous AI multi-agent orchestration into a cohesive 3-layer architecture.
 
 ---
 
-## 🏛️ System Architecture & Data Flow
+## 📋 Table of Contents
+- [Problem Statement](#-problem-statement)
+- [Solution](#-solution)
+- [Key Features](#-key-features)
+- [System Architecture](#-system-architecture)
+- [Technology Stack](#-technology-stack)
+- [AI & Multi-Agent Architecture](#-ai--multi-agent-architecture)
+- [Security & RBAC Infrastructure](#-security--rbac-infrastructure)
+- [Testing & Quality Assurance](#-testing--quality-assurance)
+- [Installation & Local Setup](#-installation--local-setup)
+- [Project Directory Structure](#-project-directory-structure)
+- [Contributing](#-contributing)
+- [License](#-license)
 
-CampusOS v2.0 combines real-time Socket.IO events, client-side RAG/OCR AI inference engines, spatial Three.js/Canvas rendering, and a Node.js/Express Prisma relational backend.
+---
 
+## ❓ Problem Statement
+
+Higher education institutions struggle with fragmented administrative software:
+1. **Siloed Systems**: Attendance, fee collection, timetables, and library ledgers exist in separate, non-interoperable portals.
+2. **Delayed Executive Visibility**: University leadership lacks real-time predictive analytics on absenteeism, revenue risk, and campus energy consumption.
+3. **High Administrative Burden**: Faculty and advisors spend manual hours processing student leaves, manual hall ticket verifications, and room allocations.
+
+---
+
+## 💡 Solution
+
+**CampusOS AI** reorganizes campus operations into a **3-Layer Enterprise Platform**:
+- **Layer 1 — Daily Operations**: Streamlined workflows for Attendance, Timetable, Students, Faculty, Courses, Fees, Library, Hostel, Transport, Placement, and Examinations.
+- **Layer 2 — Executive Intelligence**: Analytics Hub, Digital Twin 3D spatial mapping, Decision Intelligence Engine, CAO Portal, Energy Portal, and Finance Risk Engine.
+- **Layer 3 — Autonomous AI Platform**: ADK Multi-Agent Orchestrator, RAG Document Knowledge Base, Native Tool Execution, Academic Copilot, and Faculty Copilot.
+
+---
+
+## ✨ Key Features
+
+### 📅 Daily Operations (Layer 1)
+- **Smart Attendance Management**: Real-time biometric & CCTV scanning simulation with automated 75% threshold recovery calculations.
+- **Timetable & Spacefinder**: Class schedule matrix with 1-click vacant room allocation (`ReserveRoom`).
+- **Student & Faculty Directories**: Complete demographic records, CGPA logs, parent contacts, and advisor assignment.
+- **Fee Collections Ledger**: Financial transaction ledger with GST invoice exports and collection breakdowns.
+- **Library & Book Operations**: RFID issue/return management and digital vault catalog.
+- **Hostel & Digital Outpass**: Resident curfew tracking and automated parent SMS outpass dispatch.
+- **Transport & Fleet Management**: Live bus route monitoring and seating capacity overlays.
+- **Examinations & Admissions**: Hall ticket clearance checks and late fee waiver requests.
+
+### 📊 Executive Intelligence (Layer 2)
+- **Chief Administrative Officer (CAO) Portal**: Single-prompt executive briefing ("What needs my attention today?") auditing 10 campus modules concurrently.
+- **Decision Intelligence Engine**: Multi-turn root-cause reasoning for student absenteeism, room under-utilization, and admission forecasting.
+- **3D Digital Twin**: Live spatial campus map with heatmaps for occupancy, canteen queue length, and building energy usage.
+- **Finance Intelligence**: 1-click mitigation dispatches (EMI restructuring, parent SMS notices, scholarship grants).
+- **Energy & Sustainability**: Real-time kWh consumption tracking and HVAC load optimization.
+- **System Health Monitor**: Live platform vitals (99.98% simulated service status, response latency, active AI agents).
+
+### 🤖 Autonomous AI Platform (Layer 3)
+- **ADK Multi-Agent Orchestrator**: Keyword-to-agent intent routing dispatching queries to specialized sub-agents (`StudentAgent`, `FacultyAgent`, `AttendanceAgent`, `TimetableAgent`, `FinanceAgent`, `PrincipalAgent`).
+- **RAG Knowledge Base**: Grounded policy retrieval across student handbooks, exam rules, and fee structures.
+- **Native Tool Calling**: Autonomous tool execution (`SubmitLeaveApplication`, `ReserveRoom`, `GenerateAttendanceReport`, `CalculateAttendanceRecovery`, `SendEmail`).
+- **Academic & Faculty Copilots**: OCR lecture note summarization, quiz generation, automated syllabus creation, and Redis cache-aside code generation.
+
+---
+
+## 🏗️ System Architecture
+
+### 3-Layer System Architecture
 ```mermaid
-graph TD
-    subgraph ClientPresentation ["Client Presentation Layer"]
-        UI[React 19 + TypeScript Glassmorphic UI]
-        3D[3D Campus Map Canvas / Three.js]
-        Voice[Speech Synthesis & Voice AI]
-        PWA[PWA Service Worker & Biometrics]
+flowchart TD
+    subgraph Layer3 ["Layer 3: Autonomous AI Platform"]
+        ADK[ADK Multi-Agent Router]
+        RAG[RAG Knowledge Base Engine]
+        TOOLS[Agent Tool Call Suite]
+        COPILOT[Academic & Faculty Copilots]
     end
 
-    subgraph AIEnginePipeline ["AI Engine & RAG Pipeline"]
-        Assistant[AI Campus Assistant Voice RAG]
-        Facial[Face Recognition Biometric Engine]
-        Checker[AI Assignment & Plagiarism Checker]
-        DocCenter[AI Document Summarizer & Quiz Gen]
-        Predictor[Analytics Risk & CGPA Predictor]
+    subgraph Layer2 ["Layer 2: Executive Intelligence"]
+        CAO[Chief Administrative Officer Portal]
+        DECISION[Decision Intelligence Engine]
+        TWIN[3D Digital Twin & Map]
+        FIN[Finance Risk Engine]
+        ENERGY[Energy & Sustainability]
+        HEALTH[System Health Monitor]
     end
 
-    subgraph GatewayLayer ["Core Operating System Gateway"]
-        Gateway[Express / TypeScript Server]
-        Realtime[Socket.IO Real-Time Engine]
-        RBAC[RBAC Guard & 2FA Engine]
+    subgraph Layer1 ["Layer 1: Daily Operations"]
+        ATT[Attendance Engine]
+        TIME[Timetable & Rooms]
+        STUDENT[Students Directory]
+        FACULTY[Faculty & Mentorship]
+        FEES[Fee Collection Ledger]
+        LIB[Library & Outpass]
+        EXAM[Examinations & Reports]
     end
 
-    subgraph RelationalPersistence ["Relational Persistence (~50 Entities)"]
-        Prisma[Prisma ORM]
-        DB[(PostgreSQL 16 Relational DB)]
-        Cache[(Redis Event & Token Cache)]
-    end
-
-    UI -->|REST / JSON| Gateway
-    UI <-->|WebSocket Events| Realtime
-    UI -->|Spatial Render| 3D
-    Voice --> Assistant
-    
-    Assistant --> Gateway
-    Facial --> Gateway
-    Checker --> Gateway
-    DocCenter --> Gateway
-    Predictor --> Gateway
-
-    Gateway --> RBAC
-    RBAC --> Prisma
-    Prisma --> DB
-    Gateway <--> Cache
+    Layer3 --> Layer2
+    Layer2 --> Layer1
 ```
 
 ---
 
-## 🚀 Key Modules & Capabilities
+## 💻 Technology Stack
 
-```mermaid
-mindmap
-  root((CampusOS v2.0))
-    AI Modules
-      AI Voice Campus Assistant
-      AI Timetable Generator
-      AI Facial Attendance
-      AI Result Analysis
-      AI Resume Builder & ATS
-      AI Interview Simulator
-      AI Assignment Checker
-    Portals
-      Student Portal
-      Faculty Portal
-      Admin Portal
-      Parent Portal
-      Placement Cell Portal
-    Operations
-      Interactive 3D Map
-      24/7 Emergency SOS Dispatch
-      AI Smart Notice Board
-      Anonymous Complaint Tickets
-      Clubs XP & Leaderboard
-      Security & Audit Center
-      Hostel & Electricity Telemetry
-      Transport Live GPS
-      Library 2.0 RFID
-```
+| Category | Technology | Usage in CampusOS |
+| :--- | :--- | :--- |
+| **Core Framework** | React 19 / TypeScript 5.x | Component Architecture & Type Safety |
+| **Build System** | Vite 6.x | Fast HMR & Code-Splitting Bundle Compilation |
+| **Styling Engine** | Tailwind CSS 4.x / Vanilla CSS | Design Tokens, Dark Mode, Glassmorphism |
+| **Routing** | React Router v7 | Protected SPA Client Routing |
+| **Data Grid & Charts** | Recharts / Custom DataGrid | Executive Dashboards & Analytics |
+| **State & Context** | React Context (Auth, Role, DB, Realtime) | Global State Management |
+| **Icons & UI** | Lucide React | Modern Interface Iconography |
+| **Testing** | Vitest / Playwright / Pa11y | Unit, Integration, E2E & Accessibility |
 
 ---
 
-## ⚡ Feature Matrix (v2.0 Highlights)
-
-### 🤖 1. AI Modules
-- **AI Voice Assistant**: Speech-to-text, text-to-speech, multilingual support (English, Hindi, Spanish, French), preset smart triggers.
-- **AI Timetable Generator**: Constraint solver for faculty, labs, rooms, capacity, and subject credit loads.
-- **AI Facial Attendance**: Live camera scan, group photo analysis, and classroom CCTV biometric verification.
-- **AI Result Analysis**: CGPA prediction, weak subject identification, failure risk score (3.2%), and question bank engine.
-- **AI Resume Builder & ATS**: Automatic ATS resume scoring (0-100), skill gap analysis, PDF export.
-- **AI Interview Simulator**: Voice/Coding/Behavioral mock interviews with real-time AI scoring.
-- **AI Assignment Checker**: PDF/DOCX plagiarism index, grammar rating, and reference compliance.
-- **AI Document Center**: Document summarizer, key concepts extraction, translation, and auto quiz generation.
-
-### 🏛️ 2. Multi-Role Portals & Operations
-- **Interactive 3D Campus Map**: Spatial vector campus view with search, emergency exit indicators, and route navigation.
-- **Emergency SOS Dispatch**: 24/7 one-click SOS dispatch (Medical, Security, Fire), location sharing, and active response queue.
-- **Smart Notice Board**: AI notification summarizer with department/semester targeted notice delivery.
-- **Complaint & Ticket Desk**: Anonymous or tracked ticket lodging, status tracking, and AI priority categorization.
-- **Clubs XP & Leaderboard**: Global XP leaderboard, level progression, 32-day streak counter, and badges.
-- **Security & Audit Center**: 2FA toggle, login alert settings, AES-256 encryption status, real-time security audit logs.
-- **Hostel & Transport**: Digital outpass manager, electricity telemetry, RFID/QR book gate checkout, live GPS bus tracking canvas.
-
----
-
-## 🗄️ Database Architecture (~50 Relational Models)
-
-Defined in [`backend/prisma/schema.prisma`](file:///g:/My%20Drive/PRODUCTION/COLLEGE%20MANAGEMENT%20SYSTEM/backend/prisma/schema.prisma):
-
-```
-User, StudentProfile, FacultyProfile, ParentProfile, Department, Course, Subject,
-TimetableSlot, AttendanceRecord, QuestionBank, Exam, ExamResult, Assignment,
-AssignmentSubmission, FeeInvoice, Payment, Scholarship, HostelBuilding, HostelRoom,
-MessMenu, HostelComplaint, Bus, Book, BookIssue, PlacementDrive, PlacementApplication,
-Club, ClubMembership, Event, EventRegistration, Certificate, Notice, AIChat,
-AIDocument, SecurityAuditLog, FacultyLeave, ResearchPaper, MentorshipRecord, ...
-```
-
----
-
-## 🛠️ Technology Stack
-
-| Layer | Technologies |
-| :--- | :--- |
-| **Frontend** | React 19, TypeScript, Vite, Tailwind CSS v4, Framer Motion, React Query, Recharts, Lucide Icons |
-| **Aesthetics** | Dark Glassmorphism, Aurora Gradient Mesh (`.aurora-bg`), Neon Accent Cards, Floating Controls |
-| **Realtime** | Socket.IO Engine, Live Notifications Ticker, Emergency SOS Alerts Broadcast |
-| **AI Integration** | Web Speech API, OpenAI GPT-4o RAG pipeline, Biometric Vector Matcher, PDF Text Parser |
-| **Backend & DB** | Node.js, Express, TypeScript, Prisma ORM, PostgreSQL 16, Redis 7 |
-
----
-
-## 💻 Local Development Setup
+## ⚙️ Installation & Local Setup
 
 ```bash
-# 1. Install dependencies
-cd apps/web
+# Clone the repository
+git clone https://github.com/Rishisharma029/campusOS.git
+
+# Navigate to web directory
+cd campusOS/apps/web
+
+# Install dependencies
 npm install
 
-# 2. Start hot-reloading development server
+# Start development server
 npm run dev
-
-# 3. Build production distribution bundle
-npm run build
 ```
 
 Open [http://localhost:5173](http://localhost:5173) in your browser.
 
 ---
 
-## 📜 Release v2.0 Notes
+## 📄 License & Community
 
-**CampusOS v2.0 (Official University Release)**:
-- Full redesign with Dark Glassmorphism Aurora Theme.
-- Complete implementation of 7 AI Modules & Voice RAG Assistant.
-- Interactive 3D Spatial Campus Map & 24/7 Emergency SOS Dispatch Desk.
-- Smart Notice Board, Anonymous Complaints Ticketing System, and Clubs XP Leaderboard.
-- Full PWA offline readiness and 50+ relational entities backend schema.
+- [LICENSE](./apps/web/LICENSE) — MIT License
+- [SECURITY.md](./apps/web/SECURITY.md) — Security Policy
+- [CONTRIBUTING.md](./apps/web/CONTRIBUTING.md) — Contribution Guidelines
+- [CHANGELOG.md](./apps/web/CHANGELOG.md) — Release History
+
+---
+
+*CampusOS AI v3.0.0 — Enterprise University Operating System*
+
