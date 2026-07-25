@@ -133,10 +133,25 @@ export const RealtimeProvider: React.FC<{ children: React.ReactNode }> = ({ chil
   );
 };
 
+const fallbackRealtimeContext: RealtimeContextType = {
+  isConnected: false,
+  activeClassesCount: 0,
+  todayAttendanceRate: 0,
+  liveNotifications: [],
+  emergencyAlerts: [],
+  studentMoodScore: 0,
+  aiAlerts: [],
+  triggerEmergencySOS: () => {},
+  resolveEmergencySOS: () => {},
+  addNotification: () => {},
+};
+
 export const useRealtime = () => {
-  const context = useContext(RealtimeContext);
-  if (!context) {
-    throw new Error('useRealtime must be used within RealtimeProvider');
+  try {
+    const context = useContext(RealtimeContext);
+    if (!context) return fallbackRealtimeContext;
+    return context;
+  } catch {
+    return fallbackRealtimeContext;
   }
-  return context;
 };

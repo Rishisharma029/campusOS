@@ -3,31 +3,28 @@ import { useRole } from '../context/RoleContext';
 import { useDatabase } from '../context/DatabaseContext';
 import { useRealtime } from '../context/RealtimeContext';
 import {
-  Users,
-  GraduationCap,
   Percent,
   IndianRupee,
   BookOpen,
   Clock,
   Home,
-  Bus,
+  GraduationCap,
   Sparkles,
   Zap,
   Smile,
-  AlertTriangle,
   TrendingUp,
-  Award,
-  Flame,
+  Bell,
+  Bus,
+  Calendar,
+  CheckCircle2,
 } from 'lucide-react';
 import {
   ResponsiveContainer,
   AreaChart,
   Area,
-  BarChart,
-  Bar,
+  CartesianGrid,
   XAxis,
   YAxis,
-  CartesianGrid,
   Tooltip,
   PieChart,
   Pie,
@@ -42,13 +39,6 @@ const ATTENDANCE_TREND = [
   { name: 'Fri', Attendance: 94.2, Target: 90 },
 ];
 
-const REVENUE_DATA = [
-  { name: 'Jan', Fee: 4.5, Hostel: 1.2 },
-  { name: 'Feb', Fee: 3.8, Hostel: 1.0 },
-  { name: 'Mar', Fee: 5.2, Hostel: 1.5 },
-  { name: 'Apr', Fee: 6.8, Hostel: 1.9 },
-];
-
 const PLACEMENT_STATS = [
   { name: 'Placed', value: 78, color: '#10B981' },
   { name: 'In Pipeline', value: 16, color: '#3B82F6' },
@@ -57,21 +47,95 @@ const PLACEMENT_STATS = [
 
 export const Dashboard: React.FC = () => {
   const { currentRole } = useRole();
-  const { students, faculty, feeCollections } = useDatabase();
+  const { students, feeCollections } = useDatabase();
   const {
     activeClassesCount,
     todayAttendanceRate,
     studentMoodScore,
     aiAlerts,
-    liveNotifications,
   } = useRealtime();
 
-  const totalStudents = students.length || 1240;
-  const totalFaculty = faculty.length || 85;
   const totalFeesPaid = feeCollections.reduce((acc, curr) => acc + curr.amountPaid, 0) || 18450000;
+
+  // Role-tailored proactive AI Daily Briefings
+  const getProactiveBriefing = () => {
+    switch (currentRole) {
+      case 'Faculty':
+        return {
+          title: "Good morning, Dr. Arindam Sen.",
+          bullets: [
+            "3 Student leave applications pending your approval signature.",
+            "CSE-3A attendance averaged 94% in morning lab.",
+            "DBMS Quiz results graded & published automatically.",
+            "Department meeting scheduled for 03:00 PM in Conference Hall A."
+          ]
+        };
+      case 'Parent':
+        return {
+          title: "Good morning, Mr. Sharma.",
+          bullets: [
+            "Rishi's aggregate attendance stands at 92.5% (Above 75% threshold).",
+            "Mid-semester exam report card available in Examinations tab.",
+            "Semester 6 tuition fee installment due in 12 days."
+          ]
+        };
+      case 'Admin':
+        return {
+          title: "Good morning, Administrator.",
+          bullets: [
+            "Campus attendance telemetry at 94.2% across 42 active classrooms.",
+            "Hostel Building B electricity consumption spiked +22% vs baseline.",
+            "Google Cloud Placement Drive shortlisted 24 CSE candidates today."
+          ]
+        };
+      default:
+        return {
+          title: "Good morning, Rishi.",
+          bullets: [
+            "Attendance in EC308 dropped 4% this week (68.2%). Attend the next 3 classes to reach 75%.",
+            "Two assignments due today: Self-Balancing AVL Trees & DB Normalization.",
+            "DBMS class moved from LHC-101 to Room 302 (Block A).",
+            "Route 12 Campus Bus running 10 minutes behind schedule.",
+            "Mid-semester examinations commence in 5 days."
+          ]
+        };
+    }
+  };
+
+  const briefing = getProactiveBriefing();
 
   return (
     <div className="space-y-6 animate-fade-in">
+      {/* Proactive AI Daily Briefing Banner */}
+      <div className="glass-card p-6 border-blue-500/40 bg-gradient-to-r from-slate-900 via-slate-900 to-indigo-950/30 shadow-2xl relative overflow-hidden">
+        <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
+          <div className="space-y-2">
+            <div className="flex items-center gap-2">
+              <div className="p-2 rounded-xl bg-gradient-to-tr from-blue-600 via-purple-600 to-pink-600 text-white shadow-lg">
+                <Sparkles size={18} className="animate-pulse" />
+              </div>
+              <h2 className="text-base font-extrabold text-white font-display tracking-tight">
+                {briefing.title}
+              </h2>
+            </div>
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 pt-1 text-xs text-slate-300">
+              {briefing.bullets.map((bullet, idx) => (
+                <div key={idx} className="flex items-start gap-2 bg-slate-950/50 p-2.5 rounded-xl border border-slate-800">
+                  <CheckCircle2 size={14} className="text-blue-400 shrink-0 mt-0.5" />
+                  <span>{bullet}</span>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          <div className="shrink-0 flex flex-col items-end gap-2">
+            <span className="text-[10px] font-bold px-3 py-1 rounded-full bg-blue-500/20 text-blue-400 border border-blue-500/30">
+              PROACTIVE AI AGENT ACTIVE
+            </span>
+          </div>
+        </div>
+      </div>
+
       {/* Live Operational Ticker Bar */}
       <div className="p-3 rounded-2xl bg-slate-900/80 border border-slate-800 flex flex-wrap items-center justify-between gap-4 text-xs">
         <div className="flex items-center gap-3">
@@ -79,7 +143,7 @@ export const Dashboard: React.FC = () => {
             <Zap size={13} className="animate-bounce text-blue-400" />
             REALTIME ENGINE
           </span>
-          <span className="text-slate-300">Role View: <strong className="text-white font-semibold">{currentRole} Portal</strong></span>
+          <span className="text-slate-300">Active Persona: <strong className="text-white font-semibold">{currentRole} AI Agent</strong></span>
         </div>
 
         <div className="flex items-center gap-4 text-slate-400">

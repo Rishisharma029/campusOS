@@ -155,9 +155,11 @@ export const Login: React.FC = () => {
             <>
               <form onSubmit={handleCredentialsSubmit} className="space-y-4">
               <div className="space-y-1">
-                <label className="text-[11px] font-semibold text-slate-500 uppercase tracking-wide">Select Portal Role</label>
+                <label htmlFor="portal-role-select" className="text-[11px] font-semibold text-slate-500 uppercase tracking-wide">Select Portal Role</label>
                 <div className="relative">
                   <select
+                    id="portal-role-select"
+                    aria-label="Select Portal Role"
                     value={selectedRole}
                     onChange={(e) => setSelectedRole(e.target.value as UserRole)}
                     className="w-full h-9 rounded-xl border border-main bg-surface px-3 py-1 text-xs text-slate-800 dark:text-slate-200 focus:outline-none focus:ring-2 focus:ring-primary font-medium"
@@ -176,12 +178,14 @@ export const Login: React.FC = () => {
               </div>
 
               <div className="space-y-1">
-                <label className="text-[11px] font-semibold text-slate-500 uppercase tracking-wide">Username</label>
+                <label htmlFor="username-input" className="text-[11px] font-semibold text-slate-500 uppercase tracking-wide">Username</label>
                 <div className="relative">
                   <span className="absolute inset-y-0 left-0 pl-3 flex items-center text-slate-400">
                     <User size={14} />
                   </span>
                   <input
+                    id="username-input"
+                    aria-label="Username or Email"
                     type="text"
                     required
                     value={username}
@@ -194,14 +198,16 @@ export const Login: React.FC = () => {
 
               <div className="space-y-1">
                 <div className="flex justify-between items-center">
-                  <label className="text-[11px] font-semibold text-slate-500 uppercase tracking-wide">Password</label>
-                  <a href="#forgot" className="text-[10px] font-semibold text-primary hover:text-primary-dark">Forgot?</a>
+                  <label htmlFor="password-input" className="text-[11px] font-semibold text-slate-500 uppercase tracking-wide">Password</label>
+                  <button type="button" onClick={() => toast('Password Reset', 'Please contact system administrator.', 'info')} className="text-[10px] font-semibold text-primary hover:text-primary-dark cursor-pointer bg-transparent border-0 p-0">Forgot?</button>
                 </div>
                 <div className="relative">
                   <span className="absolute inset-y-0 left-0 pl-3 flex items-center text-slate-400">
                     <Lock size={14} />
                   </span>
                   <input
+                    id="password-input"
+                    aria-label="Password"
                     type="password"
                     required
                     value={password}

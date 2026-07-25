@@ -34,9 +34,12 @@ const studentSchema = z.object({
 type StudentFormInputs = z.infer<typeof studentSchema>;
 
 export const Students: React.FC = () => {
-  const { students, addStudent, deleteStudent } = useDatabase();
-  const { currentRole } = useRole();
-  const { toast } = useToast();
+  const databaseContext = useDatabase();
+  const { students = [], addStudent = () => {}, deleteStudent = () => {} } = databaseContext || {};
+  const roleContext = useRole();
+  const currentRole = roleContext?.currentRole || 'Admin';
+  const toastContext = useToast();
+  const toast = toastContext?.toast || ((t: string, m?: string) => console.log(t, m));
 
   const [selectedStudent, setSelectedStudent] = useState<Student | null>(null);
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);

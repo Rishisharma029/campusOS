@@ -11,6 +11,7 @@ import { ToastProvider } from './components/ui/Toast';
 import { DashboardLayout } from './components/layout/DashboardLayout';
 import { PageSkeleton } from './components/PageSkeleton';
 import { ErrorBoundary } from './components/ErrorBoundary';
+import { SecurityRadarEngine } from './lib/securityRadar';
 
 // Lazy load all pages
 const Dashboard = React.lazy(() => import('./pages/Dashboard').then(m => ({ default: m.Dashboard })));
@@ -45,17 +46,34 @@ const NoticeBoard = React.lazy(() => import('./pages/NoticeBoard').then(m => ({ 
 const Complaints = React.lazy(() => import('./pages/Complaints').then(m => ({ default: m.Complaints })));
 const ClubsAndEvents = React.lazy(() => import('./pages/ClubsAndEvents').then(m => ({ default: m.ClubsAndEvents })));
 const SecurityCenter = React.lazy(() => import('./pages/SecurityCenter').then(m => ({ default: m.SecurityCenter })));
+const DecisionIntelligence = React.lazy(() => import('./pages/DecisionIntelligence').then(m => ({ default: m.DecisionIntelligence })));
+const ChiefAdministrativeOfficerPortal = React.lazy(() => import('./pages/ChiefAdministrativeOfficerPortal').then(m => ({ default: m.ChiefAdministrativeOfficerPortal })));
+const AcademicCopilot = React.lazy(() => import('./pages/AcademicCopilot').then(m => ({ default: m.AcademicCopilot })));
+const FacultyCopilot = React.lazy(() => import('./pages/FacultyCopilot').then(m => ({ default: m.FacultyCopilot })));
+const EnergyPortal = React.lazy(() => import('./pages/EnergyPortal').then(m => ({ default: m.EnergyPortal })));
+const SecurityVault = React.lazy(() => import('./pages/SecurityVault').then(m => ({ default: m.SecurityVault })));
+const AdkAutonomousAgents = React.lazy(() => import('./pages/AdkAutonomousAgents').then(m => ({ default: m.AdkAutonomousAgents })));
+const SystemHealth = React.lazy(() => import('./pages/SystemHealth').then(m => ({ default: m.SystemHealth })));
 
 const PrivateRoute: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const { isAuthenticated } = useAuth();
   return isAuthenticated ? <>{children}</> : <Navigate to="/login" replace />;
 };
 
-const RoleRoute: React.FC<{ children: React.ReactNode; allowedRoles: UserRole[] }> = ({ children, allowedRoles }) => {
-  const { isAuthenticated } = useAuth();
+const RoleRoute: React.FC<{ children: React.ReactNode; allowedRoles: UserRole[]; routeName?: string }> = ({ children, allowedRoles, routeName = 'Protected Module' }) => {
+  const { isAuthenticated, user } = useAuth();
   const { currentRole } = useRole();
+
   if (!isAuthenticated) return <Navigate to="/login" replace />;
-  if (!allowedRoles.includes(currentRole)) return <Navigate to="/" replace />;
+
+  if (!allowedRoles.includes(currentRole)) {
+    // Log with actual authenticated user's identity (not hardcoded)
+    const userId = user?.username ?? 'unknown';
+    const displayName = user?.username ?? 'Unknown User';
+    SecurityRadarEngine.logUnauthorizedAttempt(userId, displayName, routeName);
+    return <Navigate to="/" replace />;
+  }
+
   return <>{children}</>;
 };
 
@@ -85,6 +103,41 @@ function App() {
                             }
                           >
                             <Route index element={<Dashboard />} />
+                            <Route path="academic-copilot" element={<AcademicCopilot />} />
+                            
+                            {/* Restricted Executive Routes */}
+                            <Route
+                              path="cao"
+                              element={
+                                <RoleRoute allowedRoles={['Admin', 'Registrar']} routeName="Productivity Agent (CAO)">
+                                  <ChiefAdministrativeOfficerPortal />
+                                </RoleRoute>
+                              }
+                            />
+                            <Route
+                              path="decision-intelligence"
+                              element={
+                                <RoleRoute allowedRoles={['Admin', 'Registrar']} routeName="Decision Intelligence">
+                                  <DecisionIntelligence />
+                                </RoleRoute>
+                              }
+                            />
+                            <Route
+                              path="faculty-copilot"
+                              element={
+                                <RoleRoute allowedRoles={['Admin', 'Faculty']} routeName="Faculty Copilot">
+                                  <FacultyCopilot />
+                                </RoleRoute>
+                              }
+                            />
+                            <Route
+                              path="energy"
+                              element={
+                                <RoleRoute allowedRoles={['Admin', 'Accountant']} routeName="Energy Optimization">
+                                  <EnergyPortal />
+                                </RoleRoute>
+                              }
+                            />
                             
                             {/* CampusOS v2.0 New Operational Routes */}
                             <Route path="map" element={<CampusMap3D />} />
@@ -94,12 +147,36 @@ function App() {
                             <Route path="complaints" element={<Complaints />} />
                             <Route path="clubs" element={<ClubsAndEvents />} />
                             <Route path="security" element={<SecurityCenter />} />
+                            <Route
+                              path="security-vault"
+                              element={
+                                <RoleRoute allowedRoles={['Admin']} routeName="SOC Security Vault">
+                                  <SecurityVault />
+                                </RoleRoute>
+                              }
+                            />
+                            <Route
+                              path="adk-agents"
+                              element={
+                                <RoleRoute allowedRoles={['Admin', 'Faculty', 'Student']} routeName="ADK Autonomous Agents">
+                                  <AdkAutonomousAgents />
+                                </RoleRoute>
+                              }
+                            />
+                            <Route
+                              path="system-health"
+                              element={
+                                <RoleRoute allowedRoles={['Admin', 'Registrar', 'Accountant']} routeName="System Health & Vitals">
+                                  <SystemHealth />
+                                </RoleRoute>
+                              }
+                            />
 
                             {/* Core ERP Modules */}
                             <Route 
                               path="students" 
                               element={
-                                <RoleRoute allowedRoles={['Admin', 'Faculty']}>
+                                <RoleRoute allowedRoles={['Admin', 'Faculty', 'Student', 'Placement Cell', 'Registrar']} routeName="Students Directory">
                                   <Students />
                                 </RoleRoute>
                               } 

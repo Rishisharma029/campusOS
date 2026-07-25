@@ -1,0 +1,13 @@
+# Global Codeowners for CampusOS AI
+* @Rishisharma029
+
+# Core AI & Orchestration Modules
+src/lib/ @Rishisharma029
+
+# Security & Contexts
+src/context/ @Rishisharma029
+SECURITY.md @Rishisharma029
+
+# Documentation & Workflows
+.github/ @Rishisharma029
+docs/ @Rishisharma029

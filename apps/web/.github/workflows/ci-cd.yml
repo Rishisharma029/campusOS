@@ -1,0 +1,62 @@
+name: CampusOS Production CI/CD Pipeline
+
+on:
+  push:
+    branches: [ main, release/* ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  validate-and-deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js Environment
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+
+      - name: Install Dependencies
+        run: npm ci
+
+      - name: Run Static Code Analysis & Linter
+        run: npm run lint
+
+      - name: Run Strict TypeScript Check
+        run: npx tsc --noEmit
+
+      - name: Run Automated Unit & Integration Tests
+        run: npx vitest run --reporter=verbose
+
+      - name: Install Playwright Browsers
+        run: npx playwright install --with-deps chromium
+
+      - name: Run Playwright E2E Browser Automation
+        run: npx playwright test
+
+      - name: Build Web Application
+        run: npm run build
+
+      - name: Authenticate to Google Cloud Platform
+        if: github.ref == 'refs/heads/main'
+        uses: google-github-actions/auth@v2
+        with:
+          credentials_json: ${{ secrets.GCP_SA_KEY }}
+
+      - name: Build & Push Docker Container Image
+        if: github.ref == 'refs/heads/main'
+        run: |
+          gcloud auth configure-docker asia-south1-docker.pkg.dev
+          docker build -t asia-south1-docker.pkg.dev/${{ secrets.GCP_PROJECT }}/campusos/api:latest .
+          docker push asia-south1-docker.pkg.dev/${{ secrets.GCP_PROJECT }}/campusos/api:latest
+
+      - name: Deploy Container to Google Cloud Run
+        if: github.ref == 'refs/heads/main'
+        uses: google-github-actions/deploy-cloudrun@v2
+        with:
+          service: campusos-api-gateway
+          region: asia-south1
+          image: asia-south1-docker.pkg.dev/${{ secrets.GCP_PROJECT }}/campusos/api:latest

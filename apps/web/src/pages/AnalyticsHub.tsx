@@ -1,263 +1,243 @@
-import React from 'react';
-import { Card, CardContent, CardHeader } from '../components/ui/Card';
-import { Button } from '../components/ui/Button';
-import { useToast } from '../components/ui/Toast';
+import React, { useState } from 'react';
+import { useRole } from '../context/RoleContext';
+import { PredictiveAnalyticsEngine, type PredictiveInsight } from '../lib/predictiveAnalyticsEngine';
+import {
+  LineChart,
+  Sparkles,
+  TrendingUp,
+  AlertTriangle,
+  CheckCircle2,
+  Zap,
+  Lock,
+  Calendar,
+  CloudRain,
+  BookOpen,
+  Users,
+  Lightbulb,
+  ArrowRight,
+  Shield,
+} from 'lucide-react';
 import {
   ResponsiveContainer,
-  RadarChart,
-  PolarGrid,
-  PolarAngleAxis,
-  PolarRadiusAxis,
-  Radar,
-  PieChart,
-  Pie,
-  Cell,
+  AreaChart,
+  Area,
+  CartesianGrid,
+  XAxis,
+  YAxis,
   Tooltip,
-  Legend
 } from 'recharts';
-import { TrendingUp, AlertTriangle, UserCheck, ShieldAlert, Mail } from 'lucide-react';
+
+const PREDICTIVE_ATTENDANCE_TREND = [
+  { week: 'Wk 1', Actual: 95.2, Predicted: 94.0 },
+  { week: 'Wk 2', Actual: 93.8, Predicted: 93.5 },
+  { week: 'Wk 3', Actual: 91.4, Predicted: 91.0 },
+  { week: 'Wk 4 (Post-Fest)', Actual: 78.4, Predicted: 79.0 },
+  { week: 'Wk 5 (AI Fixed)', Actual: 93.0, Predicted: 92.5 },
+];
 
 export const AnalyticsHub: React.FC = () => {
-  const { toast } = useToast();
+  const { currentRole } = useRole();
+  const isReadOnly = currentRole === 'Student';
 
-  // Radar competency data comparing major departments
-  const departmentCompetencies = [
-    { subject: 'Placements Rate', CSE: 96, ECE: 88, ME: 72 },
-    { subject: 'Avg CGPA', CSE: 82, ECE: 78, ME: 70 },
-    { subject: 'Research Papers', CSE: 90, ECE: 85, ME: 60 },
-    { subject: 'Student Satisfaction', CSE: 88, ECE: 80, ME: 85 },
-    { subject: 'Faculty Density', CSE: 75, ECE: 82, ME: 90 },
-    { subject: 'Lab Infrastructure', CSE: 92, ECE: 95, ME: 80 }
-  ];
+  const [insights, setInsights] = useState<PredictiveInsight[]>(
+    PredictiveAnalyticsEngine.getPredictiveInsights()
+  );
+  const [executedPayloads, setExecutedPayloads] = useState<string[]>([]);
+  const [activeMessage, setActiveMessage] = useState<string | null>(null);
 
-  // Donut placement sector split data
-  const placementSectorData = [
-    { name: 'Software Development', value: 124 },
-    { name: 'Electronics & Core', value: 64 },
-    { name: 'Consulting & Analytics', value: 48 },
-    { name: 'Core Mech & Auto', value: 32 },
-    { name: 'Logistics & Supply', value: 12 }
-  ];
-
-  const SECTOR_COLORS = ['#2563EB', '#10B981', '#F59E0B', '#EF4444', '#8B5CF6'];
-
-  // Heatmap: Simulated attendance rates for the last 30 days
-  const attendanceHeatmapData = Array.from({ length: 30 }, (_, i) => {
-    const day = i + 1;
-    // Generate simulated rates between 65% and 98%
-    const rate = Math.floor(75 + Math.random() * 23);
-    return { day, rate };
-  });
-
-  const getHeatmapColor = (rate: number) => {
-    if (rate >= 90) return 'bg-emerald-500 hover:bg-emerald-600 text-white';
-    if (rate >= 80) return 'bg-emerald-400/80 hover:bg-emerald-500/80 text-white';
-    if (rate >= 75) return 'bg-amber-400 hover:bg-amber-500 text-slate-900';
-    return 'bg-red-400 hover:bg-red-500 text-white';
+  const handleExecuteAction = (payload: string, title: string) => {
+    if (isReadOnly) return;
+    const res = PredictiveAnalyticsEngine.executePredictiveAction(payload);
+    setExecutedPayloads(prev => [...prev, payload]);
+    setActiveMessage(res.message);
+    setTimeout(() => setActiveMessage(null), 5000);
   };
 
-  const handleSendMail = (studentName: string) => {
-    toast('Warning Alert Dispatched', `Administrative alert successfully sent to ${studentName} and their parent.`, 'success');
-  };
-
-  const handleSendDuesSMS = (studentName: string) => {
-    toast('Dues Warning Dispatched', `SMS & Email reminders dispatched for ${studentName}'s outstanding fees.`, 'info');
+  const getInsightIcon = (category: string) => {
+    switch (category) {
+      case 'Attendance': return <Users size={18} className="text-amber-400" />;
+      case 'ExamClash': return <Calendar size={18} className="text-purple-400" />;
+      case 'Weather': return <CloudRain size={18} className="text-cyan-400" />;
+      case 'AcademicRisk': return <AlertTriangle size={18} className="text-rose-400" />;
+      default: return <Sparkles size={18} className="text-blue-400" />;
+    }
   };
 
   return (
-    <div className="flex flex-col gap-6 animate-fade-in">
-      
-      {/* Header */}
-      <div>
-        <h1 className="text-xl font-bold text-slate-900 dark:text-slate-100 font-display m-0 leading-tight">
-          Advanced Analytics & AI Hub
-        </h1>
-        <p className="text-xs text-slate-500 dark:text-slate-400">
-          ML prediction engines, dropout risk evaluations, outstanding fee indicators, and competency indices.
-        </p>
+    <div className="space-y-6 animate-fade-in">
+      {/* Header Banner */}
+      <div className="glass-card p-6 border-blue-500/40 bg-gradient-to-r from-slate-900 via-indigo-950/40 to-blue-950/40 shadow-2xl relative overflow-hidden">
+        <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
+          <div className="space-y-2">
+            <div className="flex items-center gap-3">
+              <div className="p-2.5 rounded-xl bg-gradient-to-tr from-blue-600 via-purple-600 to-indigo-600 text-white shadow-lg shadow-blue-500/20">
+                <LineChart size={24} className="animate-pulse" />
+              </div>
+              <div>
+                <h1 className="text-xl font-extrabold text-white font-display tracking-tight flex items-center gap-2">
+                  CampusOS Predictive Analytics Engine
+                  {isReadOnly && (
+                    <span className="text-[10px] px-2.5 py-0.5 rounded-full bg-amber-500/20 text-amber-300 border border-amber-500/30 flex items-center gap-1 font-mono">
+                      <Lock size={10} /> Read-Only Student View
+                    </span>
+                  )}
+                </h1>
+                <p className="text-xs text-slate-300">Gemini Predictive Insights: Observation &rarr; Reason &rarr; Prescriptive Suggestion</p>
+              </div>
+            </div>
+          </div>
+
+          <div className="flex items-center gap-2">
+            <span className="text-[10px] font-bold px-3 py-1 rounded-full bg-blue-500/20 text-blue-400 border border-blue-500/30 font-mono">
+              GEMINI PREDICTIVE ENGINE ACTIVE
+            </span>
+          </div>
+        </div>
       </div>
 
-      {/* Analytics Charts Row */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        
-        {/* Radar Chart */}
-        <Card className="shadow-premium border border-main bg-surface">
-          <CardHeader className="p-4 border-b border-main">
-            <h3 className="text-xs font-bold text-slate-800 dark:text-slate-200 font-display m-0">
-              Department Competency Radar Map
-            </h3>
-          </CardHeader>
-          <CardContent className="h-[300px] p-4">
-            <ResponsiveContainer width="100%" height="100%">
-              <RadarChart cx="50%" cy="50%" outerRadius="80%" data={departmentCompetencies}>
-                <PolarGrid stroke="#e2e8f0" />
-                <PolarAngleAxis dataKey="subject" style={{ fontSize: 9, fontWeight: 'bold' }} />
-                <PolarRadiusAxis angle={30} domain={[0, 100]} style={{ fontSize: 8 }} />
-                <Radar name="CSE Dept" dataKey="CSE" stroke="#2563EB" fill="#2563EB" fillOpacity={0.25} />
-                <Radar name="ECE Dept" dataKey="ECE" stroke="#10B981" fill="#10B981" fillOpacity={0.25} />
-                <Radar name="ME Dept" dataKey="ME" stroke="#F59E0B" fill="#F59E0B" fillOpacity={0.25} />
-                <Tooltip contentStyle={{ fontSize: 10, borderRadius: 8 }} />
-                <Legend iconType="circle" wrapperStyle={{ fontSize: 10 }} />
-              </RadarChart>
-            </ResponsiveContainer>
-          </CardContent>
-        </Card>
+      {/* Execution Feedback Banner */}
+      {activeMessage && (
+        <div className="p-3.5 rounded-xl bg-emerald-600 text-white text-xs font-bold flex items-center gap-2 shadow-xl animate-fade-in">
+          <CheckCircle2 size={18} />
+          <span>{activeMessage}</span>
+        </div>
+      )}
 
-        {/* Donut Chart */}
-        <Card className="shadow-premium border border-main bg-surface">
-          <CardHeader className="p-4 border-b border-main">
-            <h3 className="text-xs font-bold text-slate-800 dark:text-slate-200 font-display m-0">
-              Placement Sector Distro (Donut)
-            </h3>
-          </CardHeader>
-          <CardContent className="h-[300px] p-4 flex items-center justify-center">
-            <ResponsiveContainer width="100%" height="100%">
-              <PieChart>
-                <Pie
-                  data={placementSectorData}
-                  cx="50%"
-                  cy="45%"
-                  innerRadius={65}
-                  outerRadius={85}
-                  paddingAngle={4}
-                  dataKey="value"
-                >
-                  {placementSectorData.map((_entry, index) => (
-                    <Cell key={`cell-${index}`} fill={SECTOR_COLORS[index % SECTOR_COLORS.length]} />
-                  ))}
-                </Pie>
-                <Tooltip contentStyle={{ fontSize: 10, borderRadius: 8 }} />
-                <Legend verticalAlign="bottom" height={36} iconType="circle" wrapperStyle={{ fontSize: 9 }} />
-              </PieChart>
-            </ResponsiveContainer>
-          </CardContent>
-        </Card>
+      {/* Gemini Says: Predictive Insights Grid */}
+      <div className="space-y-4">
+        <div className="flex items-center justify-between">
+          <h2 className="text-sm font-bold text-white uppercase tracking-wider flex items-center gap-2">
+            <Sparkles size={16} className="text-blue-400" />
+            Gemini Predictive Insights & Action Engine
+          </h2>
+          <span className="text-xs text-slate-400 font-mono">4 Active Predictions</span>
+        </div>
 
-      </div>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          {insights.map(ins => {
+            const isExecuted = executedPayloads.includes(ins.actionPayload);
 
-      {/* Heatmap Row & AI predictions */}
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        
-        {/* Attendance Heatmap grid */}
-        <Card className="shadow-premium border border-main bg-surface lg:col-span-1">
-          <CardHeader className="p-4 border-b border-main">
-            <h3 className="text-xs font-bold text-slate-800 dark:text-slate-200 font-display m-0">
-              Roll Call Heatmap (Last 30 Days)
-            </h3>
-          </CardHeader>
-          <CardContent className="p-4 space-y-4">
-            <div className="grid grid-cols-6 gap-2">
-              {attendanceHeatmapData.map(d => (
-                <div
-                  key={d.day}
-                  title={`Day ${d.day}: ${d.rate}% attendance rate`}
-                  className={`aspect-square rounded-lg flex flex-col items-center justify-center text-[10px] font-bold transition-all ${getHeatmapColor(d.rate)}`}
-                >
-                  <span>{d.day}</span>
-                  <span className="text-[7px] font-normal opacity-80">{d.rate}%</span>
+            return (
+              <div
+                key={ins.id}
+                className="glass-card p-5 space-y-4 flex flex-col justify-between border-blue-500/30 hover:border-blue-500/50 transition-all shadow-xl relative overflow-hidden"
+              >
+                <div className="space-y-3">
+                  {/* Top Bar: Target Group & Confidence */}
+                  <div className="flex items-center justify-between border-b border-slate-800 pb-2.5">
+                    <div className="flex items-center gap-2">
+                      <div className="p-1.5 rounded-lg bg-slate-800">
+                        {getInsightIcon(ins.category)}
+                      </div>
+                      <span className="text-xs font-extrabold text-white font-mono">{ins.targetGroup}</span>
+                    </div>
+
+                    <span className="text-[10px] font-extrabold px-2.5 py-0.5 rounded-full bg-purple-500/20 text-purple-300 border border-purple-500/30 font-mono">
+                      ⚡ {ins.confidenceScore}% Confidence
+                    </span>
+                  </div>
+
+                  {/* 1. Observation: Gemini Says */}
+                  <div className="space-y-1">
+                    <span className="text-[10px] font-bold text-rose-400 uppercase tracking-wider flex items-center gap-1">
+                      <AlertTriangle size={11} /> Gemini Observation:
+                    </span>
+                    <p className="text-xs font-extrabold text-white pl-2 border-l-2 border-rose-500/60">
+                      "{ins.observation}"
+                    </p>
+                  </div>
+
+                  {/* 2. Reason Analysis */}
+                  <div className="space-y-1 bg-slate-950/70 p-2.5 rounded-lg border border-slate-800/80">
+                    <span className="text-[10px] font-bold text-purple-400 uppercase tracking-wider flex items-center gap-1">
+                      <Lightbulb size={11} /> Empirical Reason Analysis:
+                    </span>
+                    <p className="text-[11px] text-slate-300 leading-relaxed">
+                      {ins.reason}
+                    </p>
+                  </div>
+
+                  {/* 3. Prescriptive Suggestion */}
+                  <div className="space-y-1 bg-emerald-950/30 p-2.5 rounded-lg border border-emerald-500/30">
+                    <span className="text-[10px] font-bold text-emerald-400 uppercase tracking-wider flex items-center gap-1">
+                      <CheckCircle2 size={11} /> AI Prescriptive Suggestion:
+                    </span>
+                    <p className="text-xs font-semibold text-emerald-200">
+                      {ins.suggestion}
+                    </p>
+                  </div>
                 </div>
-              ))}
-            </div>
-            <div className="flex justify-between items-center text-[8px] text-slate-400 font-bold border-t border-main pt-2">
-              <span className="text-red-500 font-extrabold flex items-center gap-0.5">
-                <AlertTriangle size={10} /> &lt;75% Risk
-              </span>
-              <span className="text-emerald-500 font-extrabold flex items-center gap-0.5">
-                <UserCheck size={10} /> &gt;90% Ideal
-              </span>
-            </div>
-          </CardContent>
-        </Card>
 
-        {/* AI Dropout predictions list */}
-        <Card className="shadow-premium border border-main bg-surface lg:col-span-1">
-          <CardHeader className="p-4 border-b border-main">
-            <h3 className="text-xs font-bold text-slate-800 dark:text-slate-200 font-display m-0 flex items-center gap-1.5">
-              <ShieldAlert size={14} className="text-red-500" /> AI Dropout Risk Predictor
-            </h3>
-          </CardHeader>
-          <CardContent className="p-4 space-y-3">
-            <div className="space-y-2">
-              
-              <div className="p-3 border border-main rounded-xl flex justify-between items-center bg-slate-50/50 dark:bg-slate-900/5">
-                <div>
-                  <h4 className="text-[11px] font-bold text-slate-850 dark:text-slate-100 m-0">Rohan Mehta (CSE)</h4>
-                  <p className="text-[9px] text-slate-400 mt-0.5">CGPA: 5.8 | Attendance: 68%</p>
-                </div>
-                <div className="flex items-center gap-2">
-                  <span className="px-1.5 py-0.2 rounded text-[8px] bg-red-100 text-red-800 dark:bg-red-950/20 dark:text-red-400 font-bold">84% Risk</span>
-                  <button onClick={() => handleSendMail('Rohan Mehta')} className="p-1.5 rounded-lg hover:bg-slate-200 dark:hover:bg-slate-800 text-slate-500 cursor-pointer" title="Send Alert">
-                    <Mail size={12} />
+                {/* Bottom Bar: Impact & Execution Dispatches */}
+                <div className="pt-3 border-t border-slate-800 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+                  <span className="text-[10px] font-bold text-cyan-400 bg-cyan-950/40 px-2.5 py-1 rounded-lg border border-cyan-500/30">
+                    🎯 {ins.projectedImpact}
+                  </span>
+
+                  <button
+                    onClick={() => handleExecuteAction(ins.actionPayload, ins.actionTitle)}
+                    disabled={isReadOnly || isExecuted}
+                    className={`px-3.5 py-2 rounded-xl text-xs font-bold flex items-center justify-center gap-1.5 transition-all shrink-0 ${
+                      isExecuted
+                        ? 'bg-emerald-600 text-white cursor-default'
+                        : isReadOnly
+                        ? 'bg-slate-800 text-slate-500 border border-slate-700 cursor-not-allowed'
+                        : 'bg-gradient-to-r from-blue-600 via-indigo-600 to-purple-600 hover:from-blue-500 hover:to-purple-500 text-white shadow-lg shadow-blue-500/20'
+                    }`}
+                  >
+                    {isExecuted ? (
+                      <>
+                        <CheckCircle2 size={14} /> Applied ✓
+                      </>
+                    ) : isReadOnly ? (
+                      <>
+                        <Lock size={12} /> Student Read-Only
+                      </>
+                    ) : (
+                      <>
+                        <Zap size={14} /> {ins.actionTitle} &rarr;
+                      </>
+                    )}
                   </button>
                 </div>
               </div>
-
-              <div className="p-3 border border-main rounded-xl flex justify-between items-center bg-slate-50/50 dark:bg-slate-900/5">
-                <div>
-                  <h4 className="text-[11px] font-bold text-slate-850 dark:text-slate-100 m-0">Arjun Das (ME)</h4>
-                  <p className="text-[9px] text-slate-400 mt-0.5">CGPA: 5.9 | Attendance: 70%</p>
-                </div>
-                <div className="flex items-center gap-2">
-                  <span className="px-1.5 py-0.2 rounded text-[8px] bg-red-100 text-red-800 dark:bg-red-950/20 dark:text-red-400 font-bold">78% Risk</span>
-                  <button onClick={() => handleSendMail('Arjun Das')} className="p-1.5 rounded-lg hover:bg-slate-200 dark:hover:bg-slate-800 text-slate-500 cursor-pointer" title="Send Alert">
-                    <Mail size={12} />
-                  </button>
-                </div>
-              </div>
-
-              <div className="p-3 border border-main rounded-xl flex justify-between items-center bg-slate-50/50 dark:bg-slate-900/5">
-                <div>
-                  <h4 className="text-[11px] font-bold text-slate-850 dark:text-slate-100 m-0">Sneha Rao (ECE)</h4>
-                  <p className="text-[9px] text-slate-400 mt-0.5">CGPA: 6.1 | Attendance: 72%</p>
-                </div>
-                <div className="flex items-center gap-2">
-                  <span className="px-1.5 py-0.2 rounded text-[8px] bg-amber-100 text-amber-800 dark:bg-amber-950/20 dark:text-amber-400 font-bold">62% Risk</span>
-                  <button onClick={() => handleSendMail('Sneha Rao')} className="p-1.5 rounded-lg hover:bg-slate-200 dark:hover:bg-slate-800 text-slate-500 cursor-pointer" title="Send Alert">
-                    <Mail size={12} />
-                  </button>
-                </div>
-              </div>
-
-            </div>
-          </CardContent>
-        </Card>
-
-        {/* AI Fee Default risk tracker */}
-        <Card className="shadow-premium border border-main bg-surface lg:col-span-1">
-          <CardHeader className="p-4 border-b border-main">
-            <h3 className="text-xs font-bold text-slate-800 dark:text-slate-200 font-display m-0 flex items-center gap-1.5">
-              <TrendingUp size={14} className="text-amber-500" /> Fee Default Risk Models
-            </h3>
-          </CardHeader>
-          <CardContent className="p-4 space-y-3">
-            <div className="space-y-2">
-              
-              <div className="p-3 border border-main rounded-xl flex justify-between items-center bg-slate-50/50 dark:bg-slate-900/5">
-                <div>
-                  <h4 className="text-[11px] font-bold text-slate-850 dark:text-slate-100 m-0">Kunal Verma (Account #42)</h4>
-                  <p className="text-[9px] text-slate-400 mt-0.5">Owed: ₹65,000 | Overdue: 45 Days</p>
-                </div>
-                <Button size="sm" className="h-7 text-[10px] px-2 flex items-center gap-1" onClick={() => handleSendDuesSMS('Kunal Verma')}>
-                  <Mail size={11} /> Alert
-                </Button>
-              </div>
-
-              <div className="p-3 border border-main rounded-xl flex justify-between items-center bg-slate-50/50 dark:bg-slate-900/5">
-                <div>
-                  <h4 className="text-[11px] font-bold text-slate-850 dark:text-slate-100 m-0">Priya Iyer (Account #102)</h4>
-                  <p className="text-[9px] text-slate-400 mt-0.5">Owed: ₹40,000 | Overdue: 35 Days</p>
-                </div>
-                <Button size="sm" className="h-7 text-[10px] px-2 flex items-center gap-1" onClick={() => handleSendDuesSMS('Priya Iyer')}>
-                  <Mail size={11} /> Alert
-                </Button>
-              </div>
-
-            </div>
-          </CardContent>
-        </Card>
-
+            );
+          })}
+        </div>
       </div>
 
+      {/* Visual Recharts Forecast Chart */}
+      <div className="glass-card p-6 space-y-4 border-blue-500/30">
+        <div className="flex items-center justify-between">
+          <div>
+            <h3 className="text-sm font-bold text-slate-100">Predictive Attendance Recovery Forecast</h3>
+            <p className="text-xs text-slate-400">Comparing Post-Festival Baseline vs AI Rescheduled Timetable</p>
+          </div>
+          <span className="text-xs px-3 py-1 rounded-full bg-blue-500/20 text-blue-300 border border-blue-500/30 font-mono font-semibold">
+            Telemetry Model v3.1
+          </span>
+        </div>
+
+        <div className="h-[240px] w-full">
+          <ResponsiveContainer width="100%" height="100%">
+            <AreaChart data={PREDICTIVE_ATTENDANCE_TREND}>
+              <defs>
+                <linearGradient id="colorActual" x1="0" y1="0" x2="0" y2="1">
+                  <stop offset="5%" stopColor="#3B82F6" stopOpacity={0.8}/>
+                  <stop offset="95%" stopColor="#3B82F6" stopOpacity={0}/>
+                </linearGradient>
+              </defs>
+              <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.05)" />
+              <XAxis dataKey="week" stroke="#94A3B8" fontSize={11} />
+              <YAxis stroke="#94A3B8" fontSize={11} domain={[70, 100]} />
+              <Tooltip
+                contentStyle={{ backgroundColor: '#0F172A', borderColor: '#334155', borderRadius: '12px', fontSize: '12px' }}
+              />
+              <Area type="monotone" dataKey="Actual" stroke="#3B82F6" strokeWidth={3} fillOpacity={1} fill="url(#colorActual)" />
+            </AreaChart>
+          </ResponsiveContainer>
+        </div>
+      </div>
     </div>
   );
 };

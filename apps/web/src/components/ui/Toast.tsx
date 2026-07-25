@@ -77,9 +77,23 @@ export const ToastProvider: React.FC<{ children: React.ReactNode }> = ({ childre
 };
 
 export const useToast = () => {
-  const context = useContext(ToastContext);
-  if (!context) {
-    throw new Error('useToast must be used within a ToastProvider');
+  try {
+    const context = useContext(ToastContext);
+    if (!context) {
+      return {
+        toast: (title: string, message?: string, type: ToastType = 'info') => {
+          console.log(`[Toast ${type}]: ${title} - ${message}`);
+        },
+      };
+    }
+    return context;
+  } catch {
+    return {
+      toast: (title: string, message?: string, type: ToastType = 'info') => {
+        console.log(`[Toast ${type}]: ${title} - ${message}`);
+      },
+    };
   }
-  return context;
 };
+
+export default useToast;

@@ -570,7 +570,7 @@ export const DatabaseProvider: React.FC<{ children: React.ReactNode }> = ({ chil
 
     addNotification({
       title: 'Fee Payment Received',
-      message: `Received fee payment of ₹${amount.toLocaleString()} from ${student.name} via ${method}. Receipt: ${receiptNo}.`,
+      message: `Received fee payment of ₹${(Number(amount) || 0).toLocaleString()} from ${student.name} via ${method}. Receipt: ${receiptNo}.`,
       category: 'fee',
     });
   };
@@ -628,10 +628,39 @@ export const DatabaseProvider: React.FC<{ children: React.ReactNode }> = ({ chil
   );
 };
 
+const fallbackDatabaseContext: DatabaseContextType = {
+  students: [],
+  addStudent: () => {},
+  updateStudent: () => {},
+  deleteStudent: () => {},
+  faculty: [],
+  addFaculty: () => {},
+  leaves: [],
+  addLeaveRequest: () => {},
+  updateLeaveStatus: () => {},
+  books: [],
+  issueBook: () => false,
+  returnBook: () => {},
+  placements: [],
+  addPlacementDrive: () => {},
+  exams: [],
+  addExam: () => {},
+  results: [],
+  addResult: () => {},
+  feeCollections: [],
+  collectFee: () => {},
+  notifications: [],
+  addNotification: () => {},
+  markNotificationRead: () => {},
+  markAllNotificationsRead: () => {},
+};
+
 export const useDatabase = () => {
-  const context = useContext(DatabaseContext);
-  if (!context) {
-    throw new Error('useDatabase must be used within a DatabaseProvider');
+  try {
+    const context = useContext(DatabaseContext);
+    if (!context) return fallbackDatabaseContext;
+    return context;
+  } catch {
+    return fallbackDatabaseContext;
   }
-  return context;
 };

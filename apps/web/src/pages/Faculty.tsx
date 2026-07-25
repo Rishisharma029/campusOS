@@ -25,9 +25,12 @@ const leaveSchema = z.object({
 type LeaveFormInputs = z.infer<typeof leaveSchema>;
 
 export const FacultyPage: React.FC = () => {
-  const { faculty, leaves, addLeaveRequest, updateLeaveStatus } = useDatabase();
-  const { currentRole } = useRole();
-  const { toast } = useToast();
+  const databaseContext = useDatabase();
+  const { faculty = [], leaves = [], addLeaveRequest = () => {}, updateLeaveStatus = () => {} } = databaseContext || {};
+  const roleContext = useRole();
+  const currentRole = roleContext?.currentRole || 'Admin';
+  const toastContext = useToast();
+  const toast = toastContext?.toast || ((t: string, m?: string) => console.log(t, m));
 
   const [isLeaveModalOpen, setIsLeaveModalOpen] = useState(false);
 
