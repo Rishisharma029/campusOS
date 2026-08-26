@@ -1,5 +1,7 @@
 # 🏛️ CampusOS AI v3.0.0 — Enterprise University Operating System
 
+#AccelerateAIwithCloudRu
+
 ![CampusOS AI Banner](https://img.shields.io/badge/CampusOS_AI-v3.0.0--Enterprise-blue?style=for-the-badge&logo=react)
 
 [![Release](https://img.shields.io/badge/release-v3.0.0-emerald?style=flat-square)](https://github.com/Rishisharma029/campusOS/releases)
