@@ -1,4 +1,5 @@
 import React from 'react';
+import { useNavigate } from 'react-router-dom';
 import { Bell, Command, Menu, Moon, Search, Sun, Compass, Leaf, Wifi, WifiOff } from 'lucide-react';
 import { useRole } from '../../context/RoleContext';
 import { useTheme } from '../../context/ThemeContext';
@@ -17,6 +18,7 @@ export const Navbar: React.FC<NavbarProps> = ({
   onOpenNotifications,
   onOpenSearch,
 }) => {
+  const navigate = useNavigate();
   const { currentRole, setRole, allRoles } = useRole();
   const { theme, toggleTheme } = useTheme();
   const { notifications } = useDatabase();
@@ -35,13 +37,24 @@ export const Navbar: React.FC<NavbarProps> = ({
         >
           <Menu size={20} />
         </button>
-        <div className="flex items-center gap-2">
-          <div className="w-8 h-8 rounded-lg bg-primary flex items-center justify-center text-white font-bold text-base shadow-sm">
-            Ω
+        <div className="flex items-center gap-2.5">
+          <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-cyan-500 via-blue-600 to-indigo-600 flex items-center justify-center text-white font-black text-sm shadow-md shadow-blue-500/20 ring-1 ring-white/20 shrink-0">
+            ◆
           </div>
-          <span className="font-semibold text-sm tracking-tight text-slate-900 dark:text-slate-100 font-display hidden sm:inline-block">
-            ACADEMIA ERP
-          </span>
+          <div className="flex flex-col min-w-0">
+            <div className="flex items-center gap-2">
+              <span className="font-extrabold text-sm tracking-wider text-slate-900 dark:text-white font-display">
+                GENOVA
+              </span>
+              <span className="inline-flex items-center gap-1 px-1.5 py-0.5 rounded text-[10px] font-semibold bg-blue-500/10 text-blue-600 dark:text-blue-400 border border-blue-500/20 shrink-0">
+                <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
+                CampusOS AI
+              </span>
+            </div>
+            <span className="text-[10px] font-medium text-slate-500 dark:text-slate-400 tracking-tight hidden sm:inline-block truncate">
+              Engineering the Next Generation
+            </span>
+          </div>
         </div>
       </div>
 
@@ -80,7 +93,13 @@ export const Navbar: React.FC<NavbarProps> = ({
           </span>
           <select
             value={currentRole}
-            onChange={(e) => setRole(e.target.value as any)}
+            onChange={(e) => {
+              const newRole = e.target.value as any;
+              setRole(newRole);
+              if (newRole === 'Industry Portal') {
+                navigate('/career/industry-portal');
+              }
+            }}
             className="text-xs font-semibold px-2.5 py-1.5 border border-slate-200 dark:border-slate-800 bg-surface dark:bg-slate-900 text-slate-800 dark:text-slate-200 rounded-lg focus:outline-none focus:ring-1 focus:ring-blue-500 cursor-pointer shadow-premium"
           >
             {allRoles.map((role) => (

@@ -9,6 +9,7 @@ export type UserRole =
   | 'Librarian'
   | 'Registrar'
   | 'Placement Cell'
+  | 'Industry Portal'
   | 'Hostel Warden'
   | 'Transport Manager';
 
@@ -16,6 +17,7 @@ export interface ModuleInfo {
   name: string;
   path: string;
   icon: string;
+  section?: 'Core' | 'CAREER & INDUSTRY' | 'GENOVA INNOVATION' | 'Operations';
   layer?: 'Layer 1: Daily Operations' | 'Layer 2: Executive Intelligence' | 'Layer 3: Autonomous Agents';
 }
 
@@ -37,54 +39,98 @@ export const allRoles: UserRole[] = [
   'Librarian',
   'Registrar',
   'Placement Cell',
+  'Industry Portal',
   'Hostel Warden',
   'Transport Manager',
 ];
 
 const ALL_MODULES: Record<string, ModuleInfo> = {
-  // Layer 3: Autonomous Agents (ADK, RAG, Tool Calling, Gemini)
-  ADKAgents: { name: 'ADK Autonomous Agents', path: '/adk-agents', icon: 'Bot', layer: 'Layer 3: Autonomous Agents' },
-  AcademicCopilot: { name: 'AI Academic Copilot', path: '/academic-copilot', icon: 'BookOpen', layer: 'Layer 3: Autonomous Agents' },
-  FacultyCopilot: { name: 'AI Faculty Copilot', path: '/faculty-copilot', icon: 'Briefcase', layer: 'Layer 3: Autonomous Agents' },
-  Placement: { name: 'AI Placement Intelligence', path: '/placement', icon: 'Briefcase', layer: 'Layer 3: Autonomous Agents' },
-  DocCenter: { name: 'RAG Doc Center', path: '/doc-center', icon: 'Sparkles', layer: 'Layer 3: Autonomous Agents' },
+  // Core Platform (Top Tier)
+  Dashboard: { name: 'Dashboard', path: '/', icon: 'LayoutDashboard', section: 'Core' },
+  Campus: { name: 'Campus', path: '/campus', icon: 'Building2', section: 'Core' },
+  Academics: { name: 'Academics', path: '/academics', icon: 'GraduationCap', section: 'Core' },
+  AIIntelligence: { name: 'AI Intelligence', path: '/ai-intelligence', icon: 'Brain', section: 'Core' },
+
+  // CAREER & INDUSTRY
+  Skills: { name: 'Skills', path: '/career/skills', icon: 'Award', section: 'CAREER & INDUSTRY' },
+  IndustryMapping: { name: 'Industry Mapping', path: '/career/industry-mapping', icon: 'Target', section: 'CAREER & INDUSTRY' },
+  CareerPath: { name: 'Career Path', path: '/career/path', icon: 'GitBranch', section: 'CAREER & INDUSTRY' },
+  Opportunities: { name: 'Opportunities', path: '/career/opportunities', icon: 'Briefcase', section: 'CAREER & INDUSTRY' },
+  Applications: { name: 'Applications', path: '/career/applications', icon: 'CheckSquare', section: 'CAREER & INDUSTRY' },
+  Portfolio: { name: 'Portfolio', path: '/career/portfolio', icon: 'FolderGit2', section: 'CAREER & INDUSTRY' },
+  IndustryPortal: { name: 'Industry Portal', path: '/career/industry-portal', icon: 'Building2', section: 'CAREER & INDUSTRY' },
+  AIRecruiter: { name: 'AI Recruiter', path: '/career/ai-recruiter', icon: 'Sparkles', section: 'CAREER & INDUSTRY' },
+  Academician: { name: 'Academician Portal', path: '/career/academician', icon: 'GraduationCap', section: 'CAREER & INDUSTRY' },
+  InstitutionIntelligence: { name: 'Institution Intelligence', path: '/career/institution-intelligence', icon: 'BarChart3', section: 'CAREER & INDUSTRY' },
+  CareerCopilot: { name: 'AI Career Copilot', path: '/career/copilot', icon: 'Bot', section: 'CAREER & INDUSTRY' },
+
+  // GENOVA INNOVATION
+  LandIntelligence: { name: 'Land Intelligence', path: '/innovation/land-intelligence', icon: 'Layers', section: 'GENOVA INNOVATION' },
+  AutonomousMobility: { name: 'Autonomous Mobility', path: '/innovation/autonomous-mobility', icon: 'Navigation', section: 'GENOVA INNOVATION' },
+
+  // Layer 3: Autonomous Agents & Copilots
+  ADKAgents: { name: 'ADK Autonomous Agents', path: '/adk-agents', icon: 'Bot', section: 'Operations', layer: 'Layer 3: Autonomous Agents' },
+  AcademicCopilot: { name: 'AI Academic Copilot', path: '/academic-copilot', icon: 'BookOpen', section: 'Operations', layer: 'Layer 3: Autonomous Agents' },
+  FacultyCopilot: { name: 'AI Faculty Copilot', path: '/faculty-copilot', icon: 'Briefcase', section: 'Operations', layer: 'Layer 3: Autonomous Agents' },
+  Placement: { name: 'AI Placement Intelligence', path: '/placement', icon: 'Briefcase', section: 'Operations', layer: 'Layer 3: Autonomous Agents' },
+  DocCenter: { name: 'RAG Doc Center', path: '/doc-center', icon: 'Sparkles', section: 'Operations', layer: 'Layer 3: Autonomous Agents' },
 
   // Layer 2: Executive Intelligence
-  CAO: { name: 'AI Chief Admin Officer', path: '/cao', icon: 'Briefcase', layer: 'Layer 2: Executive Intelligence' },
-  DecisionIntelligence: { name: 'AI Decision Intelligence', path: '/decision-intelligence', icon: 'Brain', layer: 'Layer 2: Executive Intelligence' },
-  Analytics: { name: 'Analytics Hub', path: '/analytics', icon: 'LineChart', layer: 'Layer 2: Executive Intelligence' },
-  DigitalTwin: { name: 'Campus Digital Twin', path: '/twin', icon: 'Network', layer: 'Layer 2: Executive Intelligence' },
-  Fees: { name: 'AI Finance Intelligence', path: '/fees', icon: 'CreditCard', layer: 'Layer 2: Executive Intelligence' },
-  EnergyPortal: { name: 'AI Energy & Sustainability', path: '/energy', icon: 'Zap', layer: 'Layer 2: Executive Intelligence' },
-  Security: { name: 'Security Center', path: '/security', icon: 'Lock', layer: 'Layer 2: Executive Intelligence' },
-  SecurityVault: { name: 'SOC Security Vault', path: '/security-vault', icon: 'Shield', layer: 'Layer 2: Executive Intelligence' },
-  SystemHealth: { name: 'System Health & Vitals', path: '/system-health', icon: 'Activity', layer: 'Layer 2: Executive Intelligence' },
-  Reports: { name: 'Reports & Exports', path: '/reports', icon: 'TrendingUp', layer: 'Layer 2: Executive Intelligence' },
+  CAO: { name: 'AI Chief Admin Officer', path: '/cao', icon: 'Briefcase', section: 'Operations', layer: 'Layer 2: Executive Intelligence' },
+  DecisionIntelligence: { name: 'AI Decision Intelligence', path: '/decision-intelligence', icon: 'Brain', section: 'Operations', layer: 'Layer 2: Executive Intelligence' },
+  Analytics: { name: 'Analytics Hub', path: '/analytics', icon: 'LineChart', section: 'Operations', layer: 'Layer 2: Executive Intelligence' },
+  DigitalTwin: { name: 'Campus Digital Twin', path: '/twin', icon: 'Network', section: 'Operations', layer: 'Layer 2: Executive Intelligence' },
+  Fees: { name: 'AI Finance Intelligence', path: '/fees', icon: 'CreditCard', section: 'Operations', layer: 'Layer 2: Executive Intelligence' },
+  EnergyPortal: { name: 'AI Energy & Sustainability', path: '/energy', icon: 'Zap', section: 'Operations', layer: 'Layer 2: Executive Intelligence' },
+  Security: { name: 'Security Center', path: '/security', icon: 'Lock', section: 'Operations', layer: 'Layer 2: Executive Intelligence' },
+  SecurityVault: { name: 'SOC Security Vault', path: '/security-vault', icon: 'Shield', section: 'Operations', layer: 'Layer 2: Executive Intelligence' },
+  SystemHealth: { name: 'System Health & Vitals', path: '/system-health', icon: 'Activity', section: 'Operations', layer: 'Layer 2: Executive Intelligence' },
+  Reports: { name: 'Reports & Exports', path: '/reports', icon: 'TrendingUp', section: 'Operations', layer: 'Layer 2: Executive Intelligence' },
 
   // Layer 1: Daily Operations
-  Dashboard: { name: 'Dashboard', path: '/', icon: 'LayoutDashboard', layer: 'Layer 1: Daily Operations' },
-  Attendance: { name: 'Attendance', path: '/attendance', icon: 'CheckSquare', layer: 'Layer 1: Daily Operations' },
-  Timetable: { name: 'Timetable', path: '/timetable', icon: 'Clock', layer: 'Layer 1: Daily Operations' },
-  Faculty: { name: 'Faculty', path: '/faculty', icon: 'GraduationCap', layer: 'Layer 1: Daily Operations' },
-  Students: { name: 'Students', path: '/students', icon: 'Users', layer: 'Layer 1: Daily Operations' },
-  Courses: { name: 'Courses', path: '/courses', icon: 'BookOpen', layer: 'Layer 1: Daily Operations' },
-  Assignments: { name: 'Assignments', path: '/assignments', icon: 'ClipboardList', layer: 'Layer 1: Daily Operations' },
-  Library: { name: 'Library', path: '/library', icon: 'Library', layer: 'Layer 1: Daily Operations' },
-  Hostel: { name: 'Hostel', path: '/hostel', icon: 'Home', layer: 'Layer 1: Daily Operations' },
-  Transport: { name: 'Transport', path: '/transport', icon: 'Bus', layer: 'Layer 1: Daily Operations' },
-  NoticeBoard: { name: 'Notice Board', path: '/noticeboard', icon: 'Bell', layer: 'Layer 1: Daily Operations' },
-  Complaints: { name: 'Complaints', path: '/complaints', icon: 'LifeBuoy', layer: 'Layer 1: Daily Operations' },
-  Clubs: { name: 'Clubs & Leaderboard', path: '/clubs', icon: 'Trophy', layer: 'Layer 1: Daily Operations' },
-  CampusMap: { name: '3D Campus Map', path: '/map', icon: 'Compass', layer: 'Layer 1: Daily Operations' },
-  Emergency: { name: 'Emergency SOS', path: '/emergency', icon: 'ShieldAlert', layer: 'Layer 1: Daily Operations' },
-  Calendar: { name: 'Academic Calendar', path: '/calendar', icon: 'Calendar', layer: 'Layer 1: Daily Operations' },
-  Settings: { name: 'Settings', path: '/settings', icon: 'Settings', layer: 'Layer 1: Daily Operations' },
+  Attendance: { name: 'Attendance', path: '/attendance', icon: 'CheckSquare', section: 'Operations', layer: 'Layer 1: Daily Operations' },
+  Timetable: { name: 'Timetable', path: '/timetable', icon: 'Clock', section: 'Operations', layer: 'Layer 1: Daily Operations' },
+  Faculty: { name: 'Faculty', path: '/faculty', icon: 'GraduationCap', section: 'Operations', layer: 'Layer 1: Daily Operations' },
+  Students: { name: 'Students', path: '/students', icon: 'Users', section: 'Operations', layer: 'Layer 1: Daily Operations' },
+  Courses: { name: 'Courses', path: '/courses', icon: 'BookOpen', section: 'Operations', layer: 'Layer 1: Daily Operations' },
+  Assignments: { name: 'Assignments', path: '/assignments', icon: 'ClipboardList', section: 'Operations', layer: 'Layer 1: Daily Operations' },
+  Library: { name: 'Library', path: '/library', icon: 'Library', section: 'Operations', layer: 'Layer 1: Daily Operations' },
+  Hostel: { name: 'Hostel', path: '/hostel', icon: 'Home', section: 'Operations', layer: 'Layer 1: Daily Operations' },
+  Transport: { name: 'Transport', path: '/transport', icon: 'Bus', section: 'Operations', layer: 'Layer 1: Daily Operations' },
+  NoticeBoard: { name: 'Notice Board', path: '/noticeboard', icon: 'Bell', section: 'Operations', layer: 'Layer 1: Daily Operations' },
+  Complaints: { name: 'Complaints', path: '/complaints', icon: 'LifeBuoy', section: 'Operations', layer: 'Layer 1: Daily Operations' },
+  Clubs: { name: 'Clubs & Leaderboard', path: '/clubs', icon: 'Trophy', section: 'Operations', layer: 'Layer 1: Daily Operations' },
+  CampusMap: { name: '3D Campus Map', path: '/map', icon: 'Compass', section: 'Operations', layer: 'Layer 1: Daily Operations' },
+  Emergency: { name: 'Emergency SOS', path: '/emergency', icon: 'ShieldAlert', section: 'Operations', layer: 'Layer 1: Daily Operations' },
+  Calendar: { name: 'Academic Calendar', path: '/calendar', icon: 'Calendar', section: 'Operations', layer: 'Layer 1: Daily Operations' },
+  Settings: { name: 'Settings', path: '/settings', icon: 'Settings', section: 'Operations', layer: 'Layer 1: Daily Operations' },
 };
+
+const GENOVA_PRIMARY_MODULES = [
+  'Dashboard',
+  'Campus',
+  'Academics',
+  'AIIntelligence',
+  'Skills',
+  'IndustryMapping',
+  'CareerPath',
+  'Opportunities',
+  'Applications',
+  'Portfolio',
+  'IndustryPortal',
+  'AIRecruiter',
+  'Academician',
+  'InstitutionIntelligence',
+  'CareerCopilot',
+  'LandIntelligence',
+  'AutonomousMobility',
+];
 
 const ROLE_MODULES_MAP: Record<UserRole, string[]> = {
   Admin: Object.keys(ALL_MODULES),
   Student: [
     'Dashboard',
+    'CareerCopilot',
     'AcademicCopilot',
     'ADKAgents',
     'Placement',
@@ -107,6 +153,7 @@ const ROLE_MODULES_MAP: Record<UserRole, string[]> = {
   ],
   Faculty: [
     'Dashboard',
+    'Academician',
     'FacultyCopilot',
     'ADKAgents',
     'CampusMap',
@@ -152,7 +199,21 @@ const ROLE_MODULES_MAP: Record<UserRole, string[]> = {
   ],
   Accountant: ['Dashboard', 'Emergency', 'Fees', 'Reports', 'SystemHealth', 'Settings'],
   Librarian: ['Dashboard', 'Emergency', 'Library', 'Reports', 'Settings'],
-  'Placement Cell': ['Dashboard', 'Emergency', 'Placement', 'Reports', 'Settings'],
+  'Placement Cell': ['Dashboard', 'Emergency', 'Placement', 'InstitutionIntelligence', 'CareerCopilot', 'Reports', 'Settings'],
+  'Industry Portal': [
+    'Dashboard',
+    'IndustryPortal',
+    'AIRecruiter',
+    'CareerCopilot',
+    'Opportunities',
+    'Applications',
+    'IndustryMapping',
+    'Skills',
+    'Portfolio',
+    'Placement',
+    'Reports',
+    'Settings',
+  ],
   'Hostel Warden': ['Dashboard', 'Emergency', 'Hostel', 'Complaints', 'Reports', 'Settings'],
   'Transport Manager': ['Dashboard', 'Emergency', 'Transport', 'Reports', 'Settings'],
 };
@@ -168,7 +229,9 @@ export const RoleProvider: React.FC<{ children: React.ReactNode }> = ({ children
     localStorage.setItem('erp_role', role);
   };
 
-  const allowedModules = (ROLE_MODULES_MAP[currentRole] || ROLE_MODULES_MAP['Admin'])
+  const rawAllowed = ROLE_MODULES_MAP[currentRole] || ROLE_MODULES_MAP['Admin'];
+  const combinedKeys = Array.from(new Set([...GENOVA_PRIMARY_MODULES, ...rawAllowed]));
+  const allowedModules = combinedKeys
     .map((modName) => ALL_MODULES[modName])
     .filter(Boolean);
 

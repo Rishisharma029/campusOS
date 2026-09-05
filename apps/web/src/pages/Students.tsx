@@ -12,7 +12,8 @@ import { Modal } from '../components/ui/Modal';
 import { Drawer } from '../components/ui/Drawer';
 import { Tabs, TabList, TabTrigger, TabContent } from '../components/ui/Tabs';
 import { ProgressBar } from '../components/ui/Feedback';
-import { Plus, Eye, FileText, Printer, Trash2, Upload, CheckCircle } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
+import { Plus, Eye, FileText, Printer, Trash2, Upload, CheckCircle, BrainCircuit, Award, Sparkles, ExternalLink, CheckCircle2 } from 'lucide-react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import * as z from 'zod';
@@ -40,6 +41,7 @@ export const Students: React.FC = () => {
   const currentRole = roleContext?.currentRole || 'Admin';
   const toastContext = useToast();
   const toast = toastContext?.toast || ((t: string, m?: string) => console.log(t, m));
+  const navigate = useNavigate();
 
   const [selectedStudent, setSelectedStudent] = useState<Student | null>(null);
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
@@ -283,6 +285,7 @@ export const Students: React.FC = () => {
             <Tabs defaultValue="info">
               <TabList>
                 <TabTrigger value="info">General Info</TabTrigger>
+                <TabTrigger value="skills">Skill Intelligence</TabTrigger>
                 <TabTrigger value="docs">Documents</TabTrigger>
                 <TabTrigger value="idcard">ID Card Generator</TabTrigger>
               </TabList>
@@ -338,7 +341,56 @@ export const Students: React.FC = () => {
                 )}
               </TabContent>
 
-              {/* Tab 2: Documents */}
+              {/* Tab 2: Skill Intelligence */}
+              <TabContent value="skills" className="flex flex-col gap-4 pt-3.0">
+                <div className="p-4 rounded-xl bg-gradient-to-r from-blue-900/40 via-indigo-900/40 to-slate-900/40 border border-blue-500/30 flex items-center justify-between">
+                  <div>
+                    <span className="text-[10px] font-bold text-blue-400 uppercase tracking-wider block">Student Skill Intelligence</span>
+                    <h4 className="text-sm font-bold text-slate-100">Verified Competencies & AI Assessment Profile</h4>
+                    <p className="text-xs text-slate-400 mt-0.5">Readiness Score: <strong className="text-emerald-400">94 / 100</strong> • 4 Verified Credentials</p>
+                  </div>
+                  <Button
+                    size="sm"
+                    className="flex items-center gap-1 text-xs shrink-0"
+                    onClick={() => {
+                      setIsDetailOpen(false);
+                      navigate('/career/skills');
+                    }}
+                  >
+                    Open Skill Hub <ExternalLink size={12} />
+                  </Button>
+                </div>
+
+                <div className="space-y-2">
+                  <span className="text-[11px] font-bold uppercase tracking-wider text-slate-400">Core Technical Competencies</span>
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                    {[
+                      { name: 'ROS2 / Micro-ROS', level: 90, verified: true },
+                      { name: 'Nav2 Path Planning', level: 86, verified: true },
+                      { name: 'GIS Coordinate Modeling', level: 92, verified: true },
+                      { name: 'PyTorch & TensorRT', level: 92, verified: true },
+                    ].map((s) => (
+                      <div key={s.name} className="p-2.5 rounded-lg bg-slate-50/50 dark:bg-slate-800/30 border border-slate-200/60 dark:border-slate-800 text-xs flex items-center justify-between">
+                        <div className="flex items-center gap-1.5">
+                          <CheckCircle2 size={12} className="text-emerald-500 shrink-0" />
+                          <span className="font-semibold text-slate-800 dark:text-slate-200">{s.name}</span>
+                        </div>
+                        <span className="font-mono text-blue-600 dark:text-blue-400 font-bold">{s.level}%</span>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+
+                <div className="p-3 rounded-lg bg-slate-50 dark:bg-slate-800/40 border border-slate-200/60 dark:border-slate-800 text-xs space-y-1">
+                  <span className="text-[10px] font-bold uppercase text-slate-400 block">AI Assessment Status</span>
+                  <div className="flex items-center justify-between text-slate-700 dark:text-slate-300">
+                    <span>Expert Assessment (Autonomous & Geospatial)</span>
+                    <Badge variant="success">Completed (95%)</Badge>
+                  </div>
+                </div>
+              </TabContent>
+
+              {/* Tab 3: Documents */}
               <TabContent value="docs" className="flex flex-col gap-4 pt-3.0">
                 <div className="flex items-center justify-between">
                   <span className="text-xs font-semibold text-slate-800 dark:text-slate-200">
@@ -382,11 +434,11 @@ export const Students: React.FC = () => {
                   {/* Top Bar Header */}
                   <div className="flex items-center justify-between border-b border-white/10 pb-3">
                     <div className="flex items-center gap-1.5">
-                      <div className="w-5 h-5 rounded bg-blue-600 flex items-center justify-center text-white font-bold text-[10px]">
-                        Ω
+                      <div className="w-5 h-5 rounded bg-gradient-to-br from-cyan-500 to-blue-600 flex items-center justify-center text-white font-bold text-[10px]">
+                        ◆
                       </div>
-                      <span className="text-[10px] font-bold tracking-wider text-blue-400 font-display">
-                        ACADEMIA UNIVERSITY
+                      <span className="text-[10px] font-extrabold tracking-wider text-cyan-300 font-display">
+                        GENOVA CAMPUSOS
                       </span>
                     </div>
                     <Badge variant="primary" className="bg-white/10 border-white/20 text-white font-mono text-[8px] uppercase">

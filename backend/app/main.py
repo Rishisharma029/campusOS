@@ -10,7 +10,7 @@ from sqlalchemy.exc import SQLAlchemyError
 from app.core.config import settings
 from app.core.limiter import limiter
 from app.middlewares.security_headers import SecurityHeadersMiddleware
-from app.routers import user, mfa, academic, student, faculty, operation, finance, library
+from app.routers import user, mfa, academic, student, faculty, operation, finance, library, career
 
 
 # ── Application Lifespan ──────────────────────────────────────────────────────
@@ -104,6 +104,7 @@ app.include_router(faculty.router, prefix=settings.API_V1_STR, tags=["Faculty"])
 app.include_router(operation.router, prefix=settings.API_V1_STR, tags=["Operations"])
 app.include_router(finance.router, prefix=settings.API_V1_STR, tags=["Finance"])
 app.include_router(library.router, prefix=settings.API_V1_STR, tags=["Library"])
+app.include_router(career.router, prefix=settings.API_V1_STR, tags=["Career & Employability (SIH26044)"])
 
 
 # ── Core Utility Endpoints ────────────────────────────────────────────────────

@@ -1,45 +1,92 @@
-# Contributing to CampusOS ERP
+# Contributing to CampusOS AI
 
-Thank you for your interest in improving CampusOS ERP! We welcome contributions to help resolve bugs, enhance UI aesthetics, and expand backend capabilities.
+Thank you for your interest in contributing to **CampusOS AI**! We welcome contributions from developers, designers, and educators to expand administrative workflows, enhance UI accessibility, and strengthen student employability engines.
 
 ---
 
 ## 1. Code of Conduct
 
-Please maintain professional, respectful, and constructive communication in all issues, pull requests, and discussions.
+All participants in the CampusOS AI project are expected to adhere to our [Code of Conduct](./CODE_OF_CONDUCT.md). Please maintain respectful, collaborative, and inclusive communication across issues, discussions, and pull requests.
 
 ---
 
-## 2. Bug Reports & Feature Requests
+## 2. Getting Started
 
-### Reporting Bugs
-If you find a bug, please check the existing issues before opening a new one. When submitting a bug report, include:
-1. **Steps to Reproduce**: Detailed steps showing how to trigger the bug.
-2. **Expected Behavior**: What you expected to happen.
-3. **Screenshots/Logs**: Any console outputs, traceback logs, or UI screenshots.
-4. **Environment Details**: OS, Python/Node versions, and browser specs.
+### Prerequisites
+- **Python**: 3.11+ (Tested on Python 3.14)
+- **Node.js**: 18+ (Tested on Node 22)
+- **Git**
 
-### Reporting Vulnerabilities
-> [!IMPORTANT]
-> If you find a security vulnerability, do **not** file a public issue. Follow the private reporting steps outlined in [SECURITY.md](file:///SECURITY.md).
+### Repository Setup
+1. **Fork the Repository** on GitHub.
+2. **Clone your fork locally**:
+   ```bash
+   git clone https://github.com/<your-username>/campusOS.git
+   cd campusOS
+   ```
+3. **Set up the Backend**:
+   ```bash
+   cd backend
+   python -m venv venv
+   # On Windows:
+   .\venv\Scripts\activate
+   # On Linux/macOS:
+   source venv/bin/activate
+
+   pip install -r requirements.txt
+   python seed.py
+   python -m uvicorn app.main:app --host 127.0.0.1 --port 8000 --reload
+   ```
+4. **Set up the Frontend**:
+   ```bash
+   # In another terminal:
+   cd campusOS/apps/web
+   npm install
+   npm run dev
+   ```
 
 ---
 
 ## 3. Pull Request Guidelines
 
-1. **Fork the Repository**: Create a personal fork and work on a feature branch (e.g. `feature/my-new-feature` or `bugfix/issue-id`).
-2. **Respect the License**: All code contributions must comply with our proprietary [LICENSE](file:///LICENSE) and belong to Rishi Sharma.
-3. **Maintain Linting Standards**:
-   - Backend Python code must pass Ruff style guidelines (`ruff check app/`).
-   - Frontend TypeScript code must pass ESLint/OXLint checks (`npm run lint`).
-4. **Write Tests**: Ensure any backend modifications are fully covered by integration/unit tests. Run the test suite:
+1. **Create a Topic Branch**:
    ```bash
-   cd backend
-   venv\Scripts\python -m pytest tests/ -v
+   git checkout -b feature/your-feature-name
+   # or
+   git checkout -b fix/issue-description
    ```
-5. **Ensure Successful Builds**: Validate that the frontend compiles cleanly before submitting:
-   ```bash
-   cd apps/web
-   npm run build
-   ```
-6. **Submit PR**: Provide a descriptive summary of your changes, referencing any open issues.
+2. **Adhere to Code Quality Standards**:
+   - **Backend Python**: Follow PEP 8 and Ruff conventions (`ruff check app/`).
+   - **Frontend TypeScript**: Ensure zero TypeScript or build errors (`npm run build`).
+3. **Run Automated Tests**:
+   - **Backend Pytest**:
+     ```bash
+     cd backend
+     python -m pytest
+     ```
+     Ensure all 17+ tests pass.
+   - **Frontend Build**:
+     ```bash
+     cd apps/web
+     npm run build
+     ```
+     Ensure the build completes with exit code `0`.
+4. **Commit Conventions**:
+   Use clear, semantic commit messages:
+   - `feat: add automated JD skill extraction in recruiter router`
+   - `fix: prevent redirect loop on login with orphaned session flag`
+   - `docs: update system architecture and process flowcharts in README`
+   - `test: add unit test coverage for career copilot query parsing`
+
+---
+
+## 4. Reporting Issues & Vulnerabilities
+
+- **Bug Reports & Enhancements**: Open an issue on GitHub detailing the steps to reproduce, expected vs. actual behavior, and relevant logs.
+- **Security Vulnerabilities**: Do **not** post security bugs to public issues. Refer to [`SECURITY.md`](./SECURITY.md) for private reporting procedures.
+
+---
+
+<div align="center">
+  <sub>CampusOS AI • Smart India Hackathon 2026 (SIH26044)</sub>
+</div>

@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { useRole } from '../context/RoleContext';
 import { PredictiveAnalyticsEngine, type PredictiveInsight } from '../lib/predictiveAnalyticsEngine';
 import {
@@ -36,6 +37,7 @@ const PREDICTIVE_ATTENDANCE_TREND = [
 ];
 
 export const AnalyticsHub: React.FC = () => {
+  const navigate = useNavigate();
   const { currentRole } = useRole();
   const isReadOnly = currentRole === 'Student';
 
@@ -88,6 +90,13 @@ export const AnalyticsHub: React.FC = () => {
           </div>
 
           <div className="flex items-center gap-2">
+            <button
+              onClick={() => navigate('/career/institution-intelligence')}
+              className="px-3 py-1.5 rounded-xl bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 text-white font-bold text-xs flex items-center gap-1.5 cursor-pointer shadow-md transition-all"
+            >
+              <TrendingUp size={13} />
+              <span>Institution Intelligence (SIH26044)</span>
+            </button>
             <span className="text-[10px] font-bold px-3 py-1 rounded-full bg-blue-500/20 text-blue-400 border border-blue-500/30 font-mono">
               GEMINI PREDICTIVE ENGINE ACTIVE
             </span>

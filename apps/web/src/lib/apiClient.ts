@@ -1,4 +1,4 @@
-const API_BASE = (import.meta.env.VITE_API_URL as string) || "http://localhost:8000";
+const API_BASE = (import.meta.env.VITE_API_URL as string) || "";
 
 let _accessToken: string | null = sessionStorage.getItem("access_token");
 let _refreshToken: string | null = localStorage.getItem("refresh_token");
@@ -20,6 +20,9 @@ export const clearTokens = () => {
   _refreshToken = null;
   sessionStorage.removeItem("access_token");
   localStorage.removeItem("refresh_token");
+  sessionStorage.removeItem("auth_active");
+  sessionStorage.removeItem("auth_user");
+  sessionStorage.removeItem("auth_mode");
 };
 
 export const getAccessToken = () => _accessToken;
@@ -37,6 +40,7 @@ function onRefreshed(token: string) {
 async function performRefresh(): Promise<string> {
   const token = getRefreshToken();
   if (!token) {
+    clearTokens();
     throw new Error("No refresh token available");
   }
 
@@ -84,8 +88,8 @@ export async function apiFetch<T>(path: string, options: RequestInit = {}): Prom
       } catch (err) {
         _isRefreshing = false;
         clearTokens();
-        // Redirect to login page in browser environment
-        if (typeof window !== "undefined") {
+        // Redirect to login page in browser environment only if not already on /login
+        if (typeof window !== "undefined" && !window.location.pathname.endsWith("/login")) {
           window.location.href = "/login";
         }
         throw err;

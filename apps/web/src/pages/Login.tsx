@@ -171,6 +171,7 @@ export const Login: React.FC = () => {
                     <option value="Accountant">Finance Accountant</option>
                     <option value="Librarian">Librarian Ledger</option>
                     <option value="Placement Cell">Placement Coordinator</option>
+                    <option value="Industry Portal">Industry Partner / Recruiter Portal</option>
                     <option value="Hostel Warden">Hostel Warden</option>
                     <option value="Transport Manager">Transport Manager</option>
                   </select>
@@ -250,7 +251,7 @@ export const Login: React.FC = () => {
               <span className="text-[10px] font-bold text-slate-400 dark:text-slate-500 uppercase tracking-wider block text-center">
                 ✨ Quick Demo Portals (Bypass Backend)
               </span>
-              <div className="grid grid-cols-3 gap-2">
+              <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
                 <button
                   type="button"
                   onClick={async () => {
@@ -292,6 +293,27 @@ export const Login: React.FC = () => {
                   className="py-1 px-2 border border-slate-200 dark:border-slate-800 rounded-lg text-[10px] font-semibold text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800/40 cursor-pointer text-center"
                 >
                   Student
+                </button>
+                <button
+                  type="button"
+                  onClick={async () => {
+                    setUsername('industry@campusos.org');
+                    setPassword('IndustryPassword@123');
+                    setSelectedRole('Industry Portal');
+                    setIsLoading(true);
+                    try {
+                      await login('industry@campusos.org', 'IndustryPassword@123', 'Industry Portal');
+                      toast('MFA Provisioned', 'Demo code verification required.', 'info');
+                      setStep('twofactor');
+                    } catch (e) {
+                      toast('Demo Login Error', 'Failed to initialize.', 'error');
+                    } finally {
+                      setIsLoading(false);
+                    }
+                  }}
+                  className="py-1 px-2 border border-emerald-500/30 bg-emerald-500/10 rounded-lg text-[10px] font-semibold text-emerald-600 dark:text-emerald-400 hover:bg-emerald-500/20 cursor-pointer text-center"
+                >
+                  Industry Portal
                 </button>
                 <button
                   type="button"

@@ -301,3 +301,83 @@ describe('Data Integrity â€” Mock Database', async () => {
     expect(requiredFeeFields).not.toContain('amount'); // 'amount' was the wrong name (fixed)
   });
 });
+
+// ─── Career Copilot Engine Tests (SIH26044) ──────────────────────
+describe('CareerCopilotEngine', async () => {
+  const { CareerCopilotEngine } = await import('../lib/careerCopilotEngine');
+
+  it('getGroundedContext returns verified profile for Rishi Sharma', () => {
+    const ctx = CareerCopilotEngine.getGroundedContext();
+    expect(ctx.studentName).toBe('Rishi Sharma');
+    expect(ctx.overallReadiness).toBe(84);
+    expect(ctx.verifiedSkillsCount).toBe(17);
+    expect(ctx.verifiedProjectsCount).toBe(6);
+    expect(ctx.internshipsCount).toBe(2);
+    expect(ctx.cgpa).toBeGreaterThanOrEqual(9.0);
+    expect(ctx.verificationHash).toContain('0x');
+    expect(ctx.topSkills.length).toBeGreaterThan(0);
+  });
+
+  it('analyzeDataAnalystPath computes exact gap analysis and 3 remediation phases', () => {
+    const roadmap = CareerCopilotEngine.analyzeDataAnalystPath();
+    expect(roadmap.targetRole).toContain('Data Analyst');
+    expect(roadmap.currentRoleReadiness).toBeGreaterThan(0);
+    expect(roadmap.currentRoleReadiness).toBeLessThanOrEqual(100);
+    expect(roadmap.gaps.length).toBeGreaterThan(0);
+    expect(roadmap.remediationPhases).toHaveLength(3);
+    expect(roadmap.projectSuggestion.title).toBeDefined();
+  });
+
+  it('auditInternshipReadiness evaluates Computer Vision Intern with why factors and gap factors', () => {
+    const audit = CareerCopilotEngine.auditInternshipReadiness();
+    expect(audit.opportunityRole).toBe('Computer Vision Intern');
+    expect(audit.matchScore).toBe(88);
+    expect(audit.whyFactors.some(w => w.label.includes('Python'))).toBe(true);
+    expect(audit.whyFactors.some(w => w.label.includes('OpenCV'))).toBe(true);
+    expect(audit.gapFactors.some(g => g.skill.includes('YOLO'))).toBe(true);
+    expect(audit.gapFactors.some(g => g.skill.includes('Model Deployment'))).toBe(true);
+    expect(audit.eligibility.degree.status).toBe(true);
+    expect(audit.eligibility.cgpa.status).toBe(true);
+    expect(audit.fastBridgeAction.actionTitle).toBeDefined();
+  });
+
+  it('recommendRankedOpportunities returns opportunities sorted by match score', () => {
+    const opps = CareerCopilotEngine.recommendRankedOpportunities();
+    expect(opps.length).toBeGreaterThan(0);
+    for (let i = 0; i < opps.length - 1; i++) {
+      expect(opps[i].matchScore).toBeGreaterThanOrEqual(opps[i + 1].matchScore);
+    }
+    expect(opps[0].actionLabel).toBeDefined();
+  });
+
+  it('calculateSkillVelocityROI returns ranked skills with readiness surge metrics', () => {
+    const velocity = CareerCopilotEngine.calculateSkillVelocityROI();
+    expect(velocity.length).toBeGreaterThanOrEqual(4);
+    expect(velocity[0].readinessSurge).toBe(8.4); // Cloud
+    expect(velocity[1].readinessSurge).toBe(7.1); // DSA
+    expect(velocity[0].unlockedRolesCount).toBeGreaterThan(10);
+  });
+
+  it('processQuery dispatches canonical user questions correctly', () => {
+    const q1 = CareerCopilotEngine.processQuery('What should I learn to become a data analyst?');
+    expect(q1.responseType).toBe('role_gap_roadmap');
+    expect(q1.roleRoadmap).toBeDefined();
+
+    const q2 = CareerCopilotEngine.processQuery('Why am I not ready for this internship?');
+    expect(q2.responseType).toBe('internship_readiness_audit');
+    expect(q2.internshipAudit).toBeDefined();
+
+    const q3 = CareerCopilotEngine.processQuery('Which opportunities should I apply for?');
+    expect(q3.responseType).toBe('opportunity_recommendations');
+    expect(q3.opportunityCards).toBeDefined();
+
+    const q4 = CareerCopilotEngine.processQuery('What skills will improve my readiness fastest?');
+    expect(q4.responseType).toBe('skill_velocity_roi');
+    expect(q4.skillVelocityItems).toBeDefined();
+
+    const q5 = CareerCopilotEngine.processQuery('How can I prepare for interviews?');
+    expect(q5.responseType).toBe('grounded_answer');
+    expect(q5.text).toContain('Rishi Sharma');
+  });
+});
+

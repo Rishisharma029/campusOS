@@ -1,25 +1,27 @@
-# Security Policy — CampusOS ERP
+# Security Policy — CampusOS AI (SIH26044)
 
-This document outlines the security architecture, threat model, and defense-in-depth implementations of CampusOS ERP.
+This document outlines the security architecture, threat model, cryptographic verification protocol, and defense-in-depth implementations of the CampusOS AI University Operating System.
 
 ---
 
 ## 1. Security Architecture & Threat Model
 
-CampusOS adopts a multi-tier defense architecture protecting identity, endpoints, databases, network routing, and assets.
+CampusOS adopts a multi-tier defense-in-depth architecture protecting client identities, API routes, operational databases, and employability verification ledgers.
 
 ```mermaid
 graph TD
-    Client[Client Browser / PWA]
-    Gateway[Vite DevServer / Nginx Proxy]
-    API[FastAPI Backend Application]
-    DB[(SQLite / PostgreSQL)]
-    Cache[(Redis Session Cache)]
+    Client[Client Browser / PWA<br/>React 19 + TypeScript]
+    Proxy[Vite DevServer / Reverse Proxy<br/>Port 5173]
+    API[FastAPI Asynchronous Backend<br/>Port 8000]
+    DB[(SQLite / PostgreSQL<br/>Async SQLAlchemy 2.0)]
+    ProofLedger[(Cryptographic Proof Ledger<br/>SHA-256 Immutable Hashes)]
+    Limiter[SlowAPI Rate Limiter<br/>Token Bucket Protection]
 
-    Client -->|HTTPS + Session Token| Gateway
-    Gateway -->|Forward Headers + CSP| API
-    API -->|Async Session| DB
-    API -->|Token Blacklist / Rate Limit| Cache
+    Client -->|HTTPS / Local Session Token| Proxy
+    Proxy -->|Internal Proxy Forwarding| API
+    API -->|Protected by Limiter| Limiter
+    API -->|Parameterized Async Session| DB
+    API -->|Mint & Audit Proofs| ProofLedger
 ```
 
 ---
@@ -27,33 +29,61 @@ graph TD
 ## 2. Implemented Security Controls
 
 ### 🔑 Authentication & Token Management
-* **Memory-Only JWT Storage**: Access tokens are stored strictly in-memory (module-level Javascript variables) during application sessions, preventing **Cross-Site Scripting (XSS)** token theft. Refresh tokens are scoped to sessionStorage/localStorage.
-* **Access Token Expiry**: Token lifespan is strictly capped at **30 minutes** (down from 8 days in previous configurations).
-* **Token Rotation**: Implemented a fetch-based interceptor doing auto-rotation (using a queue to block concurrent refresh calls) on `401 Unauthorized` responses.
-* **MFA (TOTP) Security**: Native MFA engine supporting RFC 6238 Time-Based One-Time Passwords (TOTP) with clock-drift checks.
+* **Memory-Only Access Token Storage**:
+  - JWT Access tokens are held strictly in JavaScript module-level memory variables, protecting tokens from Cross-Site Scripting (XSS) extraction via `localStorage`.
+  - Scoped refresh tokens are exchanged automatically through an interceptor queue with concurrency locking.
+* **Access Token Expiry**: Token lifespan is capped at **30 minutes**, minimizing replay windows.
+* **Orphaned Auth Flag Auto-Cleanup**:
+  - Frontend authentication initializes with strict validation: if an `auth_active` flag is present without a corresponding access or refresh token, the flag is purged instantly, eliminating infinite redirect loops.
+* **Multi-Factor Authentication (MFA / TOTP)**:
+  - Supports RFC 6238 Time-Based One-Time Passwords with clock-drift tolerances and token replay rejection.
 
 ### 🛡️ Web & API Protections
-* **Strict CORS Enforcements**: Banned CORS wildcard origins (`*`) when credentials are allowed, mapping origins to explicit Whitelists read dynamically from settings.
-* **Rate Limiting**: Attached `slowapi` rate limiters on credential routes:
-  - `/auth/login`: Maximum **5 requests/minute**
-  - `/auth/refresh`: Maximum **10 requests/minute**
-* **Security Headers**: All API endpoints return security headers via custom Starlette middleware:
-  - `Strict-Transport-Security` (HSTS): Capped at `max-age=31536000` (1 year) with subdomains.
-  - `X-Frame-Options`: Set to `DENY` to mitigate Clickjacking.
-  - `X-Content-Type-Options`: Set to `nosniff` to avoid MIME sniffing.
-  - `Content-Security-Policy` (CSP): Bounded default-src to `'self'` and `'unsafe-inline'` + whitelisted `cdn.jsdelivr.net` and `fastly.jsdelivr.net` strictly for Swagger UI documentation pages.
+* **Strict CORS Enforcements**:
+  - Wildcard origins (`*`) are banned when credentials are transmitted.
+  - Allowed origins are bounded to explicit configurations (`http://localhost:5173`, `http://127.0.0.1:5173`, `http://localhost:3000`).
+* **Reverse-Proxy Isolation**:
+  - Vite development and Nginx production proxies map `/api/*` and `/health` requests directly to `http://127.0.0.1:8000`, eliminating cross-origin browser hazards.
+* **Rate Limiting (SlowAPI)**:
+  - Sensitive credential endpoints are strictly rate-limited:
+    - `/api/v1/auth/login`: **5 requests/minute**
+    - `/api/v1/auth/refresh`: **10 requests/minute**
+* **Security Headers Middleware**:
+  - Every API response is fortified by Starlette middleware:
+    - `Strict-Transport-Security` (HSTS): `max-age=31536000; includeSubDomains`
+    - `X-Frame-Options`: `DENY` (Clickjacking mitigation)
+    - `X-Content-Type-Options`: `nosniff` (MIME sniffing prevention)
+    - `Content-Security-Policy` (CSP): Bounded script and connect directives.
+
+### 📜 Verifiable Credentials & Ledger Integrity (SIH26044)
+* **Tamper-Evident SHA-256 Proof Hashing**:
+  - Verified student claims (skills, certificates, internships, projects, achievements) are minted with cryptographic verification hashes (`0x...-GENOVA-PROOF`).
+  - Claims cannot be modified client-side without invalidating the cryptographic checksum.
+* **Multi-Party Verification Gate**:
+  - High-stakes credentials require dual verification (AI automated sandbox assessment + authorized faculty jury or industry supervisor signature).
 
 ### 🗄️ Database & Input Validation
-* **SQL Injection Mitigation**: Strictly parameterized queries using SQLAlchemy 2.0 ORM models and async database sessions. No raw string interpolation is used for queries.
-* **Role-Based Access Control (RBAC)**: Route-level navigation guards (`RoleRoute`) and endpoint checks (`PermissionChecker`) enforce granular resource boundaries (e.g. Students/Parents can never access `/students` or `/faculty` endpoints).
-* **Strong Production Keys**: In production mode (`ENVIRONMENT=production`), the application enforces cryptographic strength checks on the `SECRET_KEY`. If the key is the development default or is shorter than 32 characters, the application raises a hard validation error and refuses to start up.
+* **SQL Injection Mitigation**:
+  - Strictly parameterized queries using SQLAlchemy 2.0 ORM models with asynchronous query execution. String concatenation in database queries is prohibited.
+* **Role-Based Access Control (RBAC)**:
+  - Dual-layer RBAC enforcement:
+    - **Frontend**: Protected route guards (`RoleRoute`, `PrivateRoute`) reject unauthorized views.
+    - **Backend**: FastAPI dependency injectors (`PermissionChecker`, `get_current_active_user`) reject unauthorized requests with HTTP `403 Forbidden`.
+* **Production Key Validation Guards**:
+  - In production mode (`ENVIRONMENT=production`), the application enforces cryptographic strength checks on `SECRET_KEY`. If the development marker or a key shorter than 32 characters is detected, startup aborts immediately.
 
 ---
 
 ## 3. Reporting Vulnerabilities
 
-If you identify a security vulnerability in this project, please **do not** open a public issue. Instead, report it privately:
+If you identify a security vulnerability in CampusOS AI, please **do not** open a public issue on GitHub. Instead, report it through our responsible disclosure channel:
 
 * **Contact**: Rishi Sharma
-* **Email**: i.rishisharma2007@gmail.com
-* **Format**: Please include a clear description, proof of concept (PoC), and steps to reproduce. We will acknowledge and patch verified vulnerabilities within 48 hours.
+* **Email**: `i.rishisharma2007@gmail.com`
+* **Subject**: `[SECURITY VULNERABILITY] CampusOS AI - <Brief Description>`
+* **Information to Include**:
+  1. Description of the vulnerability and attack vector.
+  2. Step-by-step Proof of Concept (PoC) or script.
+  3. Impact assessment and potential remediation suggestions.
+
+All valid vulnerability disclosures will be acknowledged within **24 hours**, and patches deployed within **48 hours**.

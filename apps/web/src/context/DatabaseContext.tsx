@@ -134,20 +134,20 @@ export const DatabaseProvider: React.FC<{ children: React.ReactNode }> = ({ chil
   const [students, setStudents] = useState<Student[]>([
     {
       id: 'STU001',
-      name: 'Aarav Mehta',
-      email: 'aarav.mehta@university.edu',
+      name: 'Rishi Sharma',
+      email: 'rishi.sharma@university.edu',
       rollNo: '2024CS001',
       department: 'Computer Science',
       course: 'B.Tech CSE',
-      year: 3,
-      attendanceRate: 92.5,
+      year: 4,
+      attendanceRate: 94.2,
       feePaid: 150000,
       feeTotal: 180000,
       hostelRoom: 'Block A, Room 304',
       transportBus: 'Route 12',
       placementStatus: 'Eligible',
-      cgpa: 8.7,
-      parentName: 'Rajesh Mehta',
+      cgpa: 9.24,
+      parentName: 'Sunil Sharma',
       parentEmail: 'rajesh.mehta@gmail.com',
       phone: '+91 98765 43210',
     },
@@ -294,7 +294,7 @@ export const DatabaseProvider: React.FC<{ children: React.ReactNode }> = ({ chil
       totalCopies: 10,
       availableCopies: 8,
       issuedTo: [
-        { studentId: 'STU001', studentName: 'Aarav Mehta', issueDate: '2026-07-01', dueDate: '2026-07-15' },
+        { studentId: 'STU001', studentName: 'Rishi Sharma', issueDate: '2026-07-01', dueDate: '2026-07-15' },
       ],
     },
     {
@@ -376,14 +376,14 @@ export const DatabaseProvider: React.FC<{ children: React.ReactNode }> = ({ chil
 
   // Initial Mock Exam Results
   const [results, setResults] = useState<Result[]>([
-    { id: 'R001', studentId: 'STU001', studentName: 'Aarav Mehta', subjectName: 'Data Structures', marksObtained: 88, maxMarks: 100, grade: 'A+' },
-    { id: 'R002', studentId: 'STU001', studentName: 'Aarav Mehta', subjectName: 'Computer Architecture', marksObtained: 79, maxMarks: 100, grade: 'A' },
+    { id: 'R001', studentId: 'STU001', studentName: 'Rishi Sharma', subjectName: 'Data Structures', marksObtained: 88, maxMarks: 100, grade: 'A+' },
+    { id: 'R002', studentId: 'STU001', studentName: 'Rishi Sharma', subjectName: 'Computer Architecture', marksObtained: 79, maxMarks: 100, grade: 'A' },
     { id: 'R003', studentId: 'STU002', studentName: 'Diya Sharma', subjectName: 'Microprocessors', marksObtained: 94, maxMarks: 100, grade: 'O' },
   ]);
 
   // Initial Fee Collections Ledger
   const [feeCollections, setFeeCollections] = useState<FeeCollection[]>([
-    { id: 'RCP1001', studentId: 'STU001', studentName: 'Aarav Mehta', amountPaid: 50000, receiptNo: 'RCP1001', paymentDate: '2026-06-15', paymentMethod: 'UPI / NetBanking' },
+    { id: 'RCP1001', studentId: 'STU001', studentName: 'Rishi Sharma', amountPaid: 50000, receiptNo: 'RCP1001', paymentDate: '2026-06-15', paymentMethod: 'UPI / NetBanking' },
     { id: 'RCP1002', studentId: 'STU002', studentName: 'Diya Sharma', amountPaid: 180000, receiptNo: 'RCP1002', paymentDate: '2026-06-10', paymentMethod: 'Credit Card' },
     { id: 'RCP1003', studentId: 'STU003', studentName: 'Rohan Sen', amountPaid: 90000, receiptNo: 'RCP1003', paymentDate: '2026-06-20', paymentMethod: 'Debit Card' },
   ]);

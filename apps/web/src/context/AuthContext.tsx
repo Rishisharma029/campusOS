@@ -1,7 +1,7 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import { useRole, type UserRole } from './RoleContext';
 import { apiLogin, apiLogout, apiGetSessions } from '../api/auth';
-import { clearTokens, getAccessToken } from '../lib/apiClient';
+import { clearTokens, getAccessToken, getRefreshToken } from '../lib/apiClient';
 
 export interface SessionDevice {
   id: string;
@@ -31,7 +31,16 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   
   // Tab-persistent session state
   const [isAuthenticated, setIsAuthenticated] = useState<boolean>(() => {
-    return sessionStorage.getItem('auth_active') === 'true';
+    const hasActive = sessionStorage.getItem('auth_active') === 'true';
+    const hasToken = !!sessionStorage.getItem('access_token') || !!localStorage.getItem('refresh_token');
+    const isDemo = sessionStorage.getItem('auth_mode') === 'demo';
+    if (hasActive && !hasToken && !isDemo) {
+      // Clean up orphaned auth flags from invalidated sessions
+      sessionStorage.removeItem('auth_active');
+      sessionStorage.removeItem('auth_user');
+      return false;
+    }
+    return hasActive && (hasToken || isDemo);
   });
   
   const [user, setUser] = useState<{ username: string; role: UserRole } | null>(() => {
@@ -61,7 +70,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
   // Fetch active session devices on authentication
   useEffect(() => {
-    if (isAuthenticated) {
+    if (isAuthenticated && (getAccessToken() || getRefreshToken())) {
       apiGetSessions()
         .then((data) => {
           // Map backend SessionDevice representation to frontend UI format
@@ -75,12 +84,16 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
           setDevices(mappedDevices);
         })
         .catch((err) => {
-          console.error("Failed to fetch session devices:", err);
+          console.warn("Failed to fetch session devices:", err);
           // Fallback mock session list if API fails
           setDevices([
             { id: 'dev1', name: 'Chrome on Windows 11', location: 'Bengaluru, India', date: 'Active Now', isCurrent: true },
           ]);
         });
+    } else if (isAuthenticated) {
+      setDevices([
+        { id: 'dev1', name: 'Chrome on Windows 11', location: 'Bengaluru, India', date: 'Active Now', isCurrent: true },
+      ]);
     } else {
       setDevices([]);
     }
@@ -104,6 +117,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         errMsg.toLowerCase().includes('load')
       ) {
         console.warn("API server unreachable. Falling back to local Demo Mode auth.");
+        sessionStorage.setItem('auth_mode', 'demo');
         setUser({ username: username.split('@')[0] || username, role });
         setRole(role);
         return;
@@ -151,6 +165,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       setIsSessionWarningOpen(false);
       sessionStorage.removeItem('auth_active');
       sessionStorage.removeItem('auth_user');
+      sessionStorage.removeItem('auth_mode');
     }
   };
 

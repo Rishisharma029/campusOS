@@ -52,8 +52,9 @@ export const CommandPalette: React.FC<CommandPaletteProps> = ({ isOpen, onClose 
 
     // Modules
     allowedModules.forEach((mod) => {
+      const category = mod.section ? (mod.section === 'Core' ? 'Core Platform' : mod.section) : 'Operations';
       list.push({
-        category: 'Navigation',
+        category,
         label: `Go to ${mod.name}`,
         icon: <DynamicIcon name={mod.icon} size={16} />,
         action: () => {

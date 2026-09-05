@@ -55,6 +55,28 @@ const SecurityVault = React.lazy(() => import('./pages/SecurityVault').then(m =>
 const AdkAutonomousAgents = React.lazy(() => import('./pages/AdkAutonomousAgents').then(m => ({ default: m.AdkAutonomousAgents })));
 const SystemHealth = React.lazy(() => import('./pages/SystemHealth').then(m => ({ default: m.SystemHealth })));
 
+// GENOVA Platform Hubs
+const CampusHub = React.lazy(() => import('./pages/CampusHub').then(m => ({ default: m.CampusHub })));
+const AcademicsHub = React.lazy(() => import('./pages/AcademicsHub').then(m => ({ default: m.AcademicsHub })));
+const AIIntelligenceHub = React.lazy(() => import('./pages/AIIntelligenceHub').then(m => ({ default: m.AIIntelligenceHub })));
+
+// GENOVA Career & Industry
+const CareerSkills = React.lazy(() => import('./pages/career/CareerSkills').then(m => ({ default: m.CareerSkills })));
+const IndustrySkillMapping = React.lazy(() => import('./pages/career/IndustrySkillMapping').then(m => ({ default: m.IndustrySkillMapping })));
+const CareerPath = React.lazy(() => import('./pages/career/CareerPath').then(m => ({ default: m.CareerPath })));
+const CareerOpportunities = React.lazy(() => import('./pages/career/CareerOpportunities').then(m => ({ default: m.CareerOpportunities })));
+const CareerApplications = React.lazy(() => import('./pages/career/CareerApplications').then(m => ({ default: m.CareerApplications })));
+const CareerPortfolio = React.lazy(() => import('./pages/career/CareerPortfolio').then(m => ({ default: m.CareerPortfolio })));
+const IndustryPortal = React.lazy(() => import('./pages/career/IndustryPortal').then(m => ({ default: m.IndustryPortal })));
+const AIRecruiter = React.lazy(() => import('./pages/career/AIRecruiter').then(m => ({ default: m.AIRecruiter })));
+const AcademicianPortal = React.lazy(() => import('./pages/career/AcademicianPortal').then(m => ({ default: m.AcademicianPortal })));
+const InstitutionIntelligence = React.lazy(() => import('./pages/career/InstitutionIntelligence').then(m => ({ default: m.InstitutionIntelligence })));
+const CareerCopilot = React.lazy(() => import('./pages/career/CareerCopilot').then(m => ({ default: m.CareerCopilot })));
+
+// GENOVA Innovation Standalone Integration Points
+const LandIntelligencePlaceholder = React.lazy(() => import('./pages/innovation/LandIntelligencePlaceholder').then(m => ({ default: m.LandIntelligencePlaceholder })));
+const AutonomousMobilityPlaceholder = React.lazy(() => import('./pages/innovation/AutonomousMobilityPlaceholder').then(m => ({ default: m.AutonomousMobilityPlaceholder })));
+
 const PrivateRoute: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const { isAuthenticated } = useAuth();
   return isAuthenticated ? <>{children}</> : <Navigate to="/login" replace />;
@@ -103,6 +125,29 @@ function App() {
                             }
                           >
                             <Route index element={<Dashboard />} />
+                            
+                            {/* GENOVA Platform Core Hubs */}
+                            <Route path="campus" element={<CampusHub />} />
+                            <Route path="academics" element={<AcademicsHub />} />
+                            <Route path="ai-intelligence" element={<AIIntelligenceHub />} />
+
+                            {/* GENOVA Career & Industry */}
+                            <Route path="career/skills" element={<CareerSkills />} />
+                            <Route path="career/industry-mapping" element={<IndustrySkillMapping />} />
+                            <Route path="career/path" element={<CareerPath />} />
+                            <Route path="career/opportunities" element={<CareerOpportunities />} />
+                            <Route path="career/applications" element={<CareerApplications />} />
+                            <Route path="career/portfolio" element={<CareerPortfolio />} />
+                            <Route path="career/industry-portal" element={<IndustryPortal />} />
+                            <Route path="career/ai-recruiter" element={<AIRecruiter />} />
+                            <Route path="career/academician" element={<AcademicianPortal />} />
+                            <Route path="career/institution-intelligence" element={<InstitutionIntelligence />} />
+                            <Route path="career/copilot" element={<CareerCopilot />} />
+
+                            {/* GENOVA Innovation Standalone Integration Points */}
+                            <Route path="innovation/land-intelligence" element={<LandIntelligencePlaceholder />} />
+                            <Route path="innovation/autonomous-mobility" element={<AutonomousMobilityPlaceholder />} />
+
                             <Route path="academic-copilot" element={<AcademicCopilot />} />
                             
                             {/* Restricted Executive Routes */}

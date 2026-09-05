@@ -31,7 +31,14 @@ class Settings(BaseSettings):
     # JSON-parseable list of allowed frontend origins.
     # Example .env value: CORS_ORIGINS=["http://localhost:5173"]
     CORS_ORIGINS: list[str] = Field(
-        default=["http://localhost:5173", "http://localhost:3000", "http://localhost:4173"],
+        default=[
+            "http://localhost:5173",
+            "http://127.0.0.1:5173",
+            "http://localhost:3000",
+            "http://127.0.0.1:3000",
+            "http://localhost:4173",
+            "http://127.0.0.1:4173",
+        ],
         validation_alias="CORS_ORIGINS",
     )
 
