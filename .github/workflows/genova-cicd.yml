@@ -223,8 +223,8 @@ jobs:
     runs-on: ubuntu-latest
     # All tests must pass before deploy
     needs: [backend-test, frontend-build, security-scan]
-    # Only deploy on direct push to the branch — never on PR
-    if: github.event_name == 'push' && github.ref == 'refs/heads/sih-2026-genova'
+    # Only deploy on direct push or manual dispatch to the branch — never on PR
+    if: (github.event_name == 'push' || github.event_name == 'workflow_dispatch') && github.ref == 'refs/heads/sih-2026-genova'
     permissions:
       contents: read
       pages: write
