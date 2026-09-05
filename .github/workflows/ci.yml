@@ -2,9 +2,9 @@ name: CI Pipeline
 
 on:
   push:
-    branches: [main, develop, sih-2026-genova]
+    branches: [main, develop]
   pull_request:
-    branches: [main, sih-2026-genova]
+    branches: [main]
 
 jobs:
   backend-lint:
@@ -43,7 +43,7 @@ jobs:
       - name: Run pytest with coverage
         run: |
           cd backend
-          pytest tests/ -v --cov=app --cov-report=term-missing --cov-report=xml
+          python -m pytest tests/ -v --cov=app --cov-report=term-missing --cov-report=xml
         env:
           ENVIRONMENT: development
           SECRET_KEY: ci-test-secret-key-for-github-actions-only-not-production
