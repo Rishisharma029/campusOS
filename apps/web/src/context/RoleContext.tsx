@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useState } from 'react';
+﻿import React, { createContext, useContext, useState } from 'react';
 
 export type UserRole =
   | 'Admin'
@@ -106,30 +106,24 @@ const ALL_MODULES: Record<string, ModuleInfo> = {
   Settings: { name: 'Settings', path: '/settings', icon: 'Settings', section: 'Operations', layer: 'Layer 1: Daily Operations' },
 };
 
+// These 4 core platform hubs are always visible for all roles.
+// Role-specific career/innovation modules are in ROLE_MODULES_MAP.
 const GENOVA_PRIMARY_MODULES = [
   'Dashboard',
   'Campus',
   'Academics',
   'AIIntelligence',
-  'Skills',
-  'IndustryMapping',
-  'CareerPath',
-  'Opportunities',
-  'Applications',
-  'Portfolio',
-  'IndustryPortal',
-  'AIRecruiter',
-  'Academician',
-  'InstitutionIntelligence',
-  'CareerCopilot',
-  'LandIntelligence',
-  'AutonomousMobility',
 ];
 
 const ROLE_MODULES_MAP: Record<UserRole, string[]> = {
   Admin: Object.keys(ALL_MODULES),
   Student: [
     'Dashboard',
+    'Skills',
+    'CareerPath',
+    'Opportunities',
+    'Applications',
+    'Portfolio',
     'CareerCopilot',
     'AcademicCopilot',
     'ADKAgents',

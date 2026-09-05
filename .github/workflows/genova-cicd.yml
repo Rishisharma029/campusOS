@@ -1,0 +1,275 @@
+﻿# ─────────────────────────────────────────────────────────────────────────────
+# GENOVA CampusOS — CI/CD Pipeline for sih-2026-genova Branch
+# SIH 2026 | Problem Code: SIH26044
+#
+# Pipeline Stages:
+#   1. backend-lint    — ruff static analysis
+#   2. backend-test    — pytest 17/17 with SQLite in-memory + coverage
+#   3. frontend-lint   — oxlint TypeScript/React linting
+#   4. frontend-build  — tsc + vite production build (TypeScript gate)
+#   5. security-scan   — SAST via CodeQL
+#   6. deploy          — GitHub Pages (only on push to sih-2026-genova)
+# ─────────────────────────────────────────────────────────────────────────────
+
+name: "GENOVA CI/CD — sih-2026-genova"
+
+on:
+  push:
+    branches:
+      - sih-2026-genova
+  pull_request:
+    branches:
+      - sih-2026-genova
+  # Allow manual re-run from the Actions tab
+  workflow_dispatch:
+
+# Cancel any in-progress run for the same branch on new push
+concurrency:
+  group: genova-cicd-${{ github.ref }}
+  cancel-in-progress: true
+
+env:
+  # Shared across all jobs
+  PYTHON_VERSION: "3.12"
+  NODE_VERSION: "22"
+
+# ─────────────────────────────────────────────────────────────────────────────
+jobs:
+
+  # ── 1. Backend Lint ──────────────────────────────────────────────────────
+  backend-lint:
+    name: "Backend — Ruff Lint"
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: backend
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Python ${{ env.PYTHON_VERSION }}
+        uses: actions/setup-python@v5
+        with:
+          python-version: ${{ env.PYTHON_VERSION }}
+          cache: pip
+          cache-dependency-path: backend/requirements.txt
+
+      - name: Install dependencies
+        run: pip install -r requirements.txt
+
+      - name: Run Ruff linter
+        run: ruff check app/ --output-format=github
+
+      - name: Run Ruff formatter check
+        run: ruff format app/ --check
+
+  # ── 2. Backend Tests ─────────────────────────────────────────────────────
+  backend-test:
+    name: "Backend — Pytest + Coverage"
+    runs-on: ubuntu-latest
+    needs: backend-lint
+    defaults:
+      run:
+        working-directory: backend
+    env:
+      ENVIRONMENT: development
+      SECRET_KEY: "ci-sih2026-genova-secret-key-not-for-production-use"
+      DATABASE_URL: "sqlite+aiosqlite:///./campusos_ci.db"
+      ACCESS_TOKEN_EXPIRE_MINUTES: "30"
+      REFRESH_TOKEN_EXPIRE_DAYS: "7"
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Python ${{ env.PYTHON_VERSION }}
+        uses: actions/setup-python@v5
+        with:
+          python-version: ${{ env.PYTHON_VERSION }}
+          cache: pip
+          cache-dependency-path: backend/requirements.txt
+
+      - name: Install dependencies
+        run: pip install -r requirements.txt
+
+      - name: Run pytest with coverage
+        run: |
+          python -m pytest tests/ -v \
+            --cov=app \
+            --cov-report=term-missing \
+            --cov-report=xml:coverage.xml \
+            --cov-report=html:coverage_html \
+            --tb=short
+
+      - name: Upload coverage XML to Codecov
+        uses: codecov/codecov-action@v4
+        if: always()
+        with:
+          files: ./backend/coverage.xml
+          flags: backend
+          name: campusos-backend
+
+      - name: Upload coverage HTML report
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: backend-coverage-report
+          path: backend/coverage_html/
+          retention-days: 7
+
+      - name: Check coverage threshold (≥ 65%)
+        run: |
+          python -m pytest tests/ \
+            --cov=app \
+            --cov-fail-under=65 \
+            -q --no-header
+
+  # ── 3. Frontend Lint ─────────────────────────────────────────────────────
+  frontend-lint:
+    name: "Frontend — OXLint"
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: apps/web
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js ${{ env.NODE_VERSION }}
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: npm
+          cache-dependency-path: apps/web/package-lock.json
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Run OXLint
+        run: npm run lint
+
+  # ── 4. Frontend Build (TypeScript Gate) ──────────────────────────────────
+  frontend-build:
+    name: "Frontend — TypeScript + Vite Build"
+    runs-on: ubuntu-latest
+    needs: frontend-lint
+    defaults:
+      run:
+        working-directory: apps/web
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js ${{ env.NODE_VERSION }}
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: npm
+          cache-dependency-path: apps/web/package-lock.json
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: TypeScript type-check + Vite production build
+        run: npm run build
+        env:
+          # Production build uses relative API paths (proxied via Vite in dev)
+          VITE_API_URL: ""
+
+      - name: Upload build artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: frontend-dist
+          path: apps/web/dist/
+          retention-days: 3
+
+  # ── 5. Security Scan (CodeQL SAST) ───────────────────────────────────────
+  security-scan:
+    name: "Security — CodeQL SAST"
+    runs-on: ubuntu-latest
+    # Run in parallel with build jobs — doesn't block deploy
+    needs: [backend-lint, frontend-lint]
+    permissions:
+      actions: read
+      contents: read
+      security-events: write
+    strategy:
+      fail-fast: false
+      matrix:
+        language: [javascript-typescript, python]
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Initialize CodeQL
+        uses: github/codeql-action/init@v3
+        with:
+          languages: ${{ matrix.language }}
+          queries: security-and-quality
+
+      - name: Autobuild
+        uses: github/codeql-action/autobuild@v3
+
+      - name: Perform CodeQL Analysis
+        uses: github/codeql-action/analyze@v3
+        with:
+          category: "/language:${{ matrix.language }}"
+
+  # ── 6. Deploy to GitHub Pages ─────────────────────────────────────────────
+  # Runs only on push to sih-2026-genova (not on PRs) after all tests pass.
+  deploy:
+    name: "Deploy — GitHub Pages"
+    runs-on: ubuntu-latest
+    # All tests must pass before deploy
+    needs: [backend-test, frontend-build, security-scan]
+    # Only deploy on direct push to the branch — never on PR
+    if: github.event_name == 'push' && github.ref == 'refs/heads/sih-2026-genova'
+    permissions:
+      contents: read
+      pages: write
+      id-token: write
+    concurrency:
+      group: pages-deploy
+      cancel-in-progress: true
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js ${{ env.NODE_VERSION }}
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: npm
+          cache-dependency-path: apps/web/package-lock.json
+
+      - name: Install dependencies
+        run: cd apps/web && npm ci
+
+      - name: Build for GitHub Pages
+        run: cd apps/web && npm run build
+        env:
+          # GitHub Pages is served from /campusOS/ — App.tsx detects this and sets basename
+          VITE_API_URL: ""
+
+      - name: Configure GitHub Pages
+        uses: actions/configure-pages@v5
+
+      - name: Upload Pages artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: apps/web/dist/
+
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
+
+      - name: Deployment summary
+        run: |
+          echo "### GENOVA CampusOS Deployed" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "**Branch**: sih-2026-genova" >> $GITHUB_STEP_SUMMARY
+          echo "**Commit**: ${{ github.sha }}" >> $GITHUB_STEP_SUMMARY
+          echo "**URL**: ${{ steps.deployment.outputs.page_url }}" >> $GITHUB_STEP_SUMMARY
+          echo "**SIH Code**: SIH26044" >> $GITHUB_STEP_SUMMARY

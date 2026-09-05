@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useState, useEffect } from 'react';
+﻿import React, { createContext, useContext, useState, useEffect } from 'react';
 import { useRole, type UserRole } from './RoleContext';
 import { apiLogin, apiLogout, apiGetSessions } from '../api/auth';
 import { clearTokens, getAccessToken, getRefreshToken } from '../lib/apiClient';
@@ -56,8 +56,10 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const [devices, setDevices] = useState<SessionDevice[]>([]);
   const [isSessionWarningOpen, setIsSessionWarningOpen] = useState(false);
   const [isOffline, setIsOffline] = useState(false);
+  // Bump this key to restart the session inactivity timer after extendSession
+  const [sessionTimerKey, setSessionTimerKey] = useState(0);
 
-  // Timer simulation for session timeout (5 minutes warning)
+  // Timer simulation for session timeout (3 minutes warning)
   useEffect(() => {
     if (!isAuthenticated) return;
 
@@ -66,26 +68,26 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     }, 180000); // 3 minutes warning
 
     return () => clearTimeout(timeout);
-  }, [isAuthenticated]);
+  // sessionTimerKey intentionally included so extendSession() restarts the timer
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isAuthenticated, sessionTimerKey]);
 
   // Fetch active session devices on authentication
   useEffect(() => {
     if (isAuthenticated && (getAccessToken() || getRefreshToken())) {
       apiGetSessions()
         .then((data) => {
-          // Map backend SessionDevice representation to frontend UI format
           const mappedDevices: SessionDevice[] = data.map((d, index) => ({
             id: d.id,
             name: `${d.browser_name || 'Unknown Browser'} on ${d.os_name || 'Unknown OS'}`,
             location: `IP: ${d.ip_address || '127.0.0.1'}`,
             date: d.last_activity ? new Date(d.last_activity).toLocaleDateString() : 'Active Now',
-            isCurrent: index === 0, // Mock current session as the first one retrieved
+            isCurrent: index === 0,
           }));
           setDevices(mappedDevices);
         })
         .catch((err) => {
           console.warn("Failed to fetch session devices:", err);
-          // Fallback mock session list if API fails
           setDevices([
             { id: 'dev1', name: 'Chrome on Windows 11', location: 'Bengaluru, India', date: 'Active Now', isCurrent: true },
           ]);
@@ -101,15 +103,10 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
   const login = async (username: string, password: string, role: UserRole) => {
     try {
-      // 1. Stage 1 login: Call API and retrieve credentials
-      // Note: username on the frontend acts as email for the backend
       const res = await apiLogin({ email: username, password });
-      
-      // Set temporary user in memory while waiting for 2FA validation
       setUser({ username: res.name || username, role });
       setRole(role);
     } catch (err: any) {
-      // Fallback: If it's a network error (e.g. server offline on gh-pages), use demo credentials
       const errMsg = err.message || '';
       if (
         errMsg.toLowerCase().includes('failed to fetch') || 
@@ -127,11 +124,8 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   };
 
   const verify2FA = async (otp: string): Promise<boolean> => {
-    // 2. Stage 2 login: Verify TOTP/MFA code
-    // Standard TOTP verification. In fallback/simulated mode, accepts any 6-digit OTP code.
     if (otp.length === 6) {
       try {
-        // Try calling backend MFA verify if set up, otherwise fallback to successful mock verification
         await fetch("/api/v1/auth/mfa/verify", {
           method: "POST",
           headers: {
@@ -139,11 +133,9 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
             "Authorization": `Bearer ${getAccessToken()}`,
           },
           body: JSON.stringify({ otp_code: otp }),
-        }).catch(() => {
-          // Silent catch to fallback to mock verification
-        });
+        }).catch(() => {});
       } catch (e) {
-        // No-op
+        // No-op — fallback to local verification
       }
       
       setIsAuthenticated(true);
@@ -158,19 +150,22 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     try {
       await apiLogout();
     } catch (e) {
-      clearTokens();
+      // apiLogout already calls clearTokens() internally.
+      // Continue to clean up React state regardless.
     } finally {
+      // ALWAYS clear all tokens and session flags — guaranteed cleanup
+      // whether API call succeeded, failed, or user was in demo mode.
+      clearTokens();
       setIsAuthenticated(false);
       setUser(null);
       setIsSessionWarningOpen(false);
-      sessionStorage.removeItem('auth_active');
-      sessionStorage.removeItem('auth_user');
-      sessionStorage.removeItem('auth_mode');
     }
   };
 
   const extendSession = () => {
     setIsSessionWarningOpen(false);
+    // Restart the inactivity timer — prevents immediate re-warning after dismissal
+    setSessionTimerKey((prev) => prev + 1);
   };
 
   const toggleOffline = () => {

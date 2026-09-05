@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+﻿import React, { useState, useEffect } from 'react';
 import { useAuth } from '../context/AuthContext';
 import { useNavigate } from 'react-router-dom';
 import { useToast } from '../components/ui/Toast';
@@ -170,6 +170,7 @@ export const Login: React.FC = () => {
                     <option value="Parent">Parent/Guardian Portal</option>
                     <option value="Accountant">Finance Accountant</option>
                     <option value="Librarian">Librarian Ledger</option>
+                    <option value="Registrar">Registrar / Academic Affairs</option>
                     <option value="Placement Cell">Placement Coordinator</option>
                     <option value="Industry Portal">Industry Partner / Recruiter Portal</option>
                     <option value="Hostel Warden">Hostel Warden</option>

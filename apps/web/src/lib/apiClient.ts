@@ -1,4 +1,4 @@
-const API_BASE = (import.meta.env.VITE_API_URL as string) || "";
+﻿const API_BASE = (import.meta.env.VITE_API_URL as string) || "";
 
 let _accessToken: string | null = sessionStorage.getItem("access_token");
 let _refreshToken: string | null = localStorage.getItem("refresh_token");
@@ -63,6 +63,17 @@ async function performRefresh(): Promise<string> {
   return data.access_token;
 }
 
+async function retryWithToken<T>(path: string, options: RequestInit, token: string): Promise<T> {
+  const retryHeaders = new Headers(options.headers || {});
+  retryHeaders.set("Authorization", `Bearer ${token}`);
+  const res = await fetch(`${API_BASE}${path}`, { ...options, headers: retryHeaders });
+  if (!res.ok) {
+    const json = await res.json().catch(() => ({}));
+    throw new Error(json.detail || `Request failed with status ${res.status}`);
+  }
+  return res.json() as Promise<T>;
+}
+
 export async function apiFetch<T>(path: string, options: RequestInit = {}): Promise<T> {
   const headers = new Headers(options.headers || {});
   
@@ -78,42 +89,35 @@ export async function apiFetch<T>(path: string, options: RequestInit = {}): Prom
   const response = await fetch(`${API_BASE}${path}`, finalOptions);
 
   if (response.status === 401 && path !== "/api/v1/auth/login" && path !== "/api/v1/auth/refresh") {
-    // If unauthorized, attempt token refresh
-    if (!_isRefreshing) {
-      _isRefreshing = true;
-      try {
-        const newAccessToken = await performRefresh();
-        _isRefreshing = false;
-        onRefreshed(newAccessToken);
-      } catch (err) {
-        _isRefreshing = false;
-        clearTokens();
-        // Redirect to login page in browser environment only if not already on /login
-        if (typeof window !== "undefined" && !window.location.pathname.endsWith("/login")) {
-          window.location.href = "/login";
-        }
-        throw err;
-      }
+    if (_isRefreshing) {
+      // Refresh already in progress — subscribe and wait for it to complete
+      return new Promise<T>((resolve, reject) => {
+        subscribeTokenRefresh((newToken) => {
+          retryWithToken<T>(path, options, newToken).then(resolve).catch(reject);
+        });
+      });
     }
 
-    // Wait for refresh to complete and retry the request
-    return new Promise<T>((resolve, reject) => {
-      subscribeTokenRefresh(async (token) => {
-        try {
-          headers.set("Authorization", `Bearer ${token}`);
-          const res = await fetch(`${API_BASE}${path}`, { ...options, headers });
-          if (!res.ok) {
-            const json = await res.json().catch(() => ({}));
-            reject(new Error(json.detail || "Request failed"));
-            return;
-          }
-          const data = await res.json() as T;
-          resolve(data);
-        } catch (err) {
-          reject(err);
-        }
-      });
-    });
+    // No refresh in progress — start one
+    _isRefreshing = true;
+    try {
+      const newAccessToken = await performRefresh();
+      _isRefreshing = false;
+      onRefreshed(newAccessToken);
+      // Retry the original request with the new token
+      return retryWithToken<T>(path, options, newAccessToken);
+    } catch (err) {
+      _isRefreshing = false;
+      // Notify all waiting subscribers of failure
+      _refreshSubscribers.forEach((cb) => cb(""));
+      _refreshSubscribers = [];
+      clearTokens();
+      // Redirect to login page only if not already there
+      if (typeof window !== "undefined" && !window.location.pathname.endsWith("/login")) {
+        window.location.href = "/login";
+      }
+      throw err;
+    }
   }
 
   if (!response.ok) {
