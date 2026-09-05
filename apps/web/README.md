@@ -11,6 +11,10 @@
 [![Gemini AI](https://img.shields.io/badge/Gemini_AI-1.5_Pro-purple?style=flat-square&logo=google)](https://deepmind.google/technologies/gemini/)
 [![GCP Container](https://img.shields.io/badge/GCP-Cloud_Run-4285F4?style=flat-square&logo=google-cloud)](https://cloud.google.com/run)
 [![Tests](https://img.shields.io/badge/tests-40%2F40%20PASSED-brightgreen?style=flat-square)](./src/__tests__/)
+[![Live Demo](https://img.shields.io/badge/Live_Demo-Online-success?style=flat-square&logo=githubpages&logoColor=white)](https://rishisharma029.github.io/campusOS/)
+
+> 🚀 **Live Interactive Demo**: [https://rishisharma029.github.io/campusOS/](https://rishisharma029.github.io/campusOS/)  
+> **Demo Login**: Admin: `admin@campusos.edu` / `Admin@123456` | Student: `rishi.sharma@university.edu` / `Rishi@123456` | Any 6-digit OTP
 
 > **CampusOS AI** is an enterprise-grade, AI-powered University Operating System built to unify daily academic operations, executive intelligence dashboards, and autonomous AI multi-agent orchestration into a cohesive 3-layer architecture.
 

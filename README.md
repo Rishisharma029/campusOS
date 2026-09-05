@@ -9,6 +9,14 @@
 ![Vite](https://img.shields.io/badge/Vite-6.x-646CFF?style=for-the-badge&logo=vite&logoColor=white)
 ![TailwindCSS](https://img.shields.io/badge/Tailwind_CSS-4.x-38B2AC?style=for-the-badge&logo=tailwind-css&logoColor=white)
 ![Pytest](https://img.shields.io/badge/Pytest-17%2F17_PASSED-brightgreen?style=for-the-badge&logo=pytest&logoColor=white)
+[![Live Demo](https://img.shields.io/badge/Live_Demo-CampusOS_AI-success?style=for-the-badge&logo=githubpages&logoColor=white)](https://rishisharma029.github.io/campusOS/)
+[![CI/CD Pipeline](https://img.shields.io/badge/CI%2FCD-100%25_Passing-brightgreen?style=for-the-badge&logo=githubactions&logoColor=white)](https://github.com/Rishisharma029/campusOS/actions)
+
+> 🚀 **Live Interactive Demo**: [https://rishisharma029.github.io/campusOS/](https://rishisharma029.github.io/campusOS/)  
+> 🔑 **Demo Portal Credentials**:  
+> - **System Administrator**: `admin@campusos.edu` / `Admin@123456`  
+> - **Benchmark Candidate (Rishi Sharma)**: `rishi.sharma@university.edu` / `Rishi@123456`  
+> - **Two-Factor Authentication (2FA)**: Enter any 6-digit OTP code in Demo mode.
 
 > **CampusOS AI** is an enterprise-grade university operating system and employability intelligence platform. It bridges higher education daily administration, executive governance, and student employability through a unified **3-Layer Architecture** and dedicated **SIH26044 Employability Ecosystem** (Verifiable Portfolios, AI Recruiter, Academician Portal, Institutional Intelligence, and AI Career Copilot).
 
