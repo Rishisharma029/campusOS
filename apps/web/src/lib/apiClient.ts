@@ -1,4 +1,4 @@
-﻿const API_BASE = (import.meta.env.VITE_API_URL as string) || "";
+const API_BASE = (import.meta.env.VITE_API_URL as string) || "";
 
 let _accessToken: string | null = sessionStorage.getItem("access_token");
 let _refreshToken: string | null = localStorage.getItem("refresh_token");
@@ -112,9 +112,10 @@ export async function apiFetch<T>(path: string, options: RequestInit = {}): Prom
       _refreshSubscribers.forEach((cb) => cb(""));
       _refreshSubscribers = [];
       clearTokens();
-      // Redirect to login page only if not already there
+      // Redirect to login page only if not already there, respecting base path
       if (typeof window !== "undefined" && !window.location.pathname.endsWith("/login")) {
-        window.location.href = "/login";
+        const basePath = window.location.hostname.endsWith("github.io") ? "/campusOS" : "";
+        window.location.href = `${basePath}/login`;
       }
       throw err;
     }

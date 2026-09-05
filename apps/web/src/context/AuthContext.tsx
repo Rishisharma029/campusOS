@@ -1,4 +1,4 @@
-﻿import React, { createContext, useContext, useState, useEffect } from 'react';
+import React, { createContext, useContext, useState, useEffect } from 'react';
 import { useRole, type UserRole } from './RoleContext';
 import { apiLogin, apiLogout, apiGetSessions } from '../api/auth';
 import { clearTokens, getAccessToken, getRefreshToken } from '../lib/apiClient';
@@ -74,7 +74,10 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
   // Fetch active session devices on authentication
   useEffect(() => {
-    if (isAuthenticated && (getAccessToken() || getRefreshToken())) {
+    const isStaticDeploy = typeof window !== 'undefined' && window.location.hostname.endsWith('github.io');
+    const isDemo = sessionStorage.getItem('auth_mode') === 'demo';
+
+    if (isAuthenticated && !isStaticDeploy && !isDemo && (getAccessToken() || getRefreshToken())) {
       apiGetSessions()
         .then((data) => {
           const mappedDevices: SessionDevice[] = data.map((d, index) => ({
@@ -89,12 +92,12 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         .catch((err) => {
           console.warn("Failed to fetch session devices:", err);
           setDevices([
-            { id: 'dev1', name: 'Chrome on Windows 11', location: 'Bengaluru, India', date: 'Active Now', isCurrent: true },
+            { id: 'dev1', name: 'Chrome on Mobile', location: 'Bengaluru, India', date: 'Active Now', isCurrent: true },
           ]);
         });
     } else if (isAuthenticated) {
       setDevices([
-        { id: 'dev1', name: 'Chrome on Windows 11', location: 'Bengaluru, India', date: 'Active Now', isCurrent: true },
+        { id: 'dev1', name: 'Chrome on Mobile', location: 'Bengaluru, India', date: 'Active Now', isCurrent: true },
       ]);
     } else {
       setDevices([]);
@@ -102,16 +105,27 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   }, [isAuthenticated]);
 
   const login = async (username: string, password: string, role: UserRole) => {
+    const isStaticDeploy = typeof window !== 'undefined' && window.location.hostname.endsWith('github.io');
+    if (isStaticDeploy) {
+      console.log("Static deployment detected (GitHub Pages). Using local Demo Mode authentication.");
+      sessionStorage.setItem('auth_mode', 'demo');
+      setUser({ username: username.split('@')[0] || username, role });
+      setRole(role);
+      return;
+    }
+
     try {
       const res = await apiLogin({ email: username, password });
       setUser({ username: res.name || username, role });
       setRole(role);
     } catch (err: any) {
-      const errMsg = err.message || '';
+      const errMsg = (err.message || '').toLowerCase();
       if (
-        errMsg.toLowerCase().includes('failed to fetch') || 
-        errMsg.toLowerCase().includes('network') ||
-        errMsg.toLowerCase().includes('load')
+        errMsg.includes('404') ||
+        errMsg.includes('failed to fetch') || 
+        errMsg.includes('network') ||
+        errMsg.includes('load') ||
+        errMsg.includes('api request failed')
       ) {
         console.warn("API server unreachable. Falling back to local Demo Mode auth.");
         sessionStorage.setItem('auth_mode', 'demo');
@@ -125,17 +139,22 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
   const verify2FA = async (otp: string): Promise<boolean> => {
     if (otp.length === 6) {
-      try {
-        await fetch("/api/v1/auth/mfa/verify", {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            "Authorization": `Bearer ${getAccessToken()}`,
-          },
-          body: JSON.stringify({ otp_code: otp }),
-        }).catch(() => {});
-      } catch (e) {
-        // No-op — fallback to local verification
+      const isStaticDeploy = typeof window !== 'undefined' && window.location.hostname.endsWith('github.io');
+      const isDemo = sessionStorage.getItem('auth_mode') === 'demo';
+
+      if (!isStaticDeploy && !isDemo && getAccessToken()) {
+        try {
+          await fetch("/api/v1/auth/mfa/verify", {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+              "Authorization": `Bearer ${getAccessToken()}`,
+            },
+            body: JSON.stringify({ otp_code: otp }),
+          }).catch(() => {});
+        } catch (e) {
+          // No-op — fallback to local verification
+        }
       }
       
       setIsAuthenticated(true);
