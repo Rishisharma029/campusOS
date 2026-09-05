@@ -1,12 +1,14 @@
-from datetime import datetime, timedelta, timezone
+from datetime import UTC, datetime, timedelta
+
 from fastapi import HTTPException, status
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.future import select
-from app.services.user import UserService
-from app.schemas.user import UserCreate, UserLogin, TokenResponse
-from app.security.auth import create_access_token, generate_refresh_token
-from app.models.user import User
+
 from app.models.security import UserSession
+from app.models.user import User
+from app.schemas.user import TokenResponse, UserCreate, UserLogin
+from app.security.auth import create_access_token, generate_refresh_token
+from app.services.user import UserService
 
 
 def parse_user_agent(ua_string: str) -> dict:
@@ -17,11 +19,16 @@ def parse_user_agent(ua_string: str) -> dict:
     ua = ua_string.lower()
     device_type = "Desktop"
     os_name = (
-        "Windows" if "windows" in ua
-        else "macOS" if "mac" in ua
-        else "Android" if "android" in ua
-        else "iOS" if "iphone" in ua or "ipad" in ua
-        else "Linux" if "linux" in ua
+        "Windows"
+        if "windows" in ua
+        else "macOS"
+        if "mac" in ua
+        else "Android"
+        if "android" in ua
+        else "iOS"
+        if "iphone" in ua or "ipad" in ua
+        else "Linux"
+        if "linux" in ua
         else "Unknown"
     )
 
@@ -29,10 +36,14 @@ def parse_user_agent(ua_string: str) -> dict:
         device_type = "Mobile"
 
     browser_name = (
-        "Edge" if "edg" in ua
-        else "Chrome" if "chrome" in ua
-        else "Firefox" if "firefox" in ua
-        else "Safari" if "safari" in ua
+        "Edge"
+        if "edg" in ua
+        else "Chrome"
+        if "chrome" in ua
+        else "Firefox"
+        if "firefox" in ua
+        else "Safari"
+        if "safari" in ua
         else "Unknown"
     )
     return {"device_type": device_type, "os_name": os_name, "browser_name": browser_name}
@@ -71,7 +82,7 @@ class UserController:
             device_type=ua_info["device_type"],
             os_name=ua_info["os_name"],
             browser_name=ua_info["browser_name"],
-            expires_at=datetime.now(timezone.utc) + timedelta(days=7),
+            expires_at=datetime.now(UTC) + timedelta(days=7),
             is_revoked=False,
         )
         db.add(session)
@@ -98,7 +109,7 @@ class UserController:
         stmt = select(UserSession).where(
             UserSession.refresh_token == refresh_token,
             UserSession.is_revoked == False,
-            UserSession.expires_at > datetime.now(timezone.utc),
+            UserSession.expires_at > datetime.now(UTC),
         )
         result = await db.execute(stmt)
         session = result.scalars().first()
@@ -136,7 +147,7 @@ class UserController:
             device_type=ua_info["device_type"],
             os_name=ua_info["os_name"],
             browser_name=ua_info["browser_name"],
-            expires_at=datetime.now(timezone.utc) + timedelta(days=7),
+            expires_at=datetime.now(UTC) + timedelta(days=7),
             is_revoked=False,
         )
         db.add(new_session)
@@ -154,7 +165,7 @@ class UserController:
         stmt = select(UserSession).where(
             UserSession.user_id == user_id,
             UserSession.is_revoked == False,
-            UserSession.expires_at > datetime.now(timezone.utc),
+            UserSession.expires_at > datetime.now(UTC),
         )
         result = await db.execute(stmt)
         return list(result.scalars().all())

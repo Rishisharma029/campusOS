@@ -1,9 +1,11 @@
-from datetime import datetime, timedelta, timezone
-from typing import Any, Union
-import jwt
-import bcrypt
 import secrets
 import uuid
+from datetime import UTC, datetime, timedelta
+from typing import Any
+
+import bcrypt
+import jwt
+
 from app.core.config import settings
 
 
@@ -31,7 +33,7 @@ def get_password_hash(password: str) -> str:
 
 
 def create_access_token(
-    subject: Union[str, Any],
+    subject: str | Any,
     expires_delta: timedelta | None = None,
 ) -> str:
     """
@@ -39,16 +41,14 @@ def create_access_token(
     Includes a unique JTI (JWT ID) claim for future token revocation support.
     Uses timezone-aware UTC datetime (Python 3.12+ compatible).
     """
-    expire = datetime.now(timezone.utc) + (
-        expires_delta
-        if expires_delta
-        else timedelta(minutes=settings.ACCESS_TOKEN_EXPIRE_MINUTES)
+    expire = datetime.now(UTC) + (
+        expires_delta if expires_delta else timedelta(minutes=settings.ACCESS_TOKEN_EXPIRE_MINUTES)
     )
     payload = {
         "exp": expire,
         "sub": str(subject),
         "jti": str(uuid.uuid4()),  # Unique token ID — used for revocation blacklisting
-        "iat": datetime.now(timezone.utc),  # Issued-at claim
+        "iat": datetime.now(UTC),  # Issued-at claim
     }
     return jwt.encode(payload, settings.SECRET_KEY, algorithm=settings.JWT_ALGORITHM)
 

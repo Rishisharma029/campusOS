@@ -1,13 +1,17 @@
-from typing import Optional, Sequence
+from collections.abc import Sequence
+
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.future import select
+
 from app.models.faculty import Faculty, FacultyLeave
 from app.schemas.faculty import FacultyCreate, FacultyUpdate, LeaveCreate
+
 
 class FacultyRepository:
     """
     Handles database operations for Faculty staff profiles and Leave requests.
     """
+
     def __init__(self, db: AsyncSession):
         self.db = db
 
@@ -15,15 +19,15 @@ class FacultyRepository:
         result = await self.db.execute(select(Faculty).offset(skip).limit(limit))
         return result.scalars().all()
 
-    async def get_by_id(self, faculty_id: str) -> Optional[Faculty]:
+    async def get_by_id(self, faculty_id: str) -> Faculty | None:
         result = await self.db.execute(select(Faculty).where(Faculty.id == faculty_id))
         return result.scalars().first()
 
-    async def get_by_employee_id(self, employee_id: str) -> Optional[Faculty]:
+    async def get_by_employee_id(self, employee_id: str) -> Faculty | None:
         result = await self.db.execute(select(Faculty).where(Faculty.employee_id == employee_id))
         return result.scalars().first()
 
-    async def get_by_user_id(self, user_id: str) -> Optional[Faculty]:
+    async def get_by_user_id(self, user_id: str) -> Faculty | None:
         result = await self.db.execute(select(Faculty).where(Faculty.user_id == user_id))
         return result.scalars().first()
 
@@ -36,7 +40,7 @@ class FacultyRepository:
             workload_hours=faculty_in.workload_hours,
             qualification=faculty_in.qualification,
             join_date=faculty_in.join_date,
-            status=faculty_in.status
+            status=faculty_in.status,
         )
         self.db.add(db_faculty)
         await self.db.flush()
@@ -56,10 +60,12 @@ class FacultyRepository:
 
     # Leaves
     async def get_leaves(self, faculty_id: str) -> Sequence[FacultyLeave]:
-        result = await self.db.execute(select(FacultyLeave).where(FacultyLeave.faculty_id == faculty_id))
+        result = await self.db.execute(
+            select(FacultyLeave).where(FacultyLeave.faculty_id == faculty_id)
+        )
         return result.scalars().all()
 
-    async def get_leave_by_id(self, leave_id: str) -> Optional[FacultyLeave]:
+    async def get_leave_by_id(self, leave_id: str) -> FacultyLeave | None:
         result = await self.db.execute(select(FacultyLeave).where(FacultyLeave.id == leave_id))
         return result.scalars().first()
 
@@ -69,7 +75,7 @@ class FacultyRepository:
             start_date=leave_in.start_date,
             end_date=leave_in.end_date,
             reason=leave_in.reason,
-            status="Pending"
+            status="Pending",
         )
         self.db.add(db_leave)
         await self.db.flush()

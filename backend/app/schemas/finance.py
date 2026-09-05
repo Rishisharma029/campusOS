@@ -1,5 +1,7 @@
-from pydantic import BaseModel, Field, ConfigDict
-from datetime import datetime, date
+from datetime import date, datetime
+
+from pydantic import BaseModel, ConfigDict, Field
+
 
 class FeeCollectionBase(BaseModel):
     student_id: str
@@ -12,12 +14,15 @@ class FeeCollectionBase(BaseModel):
     academic_year: str = Field("2025-26", min_length=4, max_length=10)
     fee_type: str = Field("Tuition", min_length=2, max_length=50)
 
+
 class FeeCollectionCreate(FeeCollectionBase):
     pass
+
 
 class FeePaymentUpdate(BaseModel):
     amount_paid: float = Field(..., ge=0.0)
     payment_mode: str = Field(..., min_length=2, max_length=30)
+
 
 class FeeCollectionResponse(FeeCollectionBase):
     id: str

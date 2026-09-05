@@ -15,3 +15,25 @@ fail_under = 65
 [tool.ruff]
 line-length = 100
 target-version = "py312"
+
+[tool.ruff.lint]
+# Rules: E/W=pycodestyle, F=pyflakes, I=isort, UP=pyupgrade, B=bugbear
+select = ["E", "W", "F", "I", "UP", "B"]
+
+ignore = [
+  # B008: FastAPI Depends() in function defaults is the official FastAPI pattern.
+  "B008",
+  # BLE001: Broad except Exception intentional in auth/totp for timing-safe error handling.
+  "BLE001",
+  # B904: raise-without-from-cause -- existing pattern in auth dependencies.
+  "B904",
+  # F821: SQLAlchemy relationship("ClassName") string forward refs look undefined to ruff.
+  "F821",
+  # E501: Long lines in career.py are inline mock JSON data structures.
+  "E501",
+  # E712: SQLAlchemy ORM filter uses == False for column comparison (not `not col`).
+  "E712",
+]
+
+[tool.ruff.lint.isort]
+known-first-party = ["app"]

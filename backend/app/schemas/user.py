@@ -1,27 +1,32 @@
 from datetime import datetime
-from typing import Optional
-from pydantic import BaseModel, EmailStr, Field, ConfigDict
+
+from pydantic import BaseModel, ConfigDict, EmailStr, Field
+
 
 class UserBase(BaseModel):
     email: EmailStr
     name: str = Field(..., min_length=2, max_length=100)
     role: str = Field("Student", description="User role (Admin, Student, Faculty, etc.)")
 
+
 class UserCreate(UserBase):
     password: str = Field(..., min_length=6, max_length=100)
+
 
 class UserResponse(UserBase):
     id: str
     is_active: bool
     created_at: datetime
     updated_at: datetime
-    
+
     model_config = ConfigDict(from_attributes=True)
+
 
 class UserLogin(BaseModel):
     email: EmailStr
     password: str
-    role: Optional[str] = None
+    role: str | None = None
+
 
 class TokenResponse(BaseModel):
     access_token: str
@@ -30,8 +35,10 @@ class TokenResponse(BaseModel):
     role: str
     name: str
 
+
 class RefreshTokenRequest(BaseModel):
     refresh_token: str
+
 
 class SessionResponse(BaseModel):
     id: str

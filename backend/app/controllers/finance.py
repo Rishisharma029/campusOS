@@ -1,16 +1,22 @@
-from sqlalchemy.ext.asyncio import AsyncSession
+from collections.abc import Sequence
+
 from fastapi import HTTPException, status
+from sqlalchemy.ext.asyncio import AsyncSession
+
+from app.models.finance import FeeCollection
 from app.repositories.finance import FinanceRepository
 from app.schemas.finance import FeeCollectionCreate, FeePaymentUpdate
-from app.models.finance import FeeCollection
-from typing import Sequence
+
 
 class FinanceController:
     """
     Orchestrates fee record collections and payments.
     """
+
     @staticmethod
-    async def get_all_fees(db: AsyncSession, skip: int = 0, limit: int = 100) -> Sequence[FeeCollection]:
+    async def get_all_fees(
+        db: AsyncSession, skip: int = 0, limit: int = 100
+    ) -> Sequence[FeeCollection]:
         repo = FinanceRepository(db)
         return await repo.get_all_fees(skip, limit)
 
@@ -27,7 +33,7 @@ class FinanceController:
         if existing:
             raise HTTPException(
                 status_code=status.HTTP_400_BAD_REQUEST,
-                detail=f"Fee invoice '{fee_in.invoice_no}' is already registered."
+                detail=f"Fee invoice '{fee_in.invoice_no}' is already registered.",
             )
         res = await repo.create_fee(fee_in)
         await db.commit()
@@ -39,8 +45,7 @@ class FinanceController:
         fee = await repo.get_by_id(fee_id)
         if not fee:
             raise HTTPException(
-                status_code=status.HTTP_404_NOT_FOUND,
-                detail="Fee collection record not found."
+                status_code=status.HTTP_404_NOT_FOUND, detail="Fee collection record not found."
             )
         res = await repo.update_payment(fee, update_in)
         await db.commit()

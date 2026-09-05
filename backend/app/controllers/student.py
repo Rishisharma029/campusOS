@@ -1,14 +1,18 @@
+from collections.abc import Sequence
+
 from sqlalchemy.ext.asyncio import AsyncSession
-from app.services.student import StudentService
-from app.schemas.student import StudentCreate, StudentUpdate
+
 from app.models.student import Student
-from typing import Sequence
+from app.schemas.student import StudentCreate, StudentUpdate
+from app.services.student import StudentService
+
 
 class StudentController:
     """
     Orchestrates Student profile operations.
     Invokes the StudentService and commits changes.
     """
+
     @staticmethod
     async def create_student(db: AsyncSession, student_in: StudentCreate) -> Student:
         service = StudentService(db)
@@ -32,7 +36,9 @@ class StudentController:
         return await service.get_student_by_user_id(user_id)
 
     @staticmethod
-    async def update_student(db: AsyncSession, student_id: str, update_in: StudentUpdate) -> Student:
+    async def update_student(
+        db: AsyncSession, student_id: str, update_in: StudentUpdate
+    ) -> Student:
         service = StudentService(db)
         res = await service.update_student(student_id, update_in)
         await db.commit()

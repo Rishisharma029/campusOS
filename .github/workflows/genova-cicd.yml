@@ -1,4 +1,4 @@
-﻿# ─────────────────────────────────────────────────────────────────────────────
+# ─────────────────────────────────────────────────────────────────────────────
 # GENOVA CampusOS — CI/CD Pipeline for sih-2026-genova Branch
 # SIH 2026 | Problem Code: SIH26044
 #
@@ -103,10 +103,12 @@ jobs:
       - name: Upload coverage XML to Codecov
         uses: codecov/codecov-action@v4
         if: always()
+        continue-on-error: true
         with:
           files: ./backend/coverage.xml
           flags: backend
           name: campusos-backend
+          fail_ci_if_error: false
 
       - name: Upload coverage HTML report
         uses: actions/upload-artifact@v4
@@ -250,7 +252,7 @@ jobs:
       - name: Build for GitHub Pages
         run: cd apps/web && npm run build
         env:
-          # GitHub Pages is served from /campusOS/ — App.tsx detects this and sets basename
+          VITE_BASE_PATH: '/campusOS/'
           VITE_API_URL: ""
 
       - name: Configure GitHub Pages

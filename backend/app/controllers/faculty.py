@@ -1,14 +1,18 @@
+from collections.abc import Sequence
+
 from sqlalchemy.ext.asyncio import AsyncSession
-from app.services.faculty import FacultyService
-from app.schemas.faculty import FacultyCreate, FacultyUpdate, LeaveCreate
+
 from app.models.faculty import Faculty, FacultyLeave
-from typing import Sequence
+from app.schemas.faculty import FacultyCreate, FacultyUpdate, LeaveCreate
+from app.services.faculty import FacultyService
+
 
 class FacultyController:
     """
     Orchestrates Faculty staff profile and Leave operations.
     Invokes the FacultyService and commits changes.
     """
+
     @staticmethod
     async def create_faculty(db: AsyncSession, faculty_in: FacultyCreate) -> Faculty:
         service = FacultyService(db)
@@ -17,7 +21,9 @@ class FacultyController:
         return res
 
     @staticmethod
-    async def get_faculty_members(db: AsyncSession, skip: int = 0, limit: int = 100) -> Sequence[Faculty]:
+    async def get_faculty_members(
+        db: AsyncSession, skip: int = 0, limit: int = 100
+    ) -> Sequence[Faculty]:
         service = FacultyService(db)
         return await service.get_faculty_members(skip, limit)
 
@@ -32,7 +38,9 @@ class FacultyController:
         return await service.get_faculty_by_user_id(user_id)
 
     @staticmethod
-    async def update_faculty(db: AsyncSession, faculty_id: str, update_in: FacultyUpdate) -> Faculty:
+    async def update_faculty(
+        db: AsyncSession, faculty_id: str, update_in: FacultyUpdate
+    ) -> Faculty:
         service = FacultyService(db)
         res = await service.update_faculty(faculty_id, update_in)
         await db.commit()

@@ -1,6 +1,5 @@
 from __future__ import annotations
 
-from typing import Optional
 from pydantic import Field, model_validator
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
@@ -52,7 +51,7 @@ class Settings(BaseSettings):
 
     # ── Production Guards ─────────────────────────────────────────────────────
     @model_validator(mode="after")
-    def enforce_production_security(self) -> "Settings":
+    def enforce_production_security(self) -> Settings:
         """
         Reject startup in production if the secret key is the insecure dev default
         or shorter than 32 characters.
@@ -62,18 +61,18 @@ class Settings(BaseSettings):
                 raise ValueError(
                     "SECRET_KEY must be a cryptographically secure random string "
                     "(≥ 32 characters) when ENVIRONMENT=production. "
-                    "Generate one with: python -c \"import secrets; print(secrets.token_hex(32))\""
+                    'Generate one with: python -c "import secrets; print(secrets.token_hex(32))"'
                 )
         return self
 
     # ── Derived Properties ────────────────────────────────────────────────────
     @property
-    def docs_url(self) -> Optional[str]:
+    def docs_url(self) -> str | None:
         """OpenAPI /docs disabled in production."""
         return "/docs" if self.ENVIRONMENT != "production" else None
 
     @property
-    def redoc_url(self) -> Optional[str]:
+    def redoc_url(self) -> str | None:
         """ReDoc /redoc disabled in production."""
         return "/redoc" if self.ENVIRONMENT != "production" else None
 

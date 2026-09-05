@@ -1,14 +1,18 @@
+from collections.abc import Sequence
+
 from fastapi import HTTPException, status
 from sqlalchemy.ext.asyncio import AsyncSession
+
+from app.models.faculty import Faculty, FacultyLeave
 from app.repositories.faculty import FacultyRepository
 from app.schemas.faculty import FacultyCreate, FacultyUpdate, LeaveCreate
-from app.models.faculty import Faculty, FacultyLeave
-from typing import Sequence
+
 
 class FacultyService:
     """
     Business logic for Faculty staff profiles and leave records.
     """
+
     def __init__(self, db: AsyncSession):
         self.repo = FacultyRepository(db)
 
@@ -17,7 +21,7 @@ class FacultyService:
         if existing:
             raise HTTPException(
                 status_code=status.HTTP_400_BAD_REQUEST,
-                detail=f"Faculty member with employee ID '{faculty_in.employee_id}' already exists."
+                detail=f"Faculty member with employee ID '{faculty_in.employee_id}' already exists.",
             )
         return await self.repo.create(faculty_in)
 
@@ -28,8 +32,7 @@ class FacultyService:
         faculty = await self.repo.get_by_id(faculty_id)
         if not faculty:
             raise HTTPException(
-                status_code=status.HTTP_404_NOT_FOUND,
-                detail="Faculty profile not found."
+                status_code=status.HTTP_404_NOT_FOUND, detail="Faculty profile not found."
             )
         return faculty
 
@@ -38,7 +41,7 @@ class FacultyService:
         if not faculty:
             raise HTTPException(
                 status_code=status.HTTP_404_NOT_FOUND,
-                detail="Faculty profile not found for this user."
+                detail="Faculty profile not found for this user.",
             )
         return faculty
 
@@ -60,7 +63,7 @@ class FacultyService:
         if leave_in.start_date > leave_in.end_date:
             raise HTTPException(
                 status_code=status.HTTP_400_BAD_REQUEST,
-                detail="Leave start date cannot be after end date."
+                detail="Leave start date cannot be after end date.",
             )
         return await self.repo.create_leave(leave_in)
 
@@ -68,12 +71,11 @@ class FacultyService:
         leave = await self.repo.get_leave_by_id(leave_id)
         if not leave:
             raise HTTPException(
-                status_code=status.HTTP_404_NOT_FOUND,
-                detail="Leave record not found."
+                status_code=status.HTTP_404_NOT_FOUND, detail="Leave record not found."
             )
         if status_str not in ["Pending", "Approved", "Rejected"]:
             raise HTTPException(
                 status_code=status.HTTP_400_BAD_REQUEST,
-                detail="Invalid status. Choose from: Pending, Approved, Rejected."
+                detail="Invalid status. Choose from: Pending, Approved, Rejected.",
             )
         return await self.repo.update_leave_status(leave, status_str)

@@ -1,14 +1,18 @@
-from sqlalchemy.ext.asyncio import AsyncSession
+from collections.abc import Sequence
+
 from fastapi import HTTPException, status
+from sqlalchemy.ext.asyncio import AsyncSession
+
+from app.models.library import Book, BookBorrow
 from app.repositories.library import LibraryRepository
 from app.schemas.library import BookCreate, BorrowCreate, ReturnRequest
-from app.models.library import Book, BookBorrow
-from typing import Sequence
+
 
 class LibraryController:
     """
     Orchestrates Library catalogue entries and borrowing sessions.
     """
+
     @staticmethod
     async def get_all_books(db: AsyncSession, skip: int = 0, limit: int = 100) -> Sequence[Book]:
         repo = LibraryRepository(db)
@@ -30,7 +34,7 @@ class LibraryController:
         if existing:
             raise HTTPException(
                 status_code=status.HTTP_400_BAD_REQUEST,
-                detail=f"Book with ISBN '{book_in.isbn}' already exists."
+                detail=f"Book with ISBN '{book_in.isbn}' already exists.",
             )
         res = await repo.create_book(book_in)
         await db.commit()
@@ -46,7 +50,7 @@ class LibraryController:
         if book.copies_available <= 0:
             raise HTTPException(
                 status_code=status.HTTP_400_BAD_REQUEST,
-                detail="No copies of this book are currently available for checkout."
+                detail="No copies of this book are currently available for checkout.",
             )
         # Decrement copies
         book.copies_available -= 1
@@ -59,9 +63,13 @@ class LibraryController:
         repo = LibraryRepository(db)
         borrow = await repo.get_borrow_by_id(borrow_id)
         if not borrow:
-            raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Borrow record not found.")
+            raise HTTPException(
+                status_code=status.HTTP_404_NOT_FOUND, detail="Borrow record not found."
+            )
         if borrow.return_date:
-            raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Book has already been returned.")
+            raise HTTPException(
+                status_code=status.HTTP_400_BAD_REQUEST, detail="Book has already been returned."
+            )
 
         # Increment copies
         book = await repo.get_book_by_id(borrow.book_id)

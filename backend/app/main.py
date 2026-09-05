@@ -10,10 +10,10 @@ from sqlalchemy.exc import SQLAlchemyError
 from app.core.config import settings
 from app.core.limiter import limiter
 from app.middlewares.security_headers import SecurityHeadersMiddleware
-from app.routers import user, mfa, academic, student, faculty, operation, finance, library, career
-
+from app.routers import academic, career, faculty, finance, library, mfa, operation, student, user
 
 # ── Application Lifespan ──────────────────────────────────────────────────────
+
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
@@ -26,6 +26,7 @@ async def lifespan(app: FastAPI):
         import app.models  # noqa: F401 — side-effect import registers all ORM models
         from app.database.base_model import Base
         from app.database.session import engine
+
         async with engine.begin() as conn:
             await conn.run_sync(Base.metadata.create_all)
     yield
@@ -65,6 +66,7 @@ app.add_middleware(
 
 # ── Global Exception Handlers ─────────────────────────────────────────────────
 
+
 @app.exception_handler(SQLAlchemyError)
 async def sqlalchemy_exception_handler(request: Request, exc: SQLAlchemyError) -> JSONResponse:
     """
@@ -86,7 +88,7 @@ async def generic_exception_handler(request: Request, exc: Exception) -> JSONRes
     if settings.ENVIRONMENT == "development":
         return JSONResponse(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-            content={"detail": f"[DEV] {type(exc).__name__}: {str(exc)}"},
+            content={"detail": f"[DEV] {type(exc).__name__}: {exc!s}"},
         )
     return JSONResponse(
         status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
@@ -104,10 +106,13 @@ app.include_router(faculty.router, prefix=settings.API_V1_STR, tags=["Faculty"])
 app.include_router(operation.router, prefix=settings.API_V1_STR, tags=["Operations"])
 app.include_router(finance.router, prefix=settings.API_V1_STR, tags=["Finance"])
 app.include_router(library.router, prefix=settings.API_V1_STR, tags=["Library"])
-app.include_router(career.router, prefix=settings.API_V1_STR, tags=["Career & Employability (SIH26044)"])
+app.include_router(
+    career.router, prefix=settings.API_V1_STR, tags=["Career & Employability (SIH26044)"]
+)
 
 
 # ── Core Utility Endpoints ────────────────────────────────────────────────────
+
 
 @app.get("/", summary="Root status check", include_in_schema=False)
 async def root():
@@ -127,6 +132,7 @@ async def root():
 )
 async def health():
     from sqlalchemy.future import select
+
     from app.database.session import AsyncSessionLocal
 
     db_status = "unknown"

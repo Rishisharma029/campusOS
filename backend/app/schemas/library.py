@@ -1,6 +1,7 @@
-from pydantic import BaseModel, Field, ConfigDict
-from datetime import datetime, date
-from typing import Optional
+from datetime import date, datetime
+
+from pydantic import BaseModel, ConfigDict, Field
+
 
 class BookBase(BaseModel):
     title: str = Field(..., min_length=1, max_length=255)
@@ -9,8 +10,10 @@ class BookBase(BaseModel):
     category: str = Field(..., min_length=2, max_length=50)
     copies_total: int = Field(1, ge=0)
 
+
 class BookCreate(BookBase):
     pass
+
 
 class BookResponse(BookBase):
     id: str
@@ -18,21 +21,25 @@ class BookResponse(BookBase):
     created_at: datetime
     model_config = ConfigDict(from_attributes=True)
 
+
 class BorrowBase(BaseModel):
     book_id: str
     student_id: str
     issue_date: date
     due_date: date
 
+
 class BorrowCreate(BorrowBase):
     pass
 
+
 class BorrowResponse(BorrowBase):
     id: str
-    return_date: Optional[date] = None
+    return_date: date | None = None
     fine_amount: float
     created_at: datetime
     model_config = ConfigDict(from_attributes=True)
+
 
 class ReturnRequest(BaseModel):
     return_date: date

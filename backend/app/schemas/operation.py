@@ -1,5 +1,7 @@
-from pydantic import BaseModel, Field, ConfigDict
-from datetime import datetime, date
+from datetime import date, datetime
+
+from pydantic import BaseModel, ConfigDict, Field
+
 
 class AttendanceBase(BaseModel):
     student_id: str
@@ -7,13 +9,16 @@ class AttendanceBase(BaseModel):
     date: date
     status: str = Field("Present", description="Present | Absent | Late")
 
+
 class AttendanceCreate(AttendanceBase):
     pass
+
 
 class AttendanceResponse(AttendanceBase):
     id: str
     created_at: datetime
     model_config = ConfigDict(from_attributes=True)
+
 
 class ResultBase(BaseModel):
     student_id: str
@@ -23,8 +28,10 @@ class ResultBase(BaseModel):
     grade: str = Field(..., min_length=1, max_length=5)
     exam_type: str = Field("End Semester", description="End Semester | Internal | Midterm")
 
+
 class ResultCreate(ResultBase):
     pass
+
 
 class ResultResponse(ResultBase):
     id: str

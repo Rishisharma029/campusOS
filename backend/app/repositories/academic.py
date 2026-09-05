@@ -1,13 +1,17 @@
-from typing import Optional, Sequence
+from collections.abc import Sequence
+
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.future import select
-from app.models.academic import Department, Course, Subject
-from app.schemas.academic import DepartmentCreate, CourseCreate, SubjectCreate
+
+from app.models.academic import Course, Department, Subject
+from app.schemas.academic import CourseCreate, DepartmentCreate, SubjectCreate
+
 
 class AcademicRepository:
     """
     Handles database operations for Department, Course, and Subject records.
     """
+
     def __init__(self, db: AsyncSession):
         self.db = db
 
@@ -16,11 +20,11 @@ class AcademicRepository:
         result = await self.db.execute(select(Department).offset(skip).limit(limit))
         return result.scalars().all()
 
-    async def get_department_by_id(self, dept_id: str) -> Optional[Department]:
+    async def get_department_by_id(self, dept_id: str) -> Department | None:
         result = await self.db.execute(select(Department).where(Department.id == dept_id))
         return result.scalars().first()
 
-    async def get_department_by_code(self, code: str) -> Optional[Department]:
+    async def get_department_by_code(self, code: str) -> Department | None:
         result = await self.db.execute(select(Department).where(Department.code == code))
         return result.scalars().first()
 
@@ -35,11 +39,11 @@ class AcademicRepository:
         result = await self.db.execute(select(Course).offset(skip).limit(limit))
         return result.scalars().all()
 
-    async def get_course_by_id(self, course_id: str) -> Optional[Course]:
+    async def get_course_by_id(self, course_id: str) -> Course | None:
         result = await self.db.execute(select(Course).where(Course.id == course_id))
         return result.scalars().first()
 
-    async def get_course_by_code(self, code: str) -> Optional[Course]:
+    async def get_course_by_code(self, code: str) -> Course | None:
         result = await self.db.execute(select(Course).where(Course.code == code))
         return result.scalars().first()
 
@@ -48,7 +52,7 @@ class AcademicRepository:
             department_id=course_in.department_id,
             name=course_in.name,
             code=course_in.code,
-            duration_years=course_in.duration_years
+            duration_years=course_in.duration_years,
         )
         self.db.add(db_course)
         await self.db.flush()
@@ -59,11 +63,11 @@ class AcademicRepository:
         result = await self.db.execute(select(Subject).offset(skip).limit(limit))
         return result.scalars().all()
 
-    async def get_subject_by_id(self, subject_id: str) -> Optional[Subject]:
+    async def get_subject_by_id(self, subject_id: str) -> Subject | None:
         result = await self.db.execute(select(Subject).where(Subject.id == subject_id))
         return result.scalars().first()
 
-    async def get_subject_by_code(self, code: str) -> Optional[Subject]:
+    async def get_subject_by_code(self, code: str) -> Subject | None:
         result = await self.db.execute(select(Subject).where(Subject.code == code))
         return result.scalars().first()
 
@@ -76,7 +80,7 @@ class AcademicRepository:
             course_id=subject_in.course_id,
             name=subject_in.name,
             code=subject_in.code,
-            credits=subject_in.credits
+            credits=subject_in.credits,
         )
         self.db.add(db_subject)
         await self.db.flush()

@@ -1,13 +1,17 @@
-from typing import Optional, Sequence
+from collections.abc import Sequence
+
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.future import select
+
 from app.models.student import Student
 from app.schemas.student import StudentCreate, StudentUpdate
+
 
 class StudentRepository:
     """
     Handles database operations for Student records.
     """
+
     def __init__(self, db: AsyncSession):
         self.db = db
 
@@ -15,15 +19,15 @@ class StudentRepository:
         result = await self.db.execute(select(Student).offset(skip).limit(limit))
         return result.scalars().all()
 
-    async def get_by_id(self, student_id: str) -> Optional[Student]:
+    async def get_by_id(self, student_id: str) -> Student | None:
         result = await self.db.execute(select(Student).where(Student.id == student_id))
         return result.scalars().first()
 
-    async def get_by_roll_no(self, roll_no: str) -> Optional[Student]:
+    async def get_by_roll_no(self, roll_no: str) -> Student | None:
         result = await self.db.execute(select(Student).where(Student.roll_no == roll_no))
         return result.scalars().first()
 
-    async def get_by_user_id(self, user_id: str) -> Optional[Student]:
+    async def get_by_user_id(self, user_id: str) -> Student | None:
         result = await self.db.execute(select(Student).where(Student.user_id == user_id))
         return result.scalars().first()
 
@@ -44,7 +48,7 @@ class StudentRepository:
             status=student_in.status,
             hostel_room=student_in.hostel_room,
             transport_bus=student_in.transport_bus,
-            placement_status=student_in.placement_status
+            placement_status=student_in.placement_status,
         )
         self.db.add(db_student)
         await self.db.flush()

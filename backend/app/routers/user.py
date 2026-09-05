@@ -1,19 +1,25 @@
 from fastapi import APIRouter, Depends, Request, status
 from sqlalchemy.ext.asyncio import AsyncSession
-from app.database.session import get_db
-from app.schemas.user import (
-    UserCreate, UserResponse, UserLogin, TokenResponse,
-    RefreshTokenRequest, SessionResponse,
-)
+
 from app.controllers.user import UserController
-from app.dependencies.auth import get_current_user, PermissionChecker
 from app.core.limiter import limiter
+from app.database.session import get_db
+from app.dependencies.auth import PermissionChecker, get_current_user
 from app.models.user import User
+from app.schemas.user import (
+    RefreshTokenRequest,
+    SessionResponse,
+    TokenResponse,
+    UserCreate,
+    UserLogin,
+    UserResponse,
+)
 
 router = APIRouter()
 
 
 # ── Authentication ────────────────────────────────────────────────────────────
+
 
 @router.post(
     "/auth/register",
@@ -73,6 +79,7 @@ async def refresh(
 
 # ── Session Management ────────────────────────────────────────────────────────
 
+
 @router.get(
     "/auth/sessions",
     response_model=list[SessionResponse],
@@ -112,6 +119,7 @@ async def revoke_all_sessions(
 
 # ── Profile ───────────────────────────────────────────────────────────────────
 
+
 @router.get(
     "/users/me",
     response_model=UserResponse,
@@ -122,6 +130,7 @@ async def get_me(current_user: User = Depends(get_current_user)):
 
 
 # ── RBAC Test Endpoint ────────────────────────────────────────────────────────
+
 
 @router.get(
     "/admin/verify",

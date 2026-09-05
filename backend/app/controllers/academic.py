@@ -1,14 +1,18 @@
+from collections.abc import Sequence
+
 from sqlalchemy.ext.asyncio import AsyncSession
+
+from app.models.academic import Course, Department, Subject
+from app.schemas.academic import CourseCreate, DepartmentCreate, SubjectCreate
 from app.services.academic import AcademicService
-from app.schemas.academic import DepartmentCreate, CourseCreate, SubjectCreate
-from app.models.academic import Department, Course, Subject
-from typing import Sequence
+
 
 class AcademicController:
     """
     Orchestrates department, course, and subject operations.
     Invokes the AcademicService and commits the transaction.
     """
+
     @staticmethod
     async def create_department(db: AsyncSession, dept_in: DepartmentCreate) -> Department:
         service = AcademicService(db)
@@ -17,7 +21,9 @@ class AcademicController:
         return res
 
     @staticmethod
-    async def get_departments(db: AsyncSession, skip: int = 0, limit: int = 100) -> Sequence[Department]:
+    async def get_departments(
+        db: AsyncSession, skip: int = 0, limit: int = 100
+    ) -> Sequence[Department]:
         service = AcademicService(db)
         return await service.get_departments(skip, limit)
 

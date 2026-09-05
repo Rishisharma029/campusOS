@@ -1,15 +1,19 @@
+from collections.abc import Sequence
+
 from fastapi import HTTPException, status
 from sqlalchemy.ext.asyncio import AsyncSession
+
+from app.models.academic import Course, Department, Subject
 from app.repositories.academic import AcademicRepository
-from app.schemas.academic import DepartmentCreate, CourseCreate, SubjectCreate
-from app.models.academic import Department, Course, Subject
-from typing import Sequence
+from app.schemas.academic import CourseCreate, DepartmentCreate, SubjectCreate
+
 
 class AcademicService:
     """
     Business logic for Academics: Department, Course, and Subject.
     Checks code uniqueness and coordinates queries.
     """
+
     def __init__(self, db: AsyncSession):
         self.repo = AcademicRepository(db)
 
@@ -19,7 +23,7 @@ class AcademicService:
         if existing:
             raise HTTPException(
                 status_code=status.HTTP_400_BAD_REQUEST,
-                detail=f"Department code '{dept_in.code}' is already registered."
+                detail=f"Department code '{dept_in.code}' is already registered.",
             )
         return await self.repo.create_department(dept_in)
 
@@ -30,8 +34,7 @@ class AcademicService:
         dept = await self.repo.get_department_by_id(dept_id)
         if not dept:
             raise HTTPException(
-                status_code=status.HTTP_404_NOT_FOUND,
-                detail="Department not found."
+                status_code=status.HTTP_404_NOT_FOUND, detail="Department not found."
             )
         return dept
 
@@ -42,7 +45,7 @@ class AcademicService:
         if existing:
             raise HTTPException(
                 status_code=status.HTTP_400_BAD_REQUEST,
-                detail=f"Course code '{course_in.code}' is already registered."
+                detail=f"Course code '{course_in.code}' is already registered.",
             )
         # Check department existence
         await self.get_department(course_in.department_id)
@@ -54,10 +57,7 @@ class AcademicService:
     async def get_course(self, course_id: str) -> Course:
         course = await self.repo.get_course_by_id(course_id)
         if not course:
-            raise HTTPException(
-                status_code=status.HTTP_404_NOT_FOUND,
-                detail="Course not found."
-            )
+            raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Course not found.")
         return course
 
     # Subject
@@ -67,7 +67,7 @@ class AcademicService:
         if existing:
             raise HTTPException(
                 status_code=status.HTTP_400_BAD_REQUEST,
-                detail=f"Subject code '{subject_in.code}' is already registered."
+                detail=f"Subject code '{subject_in.code}' is already registered.",
             )
         # Check course existence
         await self.get_course(subject_in.course_id)

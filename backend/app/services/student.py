@@ -1,14 +1,18 @@
+from collections.abc import Sequence
+
 from fastapi import HTTPException, status
 from sqlalchemy.ext.asyncio import AsyncSession
+
+from app.models.student import Student
 from app.repositories.student import StudentRepository
 from app.schemas.student import StudentCreate, StudentUpdate
-from app.models.student import Student
-from typing import Sequence
+
 
 class StudentService:
     """
     Business logic for Students. Validates roll numbers and links user records.
     """
+
     def __init__(self, db: AsyncSession):
         self.repo = StudentRepository(db)
 
@@ -17,7 +21,7 @@ class StudentService:
         if existing:
             raise HTTPException(
                 status_code=status.HTTP_400_BAD_REQUEST,
-                detail=f"Student with roll number '{student_in.roll_no}' already exists."
+                detail=f"Student with roll number '{student_in.roll_no}' already exists.",
             )
         return await self.repo.create(student_in)
 
@@ -28,8 +32,7 @@ class StudentService:
         student = await self.repo.get_by_id(student_id)
         if not student:
             raise HTTPException(
-                status_code=status.HTTP_404_NOT_FOUND,
-                detail="Student profile not found."
+                status_code=status.HTTP_404_NOT_FOUND, detail="Student profile not found."
             )
         return student
 
@@ -38,7 +41,7 @@ class StudentService:
         if not student:
             raise HTTPException(
                 status_code=status.HTTP_404_NOT_FOUND,
-                detail="Student profile not found for this user."
+                detail="Student profile not found for this user.",
             )
         return student
 

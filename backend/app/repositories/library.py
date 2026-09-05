@@ -1,14 +1,18 @@
-from typing import Optional, Sequence
+from collections.abc import Sequence
+from datetime import date
+
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.future import select
+
 from app.models.library import Book, BookBorrow
 from app.schemas.library import BookCreate, BorrowCreate
-from datetime import date
+
 
 class LibraryRepository:
     """
     Handles database operations for library Books and checkout Borrow logs.
     """
+
     def __init__(self, db: AsyncSession):
         self.db = db
 
@@ -17,11 +21,11 @@ class LibraryRepository:
         result = await self.db.execute(select(Book).offset(skip).limit(limit))
         return result.scalars().all()
 
-    async def get_book_by_id(self, book_id: str) -> Optional[Book]:
+    async def get_book_by_id(self, book_id: str) -> Book | None:
         result = await self.db.execute(select(Book).where(Book.id == book_id))
         return result.scalars().first()
 
-    async def get_book_by_isbn(self, isbn: str) -> Optional[Book]:
+    async def get_book_by_isbn(self, isbn: str) -> Book | None:
         result = await self.db.execute(select(Book).where(Book.isbn == isbn))
         return result.scalars().first()
 
@@ -32,7 +36,7 @@ class LibraryRepository:
             isbn=book_in.isbn,
             category=book_in.category,
             copies_total=book_in.copies_total,
-            copies_available=book_in.copies_total
+            copies_available=book_in.copies_total,
         )
         self.db.add(db_book)
         await self.db.flush()
@@ -40,10 +44,12 @@ class LibraryRepository:
 
     # Borrows
     async def get_borrows_by_student(self, student_id: str) -> Sequence[BookBorrow]:
-        result = await self.db.execute(select(BookBorrow).where(BookBorrow.student_id == student_id))
+        result = await self.db.execute(
+            select(BookBorrow).where(BookBorrow.student_id == student_id)
+        )
         return result.scalars().all()
 
-    async def get_borrow_by_id(self, borrow_id: str) -> Optional[BookBorrow]:
+    async def get_borrow_by_id(self, borrow_id: str) -> BookBorrow | None:
         result = await self.db.execute(select(BookBorrow).where(BookBorrow.id == borrow_id))
         return result.scalars().first()
 
@@ -53,7 +59,7 @@ class LibraryRepository:
             student_id=borrow_in.student_id,
             issue_date=borrow_in.issue_date,
             due_date=borrow_in.due_date,
-            fine_amount=0.00
+            fine_amount=0.00,
         )
         self.db.add(db_borrow)
         await self.db.flush()

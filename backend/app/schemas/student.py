@@ -1,6 +1,7 @@
-from pydantic import BaseModel, Field, ConfigDict, EmailStr
 from datetime import datetime
-from typing import Optional
+
+from pydantic import BaseModel, ConfigDict, EmailStr, Field
+
 
 class StudentBase(BaseModel):
     user_id: str
@@ -20,20 +21,23 @@ class StudentBase(BaseModel):
     transport_bus: str = "None"
     placement_status: str = "Preparing"
 
+
 class StudentCreate(StudentBase):
     pass
 
+
 class StudentUpdate(BaseModel):
-    year: Optional[int] = Field(None, ge=1, le=5)
-    semester: Optional[int] = Field(None, ge=1, le=10)
-    cgpa: Optional[float] = Field(None, ge=0.0, le=10.0)
-    status: Optional[str] = None
-    hostel_room: Optional[str] = None
-    transport_bus: Optional[str] = None
-    placement_status: Optional[str] = None
-    parent_name: Optional[str] = None
-    parent_email: Optional[EmailStr] = None
-    phone: Optional[str] = None
+    year: int | None = Field(None, ge=1, le=5)
+    semester: int | None = Field(None, ge=1, le=10)
+    cgpa: float | None = Field(None, ge=0.0, le=10.0)
+    status: str | None = None
+    hostel_room: str | None = None
+    transport_bus: str | None = None
+    placement_status: str | None = None
+    parent_name: str | None = None
+    parent_email: EmailStr | None = None
+    phone: str | None = None
+
 
 class StudentResponse(StudentBase):
     id: str

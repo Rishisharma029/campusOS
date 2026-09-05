@@ -69,4 +69,7 @@ async def verify_mfa(
             detail="Invalid or expired OTP code. Please try again.",
         )
 
-    return {"message": "MFA verification successful. Authentication complete.", "user": current_user.name}
+    return {
+        "message": "MFA verification successful. Authentication complete.",
+        "user": current_user.name,
+    }

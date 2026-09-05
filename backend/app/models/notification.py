@@ -1,6 +1,8 @@
-from datetime import datetime, timezone
-from sqlalchemy import String, Boolean, DateTime, ForeignKey, Text
+from datetime import UTC, datetime
+
+from sqlalchemy import Boolean, DateTime, ForeignKey, String, Text
 from sqlalchemy.orm import Mapped, mapped_column, relationship
+
 from app.database.base_model import Base
 
 
@@ -11,6 +13,7 @@ class Notification(Base):
     - category enables client-side icon and color routing.
     - read flag tracks dismissed state.
     """
+
     __tablename__ = "notifications"
 
     # Target user — nullable allows system-wide broadcast notifications (user_id = NULL)
@@ -29,7 +32,7 @@ class Notification(Base):
     read: Mapped[bool] = mapped_column(Boolean, default=False, nullable=False)
     timestamp: Mapped[datetime] = mapped_column(
         DateTime(timezone=True),
-        default=lambda: datetime.now(timezone.utc),
+        default=lambda: datetime.now(UTC),
         nullable=False,
     )
 

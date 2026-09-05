@@ -1,8 +1,8 @@
+import jwt
 from fastapi import Depends, HTTPException, status
 from fastapi.security import OAuth2PasswordBearer
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.future import select
-import jwt
 
 from app.core.config import settings
 from app.database.session import get_db
@@ -81,6 +81,6 @@ class PermissionChecker:
             raise HTTPException(
                 status_code=status.HTTP_403_FORBIDDEN,
                 detail=f"Role '{current_user.role}' is not authorized to access this resource. "
-                       f"Required: {self.allowed_roles}",
+                f"Required: {self.allowed_roles}",
             )
         return current_user

@@ -1,12 +1,16 @@
-from sqlalchemy import String, Integer, Numeric, ForeignKey, Date, Index
-from sqlalchemy.orm import Mapped, mapped_column, relationship
-from app.database.base_model import Base
 from datetime import date
+
+from sqlalchemy import Date, ForeignKey, Index, Integer, Numeric, String
+from sqlalchemy.orm import Mapped, mapped_column, relationship
+
+from app.database.base_model import Base
+
 
 class Book(Base):
     """
     SQLAlchemy model representing library catalog books.
     """
+
     __tablename__ = "books"
 
     title: Mapped[str] = mapped_column(String(255), nullable=False)
@@ -17,16 +21,24 @@ class Book(Base):
     copies_available: Mapped[int] = mapped_column(Integer, default=1, nullable=False)
 
     # Relationships
-    borrows: Mapped[list["BookBorrow"]] = relationship("BookBorrow", back_populates="book", cascade="all, delete-orphan")
+    borrows: Mapped[list["BookBorrow"]] = relationship(
+        "BookBorrow", back_populates="book", cascade="all, delete-orphan"
+    )
+
 
 class BookBorrow(Base):
     """
     SQLAlchemy model representing checkout sessions of library books by students.
     """
+
     __tablename__ = "book_borrows"
 
-    book_id: Mapped[str] = mapped_column(String(36), ForeignKey("books.id", ondelete="CASCADE"), nullable=False)
-    student_id: Mapped[str] = mapped_column(String(36), ForeignKey("students.id", ondelete="CASCADE"), nullable=False)
+    book_id: Mapped[str] = mapped_column(
+        String(36), ForeignKey("books.id", ondelete="CASCADE"), nullable=False
+    )
+    student_id: Mapped[str] = mapped_column(
+        String(36), ForeignKey("students.id", ondelete="CASCADE"), nullable=False
+    )
     issue_date: Mapped[date] = mapped_column(Date, nullable=False)
     due_date: Mapped[date] = mapped_column(Date, nullable=False)
     return_date: Mapped[date] = mapped_column(Date, nullable=True)

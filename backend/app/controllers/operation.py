@@ -1,8 +1,11 @@
+from collections.abc import Sequence
+
 from sqlalchemy.ext.asyncio import AsyncSession
+
+from app.models.operation import Attendance, Result
 from app.repositories.operation import OperationRepository
 from app.schemas.operation import AttendanceCreate, ResultCreate
-from app.models.operation import Attendance, Result
-from typing import Sequence
+
 
 class OperationController:
     """
@@ -10,6 +13,7 @@ class OperationController:
     Directly invokes the OperationRepository (since no complex validation is required)
     and commits changes.
     """
+
     @staticmethod
     async def create_attendance(db: AsyncSession, att_in: AttendanceCreate) -> Attendance:
         repo = OperationRepository(db)
@@ -18,7 +22,9 @@ class OperationController:
         return res
 
     @staticmethod
-    async def get_attendance_by_student(db: AsyncSession, student_id: str, skip: int = 0, limit: int = 100) -> Sequence[Attendance]:
+    async def get_attendance_by_student(
+        db: AsyncSession, student_id: str, skip: int = 0, limit: int = 100
+    ) -> Sequence[Attendance]:
         repo = OperationRepository(db)
         return await repo.get_attendance_by_student(student_id, skip, limit)
 
