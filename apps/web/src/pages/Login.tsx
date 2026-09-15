@@ -305,8 +305,8 @@ export const Login: React.FC = () => {
                     setSelectedRole('Admin');
                     setIsLoading(true);
                     try {
-                      await login('admin@campusos.org', 'AdminPassword@123', 'Admin');
-                      toast('MFA Provisioned', 'Demo code verification required.', 'info');
+                      await login('admin@campusos.org', 'AdminPassword@123', 'Admin', true);
+                      toast('MFA Provisioned', 'Demo code: 123456 (or any 6 digits).', 'info');
                       setStep('twofactor');
                     } catch (e) {
                       toast('Demo Login Error', 'Failed to initialize.', 'error');
@@ -326,8 +326,8 @@ export const Login: React.FC = () => {
                     setSelectedRole('Student');
                     setIsLoading(true);
                     try {
-                      await login('student@campusos.org', 'StudentPassword@123', 'Student');
-                      toast('MFA Provisioned', 'Demo code verification required.', 'info');
+                      await login('student@campusos.org', 'StudentPassword@123', 'Student', true);
+                      toast('MFA Provisioned', 'Demo code: 123456 (or any 6 digits).', 'info');
                       setStep('twofactor');
                     } catch (e) {
                       toast('Demo Login Error', 'Failed to initialize.', 'error');
@@ -347,8 +347,8 @@ export const Login: React.FC = () => {
                     setSelectedRole('Industry Portal');
                     setIsLoading(true);
                     try {
-                      await login('industry@campusos.org', 'IndustryPassword@123', 'Industry Portal');
-                      toast('MFA Provisioned', 'Demo code verification required.', 'info');
+                      await login('industry@campusos.org', 'IndustryPassword@123', 'Industry Portal', true);
+                      toast('MFA Provisioned', 'Demo code: 123456 (or any 6 digits).', 'info');
                       setStep('twofactor');
                     } catch (e) {
                       toast('Demo Login Error', 'Failed to initialize.', 'error');

@@ -17,7 +17,7 @@ interface AuthContextType {
   devices: SessionDevice[];
   isSessionWarningOpen: boolean;
   isOffline: boolean;
-  login: (username: string, password: string, role: UserRole) => Promise<void>;
+  login: (username: string, password: string, role: UserRole, isDemo?: boolean) => Promise<void>;
   verify2FA: (otp: string) => Promise<boolean>;
   logout: () => Promise<void>;
   extendSession: () => void;
@@ -104,10 +104,10 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     }
   }, [isAuthenticated]);
 
-  const login = async (username: string, password: string, role: UserRole) => {
+  const login = async (username: string, password: string, role: UserRole, isDemo = false) => {
     const isStaticDeploy = typeof window !== 'undefined' && window.location.hostname.endsWith('github.io');
-    if (isStaticDeploy) {
-      console.log("Static deployment detected (GitHub Pages). Using local Demo Mode authentication.");
+    if (isStaticDeploy || isDemo) {
+      console.log("Demo Mode authentication activated.");
       sessionStorage.setItem('auth_mode', 'demo');
       setUser({ username: username.split('@')[0] || username, role });
       setRole(role);
@@ -119,6 +119,14 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       setUser({ username: res.name || username, role });
       setRole(role);
     } catch (err: any) {
+      if (username.includes('campusos.org') || isDemo) {
+        console.warn("API login fallback to local demo mode.");
+        sessionStorage.setItem('auth_mode', 'demo');
+        setUser({ username: username.split('@')[0] || username, role });
+        setRole(role);
+        return;
+      }
+
       const errMsg = (err.message || '').toLowerCase();
       if (
         errMsg.includes('404') ||
