@@ -70,15 +70,6 @@ export const Dashboard: React.FC = () => {
             "Department meeting scheduled for 03:00 PM in Conference Hall A."
           ]
         };
-      case 'Parent':
-        return {
-          title: "Good morning, Mr. Sharma.",
-          bullets: [
-            "Rishi's aggregate attendance stands at 92.5% (Above 75% threshold).",
-            "Mid-semester exam report card available in Examinations tab.",
-            "Semester 6 tuition fee installment due in 12 days."
-          ]
-        };
       case 'Admin':
         return {
           title: "Good morning, Administrator.",

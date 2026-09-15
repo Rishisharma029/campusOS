@@ -245,7 +245,7 @@ function App() {
                             <Route 
                               path="fees" 
                               element={
-                                <RoleRoute allowedRoles={['Admin', 'Accountant', 'Student', 'Parent']}>
+                                <RoleRoute allowedRoles={['Admin', 'Accountant', 'Student']}>
                                   <Fees />
                                 </RoleRoute>
                               } 
@@ -253,7 +253,7 @@ function App() {
                             <Route 
                               path="library" 
                               element={
-                                <RoleRoute allowedRoles={['Admin', 'Librarian', 'Student', 'Faculty', 'Parent']}>
+                                <RoleRoute allowedRoles={['Admin', 'Librarian', 'Student', 'Faculty']}>
                                   <Library />
                                 </RoleRoute>
                               } 
@@ -276,7 +276,7 @@ function App() {
                             <Route 
                               path="analytics" 
                               element={
-                                <RoleRoute allowedRoles={['Admin', 'Faculty', 'Student', 'Parent']}>
+                                <RoleRoute allowedRoles={['Admin', 'Faculty', 'Student']}>
                                   <AnalyticsHub />
                                 </RoleRoute>
                               } 

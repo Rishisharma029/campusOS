@@ -7,7 +7,6 @@ export type SubAgentRole =
   | 'StudentAgent'
   | 'FacultyAgent'
   | 'PrincipalAgent'
-  | 'ParentAgent'
   | 'PlacementAgent'
   | 'FinanceAgent'
   | 'AttendanceAgent'

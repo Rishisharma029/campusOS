@@ -35,7 +35,7 @@ export const AIAssistantModal: React.FC<AIAssistantModalProps> = ({ isOpen, onCl
       sender: 'ai',
       text: `Hello! I am your ${currentRole} AI Orchestrator. Connected to 10 specialized sub-agents, tool execution engines (ReserveRoom, SubmitLeave, SendEmail), and document RAG knowledge base. How can I assist your workflow today?`,
       timestamp: 'Just now',
-      routedAgent: currentRole === 'Faculty' ? 'FacultyAgent' : currentRole === 'Parent' ? 'ParentAgent' : currentRole === 'Admin' ? 'PrincipalAgent' : 'StudentAgent',
+      routedAgent: currentRole === 'Faculty' ? 'FacultyAgent' : currentRole === 'Admin' ? 'PrincipalAgent' : 'StudentAgent',
     },
   ]);
   const [inputQuery, setInputQuery] = useState('');

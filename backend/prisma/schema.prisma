@@ -12,7 +12,6 @@ enum Role {
   ADMIN
   STUDENT
   FACULTY
-  PARENT
   ACCOUNTANT
   LIBRARIAN
   PLACEMENT_CELL
@@ -34,7 +33,6 @@ model User {
 
   student       StudentProfile?
   faculty       FacultyProfile?
-  parent        ParentProfile?
   auditLogs     SecurityAuditLog[]
   chats         AIChat[]
   documents     AIDocument[]
@@ -52,8 +50,6 @@ model StudentProfile {
   year            Int
   semester        Int
   cgpa            Float       @default(0.0)
-  parentId        String?
-  parent          ParentProfile? @relation(fields: [parentId], references: [id])
   hostelRoomId    String?
   hostelRoom      HostelRoom? @relation(fields: [hostelRoomId], references: [id])
 
@@ -83,13 +79,6 @@ model FacultyProfile {
   leaveRequests   FacultyLeave[]
   researchPapers  ResearchPaper[]
   mentorships     MentorshipRecord[]
-}
-
-model ParentProfile {
-  id              String      @id @default(uuid())
-  userId          String      @unique
-  user            User        @relation(fields: [userId], references: [id])
-  students        StudentProfile[]
 }
 
 model Department {
