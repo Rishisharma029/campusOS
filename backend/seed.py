@@ -37,6 +37,25 @@ async def seed_database():
         else:
             print("Admin user already exists.")
 
+        # Seed Demo Portals (admin@campusos.org, student@campusos.org, industry@campusos.org)
+        demo_accounts = [
+            ("admin@campusos.org", "AdminPassword@123", "Demo Administrator", "Admin"),
+            ("student@campusos.org", "StudentPassword@123", "Demo Student", "Student"),
+            ("industry@campusos.org", "IndustryPassword@123", "Demo Industry Partner", "Industry Portal"),
+            ("faculty@campusos.org", "FacultyPassword@123", "Dr. Arindam Sen", "Faculty"),
+        ]
+        for d_email, d_pwd, d_name, d_role in demo_accounts:
+            stmt = select(User).where(User.email == d_email)
+            if not (await db.execute(stmt)).scalars().first():
+                db.add(User(
+                    email=d_email,
+                    hashed_password=get_password_hash(d_pwd),
+                    name=d_name,
+                    role=d_role,
+                    is_active=True
+                ))
+                print(f"[OK] Seeded demo user: {d_email}")
+
         # 2. Seed Rishi Sharma (Student User & Profile)
         stmt = select(User).where(User.email == "rishi.sharma@university.edu")
         existing_rishi = (await db.execute(stmt)).scalars().first()
