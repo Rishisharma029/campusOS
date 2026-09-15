@@ -67,6 +67,29 @@ body {
   min-height: 100vh;
 }
 
+/* Ensure native select and option dropdowns have solid contrast in both dark and light modes */
+select, option {
+  color-scheme: dark;
+}
+
+select option {
+  background-color: #0f172a;
+  color: #f8fafc;
+}
+
+.light select,
+.light option,
+html:not(.dark) select,
+html:not(.dark) option {
+  color-scheme: light;
+}
+
+.light select option,
+html:not(.dark) select option {
+  background-color: #ffffff;
+  color: #0f172a;
+}
+
 /* Aurora Gradient Background */
 .aurora-bg {
   position: fixed;
