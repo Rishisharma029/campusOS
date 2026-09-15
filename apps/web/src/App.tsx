@@ -127,28 +127,49 @@ function App() {
                             <Route index element={<Dashboard />} />
                             
                             {/* GENOVA Platform Core Hubs */}
-                            <Route path="campus" element={<CampusHub />} />
-                            <Route path="academics" element={<AcademicsHub />} />
-                            <Route path="ai-intelligence" element={<AIIntelligenceHub />} />
+                            <Route
+                              path="campus"
+                              element={
+                                <RoleRoute allowedRoles={['Admin', 'Student', 'Faculty', 'Registrar']} routeName="Campus Hub">
+                                  <CampusHub />
+                                </RoleRoute>
+                              }
+                            />
+                            <Route
+                              path="academics"
+                              element={
+                                <RoleRoute allowedRoles={['Admin', 'Student', 'Faculty', 'Registrar']} routeName="Academics Hub">
+                                  <AcademicsHub />
+                                </RoleRoute>
+                              }
+                            />
+                            <Route
+                              path="ai-intelligence"
+                              element={
+                                <RoleRoute allowedRoles={['Admin', 'Student', 'Faculty']} routeName="AI Intelligence Hub">
+                                  <AIIntelligenceHub />
+                                </RoleRoute>
+                              }
+                            />
 
                             {/* GENOVA Career & Industry */}
-                            <Route path="career/skills" element={<CareerSkills />} />
-                            <Route path="career/industry-mapping" element={<IndustrySkillMapping />} />
-                            <Route path="career/path" element={<CareerPath />} />
-                            <Route path="career/opportunities" element={<CareerOpportunities />} />
-                            <Route path="career/applications" element={<CareerApplications />} />
-                            <Route path="career/portfolio" element={<CareerPortfolio />} />
-                            <Route path="career/industry-portal" element={<IndustryPortal />} />
-                            <Route path="career/ai-recruiter" element={<AIRecruiter />} />
-                            <Route path="career/academician" element={<AcademicianPortal />} />
-                            <Route path="career/institution-intelligence" element={<InstitutionIntelligence />} />
-                            <Route path="career/copilot" element={<CareerCopilot />} />
+                            <Route path="career/skills" element={<RoleRoute allowedRoles={['Admin', 'Student', 'Placement Cell', 'Industry Portal']} routeName="Skills"><CareerSkills /></RoleRoute>} />
+                            <Route path="career/industry-mapping" element={<RoleRoute allowedRoles={['Admin', 'Placement Cell', 'Industry Portal']} routeName="Industry Mapping"><IndustrySkillMapping /></RoleRoute>} />
+                            <Route path="career/path" element={<RoleRoute allowedRoles={['Admin', 'Student', 'Placement Cell']} routeName="Career Path"><CareerPath /></RoleRoute>} />
+                            <Route path="career/opportunities" element={<RoleRoute allowedRoles={['Admin', 'Student', 'Placement Cell', 'Industry Portal']} routeName="Opportunities"><CareerOpportunities /></RoleRoute>} />
+                            <Route path="career/applications" element={<RoleRoute allowedRoles={['Admin', 'Student', 'Placement Cell', 'Industry Portal']} routeName="Applications"><CareerApplications /></RoleRoute>} />
+                            <Route path="career/portfolio" element={<RoleRoute allowedRoles={['Admin', 'Student', 'Industry Portal']} routeName="Portfolio"><CareerPortfolio /></RoleRoute>} />
+                            <Route path="career/industry-portal" element={<RoleRoute allowedRoles={['Admin', 'Industry Portal', 'Placement Cell']} routeName="Industry Portal"><IndustryPortal /></RoleRoute>} />
+                            <Route path="career/ai-recruiter" element={<RoleRoute allowedRoles={['Admin', 'Industry Portal', 'Placement Cell']} routeName="AI Recruiter"><AIRecruiter /></RoleRoute>} />
+                            <Route path="career/academician" element={<RoleRoute allowedRoles={['Admin', 'Faculty']} routeName="Academician Portal"><AcademicianPortal /></RoleRoute>} />
+                            <Route path="career/institution-intelligence" element={<RoleRoute allowedRoles={['Admin', 'Placement Cell', 'Registrar']} routeName="Institution Intelligence"><InstitutionIntelligence /></RoleRoute>} />
+                            <Route path="career/copilot" element={<RoleRoute allowedRoles={['Admin', 'Student', 'Placement Cell', 'Industry Portal']} routeName="AI Career Copilot"><CareerCopilot /></RoleRoute>} />
 
                             {/* GENOVA Innovation Standalone Integration Points */}
                             <Route path="innovation/land-intelligence" element={<LandIntelligencePlaceholder />} />
                             <Route path="innovation/autonomous-mobility" element={<AutonomousMobilityPlaceholder />} />
 
-                            <Route path="academic-copilot" element={<AcademicCopilot />} />
+                            <Route path="academic-copilot" element={<RoleRoute allowedRoles={['Admin', 'Student', 'Faculty']} routeName="AI Academic Copilot"><AcademicCopilot /></RoleRoute>} />
                             
                             {/* Restricted Executive Routes */}
                             <Route
@@ -187,11 +208,11 @@ function App() {
                             {/* CampusOS v2.0 New Operational Routes */}
                             <Route path="map" element={<CampusMap3D />} />
                             <Route path="emergency" element={<EmergencySOS />} />
-                            <Route path="doc-center" element={<AIDocumentCenter />} />
+                            <Route path="doc-center" element={<RoleRoute allowedRoles={['Admin', 'Faculty', 'Registrar', 'Librarian']} routeName="RAG Doc Center"><AIDocumentCenter /></RoleRoute>} />
                             <Route path="noticeboard" element={<NoticeBoard />} />
                             <Route path="complaints" element={<Complaints />} />
-                            <Route path="clubs" element={<ClubsAndEvents />} />
-                            <Route path="security" element={<SecurityCenter />} />
+                            <Route path="clubs" element={<RoleRoute allowedRoles={['Admin', 'Student']} routeName="Clubs & Leaderboard"><ClubsAndEvents /></RoleRoute>} />
+                            <Route path="security" element={<RoleRoute allowedRoles={['Admin', 'Registrar', 'Hostel Warden']} routeName="Security Center"><SecurityCenter /></RoleRoute>} />
                             <Route
                               path="security-vault"
                               element={
@@ -211,7 +232,7 @@ function App() {
                             <Route
                               path="system-health"
                               element={
-                                <RoleRoute allowedRoles={['Admin', 'Registrar', 'Accountant']} routeName="System Health & Vitals">
+                                <RoleRoute allowedRoles={['Admin', 'Registrar']} routeName="System Health & Vitals">
                                   <SystemHealth />
                                 </RoleRoute>
                               }
@@ -221,7 +242,7 @@ function App() {
                             <Route 
                               path="students" 
                               element={
-                                <RoleRoute allowedRoles={['Admin', 'Faculty', 'Student', 'Placement Cell', 'Registrar']} routeName="Students Directory">
+                                <RoleRoute allowedRoles={['Admin', 'Faculty', 'Student', 'Placement Cell', 'Registrar', 'Accountant', 'Librarian', 'Hostel Warden']} routeName="Students Directory">
                                   <Students />
                                 </RoleRoute>
                               } 
@@ -229,23 +250,23 @@ function App() {
                             <Route 
                               path="faculty" 
                               element={
-                                <RoleRoute allowedRoles={['Admin', 'Faculty']}>
+                                <RoleRoute allowedRoles={['Admin', 'Faculty', 'Registrar', 'Librarian']} routeName="Faculty Directory">
                                   <FacultyPage />
                                 </RoleRoute>
                               } 
                             />
-                            <Route path="departments" element={<Courses />} />
-                            <Route path="courses" element={<Courses />} />
-                            <Route path="subjects" element={<Courses />} />
-                            <Route path="timetable" element={<Timetable />} />
-                            <Route path="attendance" element={<Attendance />} />
-                            <Route path="examinations" element={<Examinations />} />
-                            <Route path="results" element={<Examinations />} />
-                            <Route path="assignments" element={<Assignments />} />
+                            <Route path="departments" element={<RoleRoute allowedRoles={['Admin', 'Faculty', 'Student', 'Registrar']} routeName="Courses"><Courses /></RoleRoute>} />
+                            <Route path="courses" element={<RoleRoute allowedRoles={['Admin', 'Faculty', 'Student', 'Registrar']} routeName="Courses"><Courses /></RoleRoute>} />
+                            <Route path="subjects" element={<RoleRoute allowedRoles={['Admin', 'Faculty', 'Student', 'Registrar']} routeName="Courses"><Courses /></RoleRoute>} />
+                            <Route path="timetable" element={<RoleRoute allowedRoles={['Admin', 'Faculty', 'Student', 'Registrar']} routeName="Timetable"><Timetable /></RoleRoute>} />
+                            <Route path="attendance" element={<RoleRoute allowedRoles={['Admin', 'Faculty', 'Student', 'Registrar']} routeName="Attendance"><Attendance /></RoleRoute>} />
+                            <Route path="examinations" element={<RoleRoute allowedRoles={['Admin', 'Faculty', 'Student', 'Registrar']} routeName="Examinations"><Examinations /></RoleRoute>} />
+                            <Route path="results" element={<RoleRoute allowedRoles={['Admin', 'Faculty', 'Student', 'Registrar']} routeName="Examinations"><Examinations /></RoleRoute>} />
+                            <Route path="assignments" element={<RoleRoute allowedRoles={['Admin', 'Faculty', 'Student']} routeName="Assignments"><Assignments /></RoleRoute>} />
                             <Route 
                               path="fees" 
                               element={
-                                <RoleRoute allowedRoles={['Admin', 'Accountant', 'Student']}>
+                                <RoleRoute allowedRoles={['Admin', 'Accountant', 'Student']} routeName="Fee Management">
                                   <Fees />
                                 </RoleRoute>
                               } 
@@ -253,18 +274,39 @@ function App() {
                             <Route 
                               path="library" 
                               element={
-                                <RoleRoute allowedRoles={['Admin', 'Librarian', 'Student', 'Faculty']}>
+                                <RoleRoute allowedRoles={['Admin', 'Librarian', 'Student', 'Faculty']} routeName="Library Management">
                                   <Library />
                                 </RoleRoute>
                               } 
                             />
-                            <Route path="hostel" element={<Hostel />} />
-                            <Route path="transport" element={<Transport />} />
-                            <Route path="placement" element={<Placement />} />
+                            <Route 
+                              path="hostel" 
+                              element={
+                                <RoleRoute allowedRoles={['Admin', 'Hostel Warden', 'Student']} routeName="Hostel Residence">
+                                  <Hostel />
+                                </RoleRoute>
+                              } 
+                            />
+                            <Route 
+                              path="transport" 
+                              element={
+                                <RoleRoute allowedRoles={['Admin', 'Transport Manager', 'Student']} routeName="Transport Fleet">
+                                  <Transport />
+                                </RoleRoute>
+                              } 
+                            />
+                            <Route 
+                              path="placement" 
+                              element={
+                                <RoleRoute allowedRoles={['Admin', 'Placement Cell', 'Student', 'Industry Portal']} routeName="Placement Intelligence">
+                                  <Placement />
+                                </RoleRoute>
+                              } 
+                            />
                             <Route 
                               path="reports" 
                               element={
-                                <RoleRoute allowedRoles={['Admin', 'Accountant', 'Librarian', 'Placement Cell', 'Hostel Warden', 'Transport Manager']}>
+                                <RoleRoute allowedRoles={['Admin', 'Accountant', 'Librarian', 'Placement Cell', 'Hostel Warden', 'Transport Manager', 'Registrar']} routeName="Reports & Exports">
                                   <Reports />
                                 </RoleRoute>
                               } 
