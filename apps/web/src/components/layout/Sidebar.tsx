@@ -1,8 +1,16 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { NavLink } from 'react-router-dom';
 import { useRole } from '../../context/RoleContext';
 import { useAuth } from '../../context/AuthContext';
-import { ChevronLeft, ChevronRight, LogOut, Settings as SettingsIcon, Sparkles } from 'lucide-react';
+import {
+  ChevronLeft,
+  ChevronRight,
+  ChevronDown,
+  LogOut,
+  Settings as SettingsIcon,
+  Eye,
+  EyeOff,
+} from 'lucide-react';
 import { DynamicIcon } from '../DynamicIcon';
 
 interface SidebarProps {
@@ -13,6 +21,35 @@ interface SidebarProps {
 export const Sidebar: React.FC<SidebarProps> = ({ isOpen, onToggle }) => {
   const { allowedModules, currentRole } = useRole();
   const { logout } = useAuth();
+
+  // Collapsible section states with localStorage persistence
+  const [isOperationsOpen, setIsOperationsOpen] = useState<boolean>(() => {
+    const saved = localStorage.getItem('sidebar_operations_open');
+    return saved !== null ? saved === 'true' : true;
+  });
+
+  const [isCareerOpen, setIsCareerOpen] = useState<boolean>(() => {
+    const saved = localStorage.getItem('sidebar_career_open');
+    return saved !== null ? saved === 'true' : true;
+  });
+
+  const toggleOperations = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    setIsOperationsOpen((prev) => {
+      const next = !prev;
+      localStorage.setItem('sidebar_operations_open', String(next));
+      return next;
+    });
+  };
+
+  const toggleCareer = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    setIsCareerOpen((prev) => {
+      const next = !prev;
+      localStorage.setItem('sidebar_career_open', String(next));
+      return next;
+    });
+  };
 
   const coreModules = allowedModules.filter((m) => m.section === 'Core');
   const operationsModules = allowedModules.filter((m) => m.section === 'Operations' && m.path !== '/settings');
@@ -85,7 +122,7 @@ export const Sidebar: React.FC<SidebarProps> = ({ isOpen, onToggle }) => {
         </div>
 
         {/* Scrollable Navigation links strictly matching role-tailored facilities */}
-        <nav className="flex-1 overflow-y-auto p-3 space-y-4">
+        <nav className="flex-1 overflow-y-auto p-3 space-y-4 custom-scrollbar">
           {/* 1. Core Platform */}
           {coreModules.length > 0 && (
             <div className="space-y-1">
@@ -93,27 +130,91 @@ export const Sidebar: React.FC<SidebarProps> = ({ isOpen, onToggle }) => {
             </div>
           )}
 
-          {/* 2. Operations & Role Facilities */}
+          {/* 2. Operations & Role Facilities with Collapsible Toggle */}
           {operationsModules.length > 0 && (
             <div className="space-y-1 pt-2 border-t border-slate-100 dark:border-slate-800/60">
-              {isOpen && (
-                <div className="px-2 pt-1 pb-1 text-[9px] font-extrabold uppercase tracking-wider text-slate-400 dark:text-slate-500 flex items-center justify-between">
-                  <span>FACILITIES & OPERATIONS</span>
+              {isOpen ? (
+                <div
+                  onClick={toggleOperations}
+                  className="px-2 pt-1 pb-1.5 flex items-center justify-between text-[9px] font-extrabold uppercase tracking-wider text-slate-400 dark:text-slate-500 hover:text-slate-700 dark:hover:text-slate-300 cursor-pointer select-none group transition-colors"
+                >
+                  <div className="flex items-center gap-1.5">
+                    <span>FACILITIES & OPERATIONS</span>
+                    <span className="px-1.5 py-0.2 rounded-full bg-slate-200 dark:bg-slate-800 text-[9px] font-bold text-slate-600 dark:text-slate-400">
+                      {operationsModules.length}
+                    </span>
+                  </div>
+                  <button
+                    type="button"
+                    onClick={toggleOperations}
+                    title={isOperationsOpen ? "Hide Facilities & Operations" : "Show Facilities & Operations"}
+                    className="p-1 rounded hover:bg-slate-200 dark:hover:bg-slate-800 text-slate-400 group-hover:text-slate-600 dark:group-hover:text-slate-300 transition-colors flex items-center gap-1 text-[9px] lowercase font-normal"
+                  >
+                    <span>{isOperationsOpen ? 'hide' : 'show'}</span>
+                    {isOperationsOpen ? <ChevronDown size={12} /> : <ChevronRight size={12} />}
+                  </button>
+                </div>
+              ) : (
+                <div
+                  onClick={toggleOperations}
+                  title={isOperationsOpen ? "Facilities & Operations (Click to hide)" : "Facilities & Operations (Click to show)"}
+                  className="w-full flex justify-center py-1 cursor-pointer text-slate-400 hover:text-slate-200"
+                >
+                  {isOperationsOpen ? <EyeOff size={13} /> : <Eye size={13} />}
                 </div>
               )}
-              {operationsModules.map((mod) => renderNavLink(mod))}
+
+              {/* Render items only if expanded */}
+              {isOperationsOpen ? (
+                operationsModules.map((mod) => renderNavLink(mod))
+              ) : isOpen ? (
+                <button
+                  type="button"
+                  onClick={toggleOperations}
+                  className="w-full py-1.5 px-2 rounded-lg text-[11px] text-slate-400 dark:text-slate-500 hover:bg-slate-100 dark:hover:bg-slate-800/50 hover:text-blue-500 flex items-center justify-center gap-1.5 transition-all border border-dashed border-slate-200 dark:border-slate-800 cursor-pointer"
+                >
+                  <Eye size={12} />
+                  <span>Show {operationsModules.length} facilities...</span>
+                </button>
+              ) : null}
             </div>
           )}
 
-          {/* 3. CAREER & INDUSTRY */}
+          {/* 3. CAREER & INDUSTRY with Collapsible Toggle */}
           {careerModules.length > 0 && (
             <div className="space-y-1 pt-2 border-t border-slate-100 dark:border-slate-800/60">
-              {isOpen && (
-                <div className="px-2 pt-1 pb-1 text-[9px] font-extrabold uppercase tracking-wider text-slate-400 dark:text-slate-500 flex items-center justify-between">
-                  <span>CAREER & INDUSTRY</span>
+              {isOpen ? (
+                <div
+                  onClick={toggleCareer}
+                  className="px-2 pt-1 pb-1.5 flex items-center justify-between text-[9px] font-extrabold uppercase tracking-wider text-slate-400 dark:text-slate-500 hover:text-slate-700 dark:hover:text-slate-300 cursor-pointer select-none group transition-colors"
+                >
+                  <div className="flex items-center gap-1.5">
+                    <span>CAREER & INDUSTRY</span>
+                    <span className="px-1.5 py-0.2 rounded-full bg-slate-200 dark:bg-slate-800 text-[9px] font-bold text-slate-600 dark:text-slate-400">
+                      {careerModules.length}
+                    </span>
+                  </div>
+                  <button
+                    type="button"
+                    onClick={toggleCareer}
+                    title={isCareerOpen ? "Hide Career & Industry" : "Show Career & Industry"}
+                    className="p-1 rounded hover:bg-slate-200 dark:hover:bg-slate-800 text-slate-400 group-hover:text-slate-600 dark:group-hover:text-slate-300 transition-colors flex items-center gap-1 text-[9px] lowercase font-normal"
+                  >
+                    <span>{isCareerOpen ? 'hide' : 'show'}</span>
+                    {isCareerOpen ? <ChevronDown size={12} /> : <ChevronRight size={12} />}
+                  </button>
+                </div>
+              ) : (
+                <div
+                  onClick={toggleCareer}
+                  title={isCareerOpen ? "Career & Industry (Click to hide)" : "Career & Industry (Click to show)"}
+                  className="w-full flex justify-center py-1 cursor-pointer text-slate-400 hover:text-slate-200"
+                >
+                  {isCareerOpen ? <EyeOff size={13} /> : <Eye size={13} />}
                 </div>
               )}
-              {careerModules.map((mod) => renderNavLink(mod))}
+
+              {isCareerOpen && careerModules.map((mod) => renderNavLink(mod))}
             </div>
           )}
 

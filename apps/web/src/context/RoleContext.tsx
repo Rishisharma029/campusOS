@@ -63,7 +63,7 @@ const ALL_MODULES: Record<string, ModuleInfo> = {
   CareerCopilot: { name: 'AI Career Copilot', path: '/career/copilot', icon: 'Bot', section: 'CAREER & INDUSTRY' },
 
   // GENOVA INNOVATION
-  LandIntelligence: { name: 'Land Intelligence', path: '/innovation/land-intelligence', icon: 'Layers', section: 'GENOVA INNOVATION' },
+  LandIntelligence: { name: 'BhoomiLens (LIS)', path: '/innovation/land-intelligence', icon: 'Layers', section: 'GENOVA INNOVATION' },
   AutonomousMobility: { name: 'Autonomous Mobility', path: '/innovation/autonomous-mobility', icon: 'Navigation', section: 'GENOVA INNOVATION' },
 
   // Layer 3: Autonomous Agents & Copilots
