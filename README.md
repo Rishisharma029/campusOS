@@ -1,4 +1,4 @@
-# 🏛️ CampusOS AI — Enterprise University Operating System & Employability Platform
+# 🏛️ GENOVA AI — Enterprise University Operating System & Employability Platform
 ### Smart India Hackathon 2026 (SIH26044) — Enterprise Edition v3.5.0
 
 ![CampusOS AI Banner](https://img.shields.io/badge/CampusOS_AI-v3.5.0--Enterprise-blue?style=for-the-badge&logo=react)
