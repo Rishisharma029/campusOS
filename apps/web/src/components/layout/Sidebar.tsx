@@ -15,6 +15,7 @@ export const Sidebar: React.FC<SidebarProps> = ({ isOpen, onToggle }) => {
   const { logout } = useAuth();
 
   const coreModules = allowedModules.filter((m) => m.section === 'Core');
+  const operationsModules = allowedModules.filter((m) => m.section === 'Operations' && m.path !== '/settings');
   const careerModules = allowedModules.filter((m) => m.section === 'CAREER & INDUSTRY');
   const innovationModules = allowedModules.filter((m) => m.section === 'GENOVA INNOVATION');
 
@@ -70,7 +71,7 @@ export const Sidebar: React.FC<SidebarProps> = ({ isOpen, onToggle }) => {
               </span>
             </div>
             <span className="text-[10px] text-slate-400 dark:text-slate-500 truncate mt-0.5 font-medium">
-              Engineering Next Gen • {currentRole}
+              CampusOS • {currentRole}
             </span>
           </div>
 
@@ -83,38 +84,56 @@ export const Sidebar: React.FC<SidebarProps> = ({ isOpen, onToggle }) => {
           </button>
         </div>
 
-        {/* Scrollable Navigation links strictly matching requested layout */}
+        {/* Scrollable Navigation links strictly matching role-tailored facilities */}
         <nav className="flex-1 overflow-y-auto p-3 space-y-4">
           {/* 1. Core Platform */}
-          <div className="space-y-1">
-            {coreModules.map((mod) => renderNavLink(mod))}
-          </div>
+          {coreModules.length > 0 && (
+            <div className="space-y-1">
+              {coreModules.map((mod) => renderNavLink(mod))}
+            </div>
+          )}
 
-          {/* 2. CAREER & INDUSTRY */}
-          <div className="space-y-1 pt-2 border-t border-slate-100 dark:border-slate-800/60">
-            {isOpen && (
-              <div className="px-2 pt-1 pb-1 text-[9px] font-extrabold uppercase tracking-wider text-slate-400 dark:text-slate-500 flex items-center justify-between">
-                <span>CAREER & INDUSTRY</span>
-              </div>
-            )}
-            {careerModules.map((mod) => renderNavLink(mod))}
-          </div>
+          {/* 2. Operations & Role Facilities */}
+          {operationsModules.length > 0 && (
+            <div className="space-y-1 pt-2 border-t border-slate-100 dark:border-slate-800/60">
+              {isOpen && (
+                <div className="px-2 pt-1 pb-1 text-[9px] font-extrabold uppercase tracking-wider text-slate-400 dark:text-slate-500 flex items-center justify-between">
+                  <span>FACILITIES & OPERATIONS</span>
+                </div>
+              )}
+              {operationsModules.map((mod) => renderNavLink(mod))}
+            </div>
+          )}
 
-          {/* 3. GENOVA INNOVATION */}
-          <div className="space-y-1 pt-2 border-t border-slate-100 dark:border-slate-800/60">
-            {isOpen && (
-              <div className="px-2 pt-1 pb-1 text-[9px] font-extrabold uppercase tracking-wider text-cyan-600 dark:text-cyan-400 flex items-center gap-1.5">
-                <span className="w-1.5 h-1.5 rounded-full bg-cyan-400 animate-pulse" />
-                <span>GENOVA INNOVATION</span>
-              </div>
-            )}
-            {innovationModules.map((mod) =>
-              renderNavLink(
-                mod,
-                mod.name.includes('Land') ? 'bg-emerald-400' : 'bg-cyan-400'
-              )
-            )}
-          </div>
+          {/* 3. CAREER & INDUSTRY */}
+          {careerModules.length > 0 && (
+            <div className="space-y-1 pt-2 border-t border-slate-100 dark:border-slate-800/60">
+              {isOpen && (
+                <div className="px-2 pt-1 pb-1 text-[9px] font-extrabold uppercase tracking-wider text-slate-400 dark:text-slate-500 flex items-center justify-between">
+                  <span>CAREER & INDUSTRY</span>
+                </div>
+              )}
+              {careerModules.map((mod) => renderNavLink(mod))}
+            </div>
+          )}
+
+          {/* 4. GENOVA INNOVATION */}
+          {innovationModules.length > 0 && (
+            <div className="space-y-1 pt-2 border-t border-slate-100 dark:border-slate-800/60">
+              {isOpen && (
+                <div className="px-2 pt-1 pb-1 text-[9px] font-extrabold uppercase tracking-wider text-cyan-600 dark:text-cyan-400 flex items-center gap-1.5">
+                  <span className="w-1.5 h-1.5 rounded-full bg-cyan-400 animate-pulse" />
+                  <span>GENOVA INNOVATION</span>
+                </div>
+              )}
+              {innovationModules.map((mod) =>
+                renderNavLink(
+                  mod,
+                  mod.name.includes('Land') ? 'bg-emerald-400' : 'bg-cyan-400'
+                )
+              )}
+            </div>
+          )}
         </nav>
       </div>
 
