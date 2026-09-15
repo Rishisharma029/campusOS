@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { useAuth } from '../context/AuthContext';
 import { useNavigate } from 'react-router-dom';
 import { useToast } from '../components/ui/Toast';
@@ -11,6 +11,7 @@ export const Login: React.FC = () => {
   const { login, verify2FA, isAuthenticated, devices } = useAuth();
   const navigate = useNavigate();
   const { toast } = useToast();
+  const splineRef = useRef<HTMLElement | null>(null);
 
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
@@ -22,6 +23,40 @@ export const Login: React.FC = () => {
 
   // Password strength calculation states
   const [pwdStrength, setPwdStrength] = useState({ score: 0, label: 'Weak', color: 'bg-red-500' });
+
+  // Hide 3D embedded text and CTA in Spline scene so our custom branding displays cleanly
+  useEffect(() => {
+    const viewer = splineRef.current;
+    if (!viewer) return;
+
+    const cleanupScene = () => {
+      const app = (viewer as any)._spline;
+      if (!app?._scene) return;
+
+      const toHide = ['Text', 'Text 2', 'Text 3', 'Text 4', 'CTA', 'Rectangle', 'Сursor'];
+      app._scene.traverse((o: any) => {
+        if (
+          toHide.includes(o.name) ||
+          o.name?.toLowerCase().includes('text') ||
+          o.name?.toLowerCase().includes('cta') ||
+          o.name?.toLowerCase().includes('rectangle')
+        ) {
+          o.visible = false;
+        }
+      });
+      app.requestRender?.();
+    };
+
+    viewer.addEventListener('load-complete', cleanupScene);
+    const interval = setInterval(cleanupScene, 200);
+    const timeout = setTimeout(() => clearInterval(interval), 6000);
+
+    return () => {
+      viewer.removeEventListener('load-complete', cleanupScene);
+      clearInterval(interval);
+      clearTimeout(timeout);
+    };
+  }, []);
 
   useEffect(() => {
     if (isAuthenticated) {
@@ -105,7 +140,8 @@ export const Login: React.FC = () => {
         {/* Spline 3D Interactive Canvas */}
         <div className="absolute inset-0 z-0 overflow-hidden flex items-center justify-center">
           <spline-viewer
-            url={`${import.meta.env.BASE_URL}scene.splinecode`}
+            ref={splineRef as any}
+            url="https://prod.spline.design/r3J9s106Ku9w6vmO/scene.splinecode"
             className="w-full h-full block"
             style={{ width: '100%', height: '100%', background: 'transparent' }}
           />
