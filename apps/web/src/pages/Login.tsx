@@ -1,4 +1,4 @@
-﻿import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useAuth } from '../context/AuthContext';
 import { useNavigate } from 'react-router-dom';
 import { useToast } from '../components/ui/Toast';
@@ -100,13 +100,21 @@ export const Login: React.FC = () => {
   return (
     <div className="min-h-screen flex flex-col md:flex-row bg-slate-50 dark:bg-[#0b0f19] transition-colors duration-300">
       
-      {/* Brand Identity Pane */}
-      <div className="flex-1 bg-gradient-to-br from-blue-900 via-blue-950 to-slate-950 p-8 md:p-16 flex flex-col justify-between text-white border-r border-blue-900/40 relative overflow-hidden">
-        
-        {/* Animated grid lines background */}
-        <div className="absolute inset-0 bg-[linear-gradient(to_right,rgba(255,255,255,0.05)_1px,transparent_1px),linear-gradient(to_bottom,rgba(255,255,255,0.05)_1px,transparent_1px)] bg-[size:24px_24px] [mask-image:radial-gradient(ellipse_60%_50%_at_50%_0%,#000_70%,transparent_100%)] pointer-events-none" />
-        
-        <div className="flex items-center gap-3 relative z-10">
+      {/* Brand Identity Pane with Interactive Spline 3D Scene */}
+      <div className="flex-1 bg-gradient-to-br from-slate-950 via-[#0a0f1d] to-slate-900 p-8 md:p-12 flex flex-col justify-between text-white border-r border-blue-900/40 relative overflow-hidden min-h-[500px]">
+        {/* Spline 3D Interactive Canvas */}
+        <div className="absolute inset-0 z-0 overflow-hidden flex items-center justify-center">
+          <spline-viewer
+            url={`${import.meta.env.BASE_URL}scene.splinecode`}
+            className="w-full h-full block"
+            style={{ width: '100%', height: '100%', background: 'transparent' }}
+          />
+        </div>
+
+        {/* Subtle gradient vignette */}
+        <div className="absolute inset-0 bg-gradient-to-t from-slate-950/85 via-transparent to-slate-950/40 pointer-events-none z-[1]" />
+
+        <div className="flex items-center gap-3 relative z-10 pointer-events-auto">
           <div className="w-10 h-10 rounded-xl bg-blue-600 flex items-center justify-center shadow-lg font-black text-white text-xl font-display tracking-tight">
             C
           </div>
@@ -116,19 +124,19 @@ export const Login: React.FC = () => {
           </div>
         </div>
 
-        <div className="my-16 max-w-md relative z-10 space-y-4">
-          <span className="px-2.5 py-1 text-[10px] bg-blue-600/20 text-blue-400 border border-blue-600/30 rounded-full font-bold uppercase tracking-wider">
+        <div className="my-auto py-8 max-w-md relative z-10 space-y-4 pointer-events-auto">
+          <span className="px-2.5 py-1 text-[10px] bg-blue-600/30 text-blue-300 border border-blue-500/40 rounded-full font-bold uppercase tracking-wider backdrop-blur-md">
             Enterprise Grade
           </span>
-          <h2 className="text-3xl md:text-4xl font-extrabold font-display leading-tight tracking-tight text-white text-balance">
+          <h2 className="text-3xl md:text-4xl font-extrabold font-display leading-tight tracking-tight text-white text-balance drop-shadow-md">
             The Operating System for Modern Education.
           </h2>
-          <p className="text-xs text-slate-300 leading-relaxed">
+          <p className="text-xs text-slate-300 leading-relaxed drop-shadow-sm max-w-sm">
             CampusOS unifies academic directories, smart analytics predictive engines, timetabling networks, and library borrows in a single, responsive canvas.
           </p>
         </div>
 
-        <div className="relative z-10 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 text-xs text-slate-400 border-t border-slate-800 pt-6">
+        <div className="relative z-10 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 text-xs text-slate-400 border-t border-slate-800/80 pt-6 pointer-events-auto">
           <span>© 2026 CampusOS Inc.</span>
           <span className="flex items-center gap-1.5 font-medium text-emerald-400">
             <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" /> All Systems Operational
@@ -167,7 +175,6 @@ export const Login: React.FC = () => {
                     <option value="Admin">System Administrator</option>
                     <option value="Student">Student Portal</option>
                     <option value="Faculty">Faculty Portal</option>
-                    <option value="Parent">Parent/Guardian Portal</option>
                     <option value="Accountant">Finance Accountant</option>
                     <option value="Librarian">Librarian Ledger</option>
                     <option value="Registrar">Registrar / Academic Affairs</option>
@@ -315,27 +322,6 @@ export const Login: React.FC = () => {
                   className="py-1 px-2 border border-emerald-500/30 bg-emerald-500/10 rounded-lg text-[10px] font-semibold text-emerald-600 dark:text-emerald-400 hover:bg-emerald-500/20 cursor-pointer text-center"
                 >
                   Industry Portal
-                </button>
-                <button
-                  type="button"
-                  onClick={async () => {
-                    setUsername('parent@campusos.org');
-                    setPassword('ParentPassword@123');
-                    setSelectedRole('Parent');
-                    setIsLoading(true);
-                    try {
-                      await login('parent@campusos.org', 'ParentPassword@123', 'Parent');
-                      toast('MFA Provisioned', 'Demo code verification required.', 'info');
-                      setStep('twofactor');
-                    } catch (e) {
-                      toast('Demo Login Error', 'Failed to initialize.', 'error');
-                    } finally {
-                      setIsLoading(false);
-                    }
-                  }}
-                  className="py-1 px-2 border border-slate-200 dark:border-slate-800 rounded-lg text-[10px] font-semibold text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800/40 cursor-pointer text-center"
-                >
-                  Parent
                 </button>
               </div>
             </div>

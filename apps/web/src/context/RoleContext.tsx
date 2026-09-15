@@ -1,10 +1,9 @@
-﻿import React, { createContext, useContext, useState } from 'react';
+import React, { createContext, useContext, useState } from 'react';
 
 export type UserRole =
   | 'Admin'
   | 'Student'
   | 'Faculty'
-  | 'Parent'
   | 'Accountant'
   | 'Librarian'
   | 'Registrar'
@@ -34,7 +33,6 @@ export const allRoles: UserRole[] = [
   'Admin',
   'Student',
   'Faculty',
-  'Parent',
   'Accountant',
   'Librarian',
   'Registrar',
@@ -161,18 +159,6 @@ const ROLE_MODULES_MAP: Record<UserRole, string[]> = {
     'Attendance',
     'Assignments',
     'Calendar',
-    'Analytics',
-    'Settings',
-  ],
-  Parent: [
-    'Dashboard',
-    'CampusMap',
-    'Emergency',
-    'NoticeBoard',
-    'Attendance',
-    'Fees',
-    'Library',
-    'Transport',
     'Analytics',
     'Settings',
   ],

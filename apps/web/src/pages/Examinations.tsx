@@ -36,7 +36,7 @@ export const Examinations: React.FC = () => {
   const [secureBrowserMode, setSecureBrowserMode] = useState(false);
 
   const isStaff = currentRole === 'Faculty' || currentRole === 'Admin';
-  const isStudent = currentRole === 'Student' || currentRole === 'Parent';
+  const isStudent = currentRole === 'Student';
 
   const {
     register,

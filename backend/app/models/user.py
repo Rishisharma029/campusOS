@@ -6,7 +6,7 @@ from app.database.base_model import Base
 
 class User(Base):
     """
-    SQLAlchemy model representing system users (students, faculty, administrators, parents, etc.).
+    SQLAlchemy model representing system users (students, faculty, administrators, etc.).
     """
 
     __tablename__ = "users"

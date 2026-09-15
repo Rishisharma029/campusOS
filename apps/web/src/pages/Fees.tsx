@@ -59,7 +59,7 @@ export const Fees: React.FC = () => {
   };
 
   const isStaff = currentRole === 'Accountant' || currentRole === 'Admin';
-  const isStudent = currentRole === 'Student' || currentRole === 'Parent';
+  const isStudent = currentRole === 'Student';
 
   const {
     register,
