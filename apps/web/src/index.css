@@ -90,7 +90,7 @@ html:not(.dark) select option {
   color: #0f172a;
 }
 
-/* Aurora Gradient Background */
+/* Aurora Gradient Background - High Performance Composited Mesh */
 .aurora-bg {
   position: fixed;
   top: 0;
@@ -100,18 +100,19 @@ html:not(.dark) select option {
   z-index: -1;
   pointer-events: none;
   background: 
-    radial-gradient(circle at 15% 20%, rgba(59, 130, 246, 0.15) 0%, transparent 45%),
-    radial-gradient(circle at 85% 30%, rgba(112, 0, 255, 0.15) 0%, transparent 50%),
-    radial-gradient(circle at 50% 80%, rgba(16, 185, 129, 0.12) 0%, transparent 45%),
-    radial-gradient(circle at 75% 85%, rgba(239, 68, 68, 0.1) 0%, transparent 40%);
-  filter: blur(40px);
-  animation: aurora-mesh 18s ease-in-out infinite alternate;
+    radial-gradient(ellipse 60% 50% at 15% 20%, rgba(59, 130, 246, 0.14) 0%, transparent 100%),
+    radial-gradient(ellipse 60% 50% at 85% 30%, rgba(112, 0, 255, 0.14) 0%, transparent 100%),
+    radial-gradient(ellipse 50% 50% at 50% 80%, rgba(16, 185, 129, 0.1) 0%, transparent 100%),
+    radial-gradient(ellipse 50% 50% at 75% 85%, rgba(239, 68, 68, 0.08) 0%, transparent 100%);
+  transform: translateZ(0);
+  will-change: opacity;
+  animation: aurora-mesh 20s ease-in-out infinite alternate;
 }
 
 @keyframes aurora-mesh {
-  0% { transform: scale(1) translate(0, 0); }
-  50% { transform: scale(1.08) translate(-15px, 15px); }
-  100% { transform: scale(1.03) translate(15px, -10px); }
+  0% { opacity: 0.85; }
+  50% { opacity: 1; }
+  100% { opacity: 0.9; }
 }
 
 /* Glassmorphism custom classes */

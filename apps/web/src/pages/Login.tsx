@@ -24,12 +24,42 @@ export const Login: React.FC = () => {
   // Password strength calculation states
   const [pwdStrength, setPwdStrength] = useState({ score: 0, label: 'Weak', color: 'bg-red-500' });
 
+  const [visualMode, setVisualMode] = useState<'3d' | 'smooth'>(() => {
+    try {
+      return (localStorage.getItem('campusos_visual_mode') as '3d' | 'smooth') || '3d';
+    } catch {
+      return '3d';
+    }
+  });
+
+  const toggleVisualMode = () => {
+    const next = visualMode === '3d' ? 'smooth' : '3d';
+    setVisualMode(next);
+    try {
+      localStorage.setItem('campusos_visual_mode', next);
+    } catch {}
+    toast('Display Mode', next === 'smooth' ? 'High-Performance 60FPS mode active.' : '3D Interactive Scene active.', 'info');
+  };
+
+  // Dynamically load Spline viewer on-demand only when in 3d mode
+  useEffect(() => {
+    if (visualMode === '3d' && typeof window !== 'undefined' && !customElements.get('spline-viewer')) {
+      const script = document.createElement('script');
+      script.type = 'module';
+      script.src = 'https://cdn.spline.design/@splinetool/viewer@2.0.51/build/spline-viewer.js';
+      document.head.appendChild(script);
+    }
+  }, [visualMode]);
+
   // Hide 3D embedded text and CTA in Spline scene so our custom branding displays cleanly
   useEffect(() => {
+    if (visualMode !== '3d') return;
     const viewer = splineRef.current;
     if (!viewer) return;
 
+    let hasCleaned = false;
     const cleanupScene = () => {
+      if (hasCleaned) return;
       const app = (viewer as any)._spline;
       if (!app?._scene) return;
 
@@ -45,18 +75,24 @@ export const Login: React.FC = () => {
         }
       });
       app.requestRender?.();
+      hasCleaned = true;
     };
 
     viewer.addEventListener('load-complete', cleanupScene);
-    const interval = setInterval(cleanupScene, 200);
-    const timeout = setTimeout(() => clearInterval(interval), 6000);
+    const fallbackTimeout = setTimeout(cleanupScene, 1200);
 
     return () => {
       viewer.removeEventListener('load-complete', cleanupScene);
-      clearInterval(interval);
-      clearTimeout(timeout);
+      clearTimeout(fallbackTimeout);
+      try {
+        const app = (viewer as any)?._spline;
+        if (app) {
+          app.stop?.();
+          app.dispose?.();
+        }
+      } catch (e) {}
     };
-  }, []);
+  }, [visualMode]);
 
   useEffect(() => {
     if (isAuthenticated) {
@@ -135,29 +171,57 @@ export const Login: React.FC = () => {
   return (
     <div className="min-h-screen flex flex-col md:flex-row bg-slate-50 dark:bg-[#0b0f19] transition-colors duration-300">
       
-      {/* Brand Identity Pane with Interactive Spline 3D Scene */}
+      {/* Brand Identity Pane with Interactive Spline 3D Scene or High-Performance Mode */}
       <div className="flex-1 bg-gradient-to-br from-slate-950 via-[#0a0f1d] to-slate-900 p-8 md:p-12 flex flex-col justify-between text-white border-r border-blue-900/40 relative overflow-hidden min-h-[500px]">
-        {/* Spline 3D Interactive Canvas */}
-        <div className="absolute inset-0 z-0 overflow-hidden flex items-center justify-center">
-          <spline-viewer
-            ref={splineRef as any}
-            url="https://prod.spline.design/r3J9s106Ku9w6vmO/scene.splinecode"
-            className="w-full h-full block"
-            style={{ width: '100%', height: '100%', background: 'transparent' }}
-          />
-        </div>
+        {/* Visual Engine: 3D Spline Scene or High-Performance Nebula Mesh */}
+        {visualMode === '3d' ? (
+          <div className="absolute inset-0 z-0 overflow-hidden flex items-center justify-center pointer-events-none">
+            <spline-viewer
+              ref={splineRef as any}
+              url="https://prod.spline.design/r3J9s106Ku9w6vmO/scene.splinecode"
+              className="w-full h-full block pointer-events-none"
+              style={{ width: '100%', height: '100%', background: 'transparent', pointerEvents: 'none' }}
+            />
+          </div>
+        ) : (
+          <div className="absolute inset-0 z-0 overflow-hidden pointer-events-none">
+            <div className="absolute w-[450px] h-[450px] rounded-full bg-gradient-to-tr from-blue-600/30 via-indigo-500/20 to-cyan-400/25 blur-3xl top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 animate-pulse" />
+            <div className="absolute w-[300px] h-[300px] rounded-full bg-purple-600/20 blur-2xl top-1/4 left-1/3" />
+          </div>
+        )}
 
         {/* Subtle gradient vignette */}
         <div className="absolute inset-0 bg-gradient-to-t from-slate-950/85 via-transparent to-slate-950/40 pointer-events-none z-[1]" />
 
-        <div className="flex items-center gap-3 relative z-10 pointer-events-auto">
-          <div className="w-10 h-10 rounded-xl bg-blue-600 flex items-center justify-center shadow-lg font-black text-white text-xl font-display tracking-tight">
-            C
+        <div className="flex items-center justify-between gap-3 relative z-10 pointer-events-auto">
+          <div className="flex items-center gap-3">
+            <div className="w-10 h-10 rounded-xl bg-blue-600 flex items-center justify-center shadow-lg font-black text-white text-xl font-display tracking-tight">
+              C
+            </div>
+            <div>
+              <h1 className="text-lg font-bold font-display tracking-tight m-0">CampusOS</h1>
+              <p className="text-[10px] text-blue-400 font-semibold tracking-wider uppercase">ERP portal v2</p>
+            </div>
           </div>
-          <div>
-            <h1 className="text-lg font-bold font-display tracking-tight m-0">CampusOS</h1>
-            <p className="text-[10px] text-blue-400 font-semibold tracking-wider uppercase">ERP portal v2</p>
-          </div>
+
+          <button
+            type="button"
+            onClick={toggleVisualMode}
+            className="flex items-center gap-1.5 px-3 py-1 rounded-full text-[11px] font-semibold bg-slate-900/80 hover:bg-slate-800 text-slate-300 border border-slate-700/60 shadow transition-all cursor-pointer"
+            title="Toggle between 3D Spline Scene and High-Performance 60FPS mode"
+          >
+            {visualMode === '3d' ? (
+              <>
+                <span className="w-2 h-2 rounded-full bg-cyan-400 animate-pulse" />
+                <span>3D Canvas</span>
+              </>
+            ) : (
+              <>
+                <span className="w-2 h-2 rounded-full bg-emerald-400" />
+                <span>⚡ 60FPS Eco</span>
+              </>
+            )}
+          </button>
         </div>
 
         <div className="my-auto py-8 max-w-md relative z-10 space-y-4 pointer-events-auto">
