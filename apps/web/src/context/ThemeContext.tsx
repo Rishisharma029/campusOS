@@ -16,20 +16,26 @@ export const ThemeProvider: React.FC<{ children: React.ReactNode }> = ({ childre
     if (saved === 'light' || saved === 'dark' || saved === 'ocean' || saved === 'forest') {
       return saved;
     }
-    return 'light';
+    return 'dark';
   });
 
   useEffect(() => {
     const root = window.document.documentElement;
     // Clear existing theme classes
-    root.classList.remove('dark', 'theme-ocean', 'theme-forest');
+    root.classList.remove('dark', 'light', 'theme-ocean', 'theme-forest');
 
     if (theme === 'dark') {
       root.classList.add('dark');
+      root.style.colorScheme = 'dark';
     } else if (theme === 'ocean') {
-      root.classList.add('theme-ocean');
+      root.classList.add('dark', 'theme-ocean');
+      root.style.colorScheme = 'dark';
     } else if (theme === 'forest') {
-      root.classList.add('theme-forest');
+      root.classList.add('dark', 'theme-forest');
+      root.style.colorScheme = 'dark';
+    } else {
+      root.classList.add('light');
+      root.style.colorScheme = 'light';
     }
 
     localStorage.setItem('theme_profile', theme);

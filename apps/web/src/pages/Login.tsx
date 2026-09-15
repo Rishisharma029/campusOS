@@ -206,18 +206,19 @@ export const Login: React.FC = () => {
                     aria-label="Select Portal Role"
                     value={selectedRole}
                     onChange={(e) => setSelectedRole(e.target.value as UserRole)}
-                    className="w-full h-9 rounded-xl border border-main bg-surface px-3 py-1 text-xs text-slate-800 dark:text-slate-200 focus:outline-none focus:ring-2 focus:ring-primary font-medium"
+                    className="w-full h-9 rounded-xl border border-main bg-surface px-3 py-1 text-xs text-slate-800 dark:text-slate-100 dark:bg-slate-900 focus:outline-none focus:ring-2 focus:ring-primary font-medium cursor-pointer"
+                    style={{ colorScheme: 'dark' }}
                   >
-                    <option value="Admin">System Administrator</option>
-                    <option value="Student">Student Portal</option>
-                    <option value="Faculty">Faculty Portal</option>
-                    <option value="Accountant">Finance Accountant</option>
-                    <option value="Librarian">Librarian Ledger</option>
-                    <option value="Registrar">Registrar / Academic Affairs</option>
-                    <option value="Placement Cell">Placement Coordinator</option>
-                    <option value="Industry Portal">Industry Partner / Recruiter Portal</option>
-                    <option value="Hostel Warden">Hostel Warden</option>
-                    <option value="Transport Manager">Transport Manager</option>
+                    <option value="Admin" className="bg-slate-900 text-slate-100 py-1">System Administrator</option>
+                    <option value="Student" className="bg-slate-900 text-slate-100 py-1">Student Portal</option>
+                    <option value="Faculty" className="bg-slate-900 text-slate-100 py-1">Faculty Portal</option>
+                    <option value="Accountant" className="bg-slate-900 text-slate-100 py-1">Finance Accountant</option>
+                    <option value="Librarian" className="bg-slate-900 text-slate-100 py-1">Librarian Ledger</option>
+                    <option value="Registrar" className="bg-slate-900 text-slate-100 py-1">Registrar / Academic Affairs</option>
+                    <option value="Placement Cell" className="bg-slate-900 text-slate-100 py-1">Placement Coordinator</option>
+                    <option value="Industry Portal" className="bg-slate-900 text-slate-100 py-1">Industry Partner / Recruiter Portal</option>
+                    <option value="Hostel Warden" className="bg-slate-900 text-slate-100 py-1">Hostel Warden</option>
+                    <option value="Transport Manager" className="bg-slate-900 text-slate-100 py-1">Transport Manager</option>
                   </select>
                 </div>
               </div>
