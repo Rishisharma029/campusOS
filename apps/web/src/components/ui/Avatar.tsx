@@ -21,11 +21,12 @@ export const Avatar: React.FC<AvatarProps> = ({ name, src, size = 'md', classNam
   const [hasError, setHasError] = useState(false);
 
   const getInitials = (userName: string) => {
-    const parts = userName.trim().split(/\s+/);
+    const clean = userName.replace(/^[.\s\-_*]+/, '') || userName;
+    const parts = clean.trim().split(/\s+/);
     if (parts.length >= 2) {
       return `${parts[0][0]}${parts[parts.length - 1][0]}`.toUpperCase();
     }
-    return userName.slice(0, 2).toUpperCase();
+    return clean.slice(0, 2).toUpperCase();
   };
 
   const getColorClass = (userName: string) => {

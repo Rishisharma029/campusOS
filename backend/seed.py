@@ -67,7 +67,7 @@ async def seed_database():
             rishi_user = User(
                 email="rishi.sharma@university.edu",
                 hashed_password=get_password_hash("Rishi@123456"),
-                name="Rishi Sharma",
+                name=".Rishi Sharma",
                 role="Student",
                 is_active=True
             )
