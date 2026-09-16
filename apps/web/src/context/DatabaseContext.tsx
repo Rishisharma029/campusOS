@@ -134,7 +134,7 @@ export const DatabaseProvider: React.FC<{ children: React.ReactNode }> = ({ chil
   const [students, setStudents] = useState<Student[]>([
     {
       id: 'STU001',
-      name: 'Rishi Sharma',
+      name: '.Rishi Sharma',
       email: 'rishi.sharma@university.edu',
       rollNo: '2024CS001',
       department: 'Computer Science',
@@ -376,14 +376,14 @@ export const DatabaseProvider: React.FC<{ children: React.ReactNode }> = ({ chil
 
   // Initial Mock Exam Results
   const [results, setResults] = useState<Result[]>([
-    { id: 'R001', studentId: 'STU001', studentName: 'Rishi Sharma', subjectName: 'Data Structures', marksObtained: 88, maxMarks: 100, grade: 'A+' },
-    { id: 'R002', studentId: 'STU001', studentName: 'Rishi Sharma', subjectName: 'Computer Architecture', marksObtained: 79, maxMarks: 100, grade: 'A' },
+    { id: 'R001', studentId: 'STU001', studentName: '.Rishi Sharma', subjectName: 'Data Structures', marksObtained: 88, maxMarks: 100, grade: 'A+' },
+    { id: 'R002', studentId: 'STU001', studentName: '.Rishi Sharma', subjectName: 'Computer Architecture', marksObtained: 79, maxMarks: 100, grade: 'A' },
     { id: 'R003', studentId: 'STU002', studentName: 'Diya Sharma', subjectName: 'Microprocessors', marksObtained: 94, maxMarks: 100, grade: 'O' },
   ]);
 
   // Initial Fee Collections Ledger
   const [feeCollections, setFeeCollections] = useState<FeeCollection[]>([
-    { id: 'RCP1001', studentId: 'STU001', studentName: 'Rishi Sharma', amountPaid: 50000, receiptNo: 'RCP1001', paymentDate: '2026-06-15', paymentMethod: 'UPI / NetBanking' },
+    { id: 'RCP1001', studentId: 'STU001', studentName: '.Rishi Sharma', amountPaid: 50000, receiptNo: 'RCP1001', paymentDate: '2026-06-15', paymentMethod: 'UPI / NetBanking' },
     { id: 'RCP1002', studentId: 'STU002', studentName: 'Diya Sharma', amountPaid: 180000, receiptNo: 'RCP1002', paymentDate: '2026-06-10', paymentMethod: 'Credit Card' },
     { id: 'RCP1003', studentId: 'STU003', studentName: 'Rohan Sen', amountPaid: 90000, receiptNo: 'RCP1003', paymentDate: '2026-06-20', paymentMethod: 'Debit Card' },
   ]);
