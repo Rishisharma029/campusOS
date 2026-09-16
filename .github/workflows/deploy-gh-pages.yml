@@ -1,4 +1,4 @@
-name: Deploy CampusOS to GitHub Pages
+name: Deploy GENOVA AI to GitHub Pages
 
 on:
   push:
