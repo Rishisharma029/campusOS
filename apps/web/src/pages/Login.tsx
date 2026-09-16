@@ -28,11 +28,11 @@ export const Login: React.FC = () => {
     try {
       if (typeof window !== 'undefined') {
         return (localStorage.getItem('genova_visual_mode') as '3d' | 'smooth') ||
-               (localStorage.getItem('campusos_visual_mode') as '3d' | 'smooth') || '3d';
+               (localStorage.getItem('campusos_visual_mode') as '3d' | 'smooth') || 'smooth';
       }
-      return '3d';
+      return 'smooth';
     } catch {
-      return '3d';
+      return 'smooth';
     }
   });
 
