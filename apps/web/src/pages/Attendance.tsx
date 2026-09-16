@@ -9,6 +9,7 @@ import { Badge } from '../components/ui/Badge';
 import { Avatar } from '../components/ui/Avatar';
 import { Table, TableHeader, TableBody, TableRow, TableCell, TableHead } from '../components/ui/Table';
 import { Camera, Upload, Video, Sparkles, ShieldCheck } from 'lucide-react';
+import { StudentAttendanceCalendar } from '../components/attendance/StudentAttendanceCalendar';
 
 export const Attendance: React.FC = () => {
   const { students, updateStudent, addNotification } = useDatabase();
@@ -85,18 +86,38 @@ export const Attendance: React.FC = () => {
     { date: '2026-07-02', subject: 'Machine Learning', status: 'Present', time: '02:00 PM' },
   ];
 
+  if (!isStaff) {
+    const currentStudent = students[0] || {
+      id: 'std_2026_001',
+      name: 'Rishi Sharma',
+      rollNo: '2024CS001',
+      attendanceRate: 88.5,
+    };
+
+    return (
+      <div className="space-y-6 animate-fade-in">
+        <StudentAttendanceCalendar
+          studentId={currentStudent.id}
+          studentName={currentStudent.name}
+          rollNo={currentStudent.rollNo}
+          initialAttendanceRate={currentStudent.attendanceRate}
+        />
+      </div>
+    );
+  }
+
   return (
     <div className="flex flex-col gap-6 animate-fade-in">
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
-          <h1 className="text-xl font-bold text-slate-900 dark:text-slate-100 font-display m-0 leading-tight flex items-center gap-2">
+          <h1 className="text-xl font-bold text-slate-100 font-display m-0 leading-tight flex items-center gap-2">
             Attendance Portal
             <span className="text-xs px-2.5 py-0.5 rounded-full bg-emerald-500/20 text-emerald-400 border border-emerald-500/30">
               AI Face Recognition v2.0
             </span>
           </h1>
-          <p className="text-xs text-slate-500 dark:text-slate-400">
+          <p className="text-xs text-slate-400">
             Automated facial recognition via live camera, group photos, and classroom CCTV feeds.
           </p>
         </div>
@@ -168,10 +189,10 @@ export const Attendance: React.FC = () => {
       <Card>
         <CardHeader className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
           <div>
-            <h3 className="text-sm font-bold text-slate-900 dark:text-slate-100 m-0">
+            <h3 className="text-sm font-bold text-slate-100 m-0">
               {isStaff ? 'Course Attendance Checklist' : 'My Attendance Record'}
             </h3>
-            <p className="text-xs text-slate-500 dark:text-slate-400">
+            <p className="text-xs text-slate-400">
               {isStaff ? `Verifying enrolled students for ${selectedCourse}` : 'Individual subject breakdown'}
             </p>
           </div>

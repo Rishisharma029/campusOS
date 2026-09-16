@@ -28,7 +28,25 @@ class OperationRepository:
         )
         return result.scalars().all()
 
+    async def get_attendance_by_id(self, attendance_id: str) -> Attendance | None:
+        result = await self.db.execute(select(Attendance).where(Attendance.id == attendance_id))
+        return result.scalar_one_or_none()
+
     async def create_attendance(self, att_in: AttendanceCreate) -> Attendance:
+        # Check if record already exists for student, subject, and date (Upsert pattern)
+        result = await self.db.execute(
+            select(Attendance).where(
+                Attendance.student_id == att_in.student_id,
+                Attendance.subject_code == att_in.subject_code,
+                Attendance.date == att_in.date,
+            )
+        )
+        existing = result.scalar_one_or_none()
+        if existing:
+            existing.status = att_in.status
+            await self.db.flush()
+            return existing
+
         db_att = Attendance(
             student_id=att_in.student_id,
             subject_code=att_in.subject_code,
@@ -38,6 +56,21 @@ class OperationRepository:
         self.db.add(db_att)
         await self.db.flush()
         return db_att
+
+    async def update_attendance(self, attendance_id: str, status: str) -> Attendance | None:
+        existing = await self.get_attendance_by_id(attendance_id)
+        if not existing:
+            return None
+        existing.status = status
+        await self.db.flush()
+        return existing
+
+    async def batch_upsert_attendance(self, records: list[AttendanceCreate]) -> list[Attendance]:
+        synced: list[Attendance] = []
+        for rec in records:
+            att = await self.create_attendance(rec)
+            synced.append(att)
+        return synced
 
     # Results
     async def get_results_by_student(self, student_id: str) -> Sequence[Result]:

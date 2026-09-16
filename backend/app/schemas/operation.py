@@ -14,6 +14,15 @@ class AttendanceCreate(AttendanceBase):
     pass
 
 
+class AttendanceUpdate(BaseModel):
+    status: str = Field(..., description="Present | Absent | Late | Excused")
+    notes: str | None = None
+
+
+class AttendanceBatchSync(BaseModel):
+    records: list[AttendanceCreate]
+
+
 class AttendanceResponse(AttendanceBase):
     id: str
     created_at: datetime

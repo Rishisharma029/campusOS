@@ -32,6 +32,22 @@ export async function apiSubmitAttendance(data: Partial<AttendanceResponse>): Pr
   });
 }
 
+export async function apiUpdateAttendance(id: string, status: string): Promise<AttendanceResponse> {
+  return apiFetch<AttendanceResponse>(`/api/v1/attendance/${id}`, {
+    method: "PUT",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ status }),
+  });
+}
+
+export async function apiSyncAttendanceBatch(records: Partial<AttendanceResponse>[]): Promise<AttendanceResponse[]> {
+  return apiFetch<AttendanceResponse[]>("/api/v1/attendance/sync", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ records }),
+  });
+}
+
 export async function apiGetResults(studentId: string): Promise<ResultResponse[]> {
   return apiFetch<ResultResponse[]>(`/api/v1/results?student_id=${studentId}`);
 }
