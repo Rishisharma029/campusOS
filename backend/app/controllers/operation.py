@@ -29,6 +29,25 @@ class OperationController:
         return await repo.get_attendance_by_student(student_id, skip, limit)
 
     @staticmethod
+    async def update_attendance(
+        db: AsyncSession, attendance_id: str, status: str
+    ) -> Attendance | None:
+        repo = OperationRepository(db)
+        res = await repo.update_attendance(attendance_id, status)
+        if res:
+            await db.commit()
+        return res
+
+    @staticmethod
+    async def batch_sync_attendance(
+        db: AsyncSession, records: list[AttendanceCreate]
+    ) -> list[Attendance]:
+        repo = OperationRepository(db)
+        res = await repo.batch_upsert_attendance(records)
+        await db.commit()
+        return res
+
+    @staticmethod
     async def create_result(db: AsyncSession, res_in: ResultCreate) -> Result:
         repo = OperationRepository(db)
         res = await repo.create_result(res_in)

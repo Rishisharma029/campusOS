@@ -17,6 +17,7 @@ import {
 } from 'lucide-react';
 import { useToast } from '../ui/Toast';
 import { Link } from 'react-router-dom';
+import { StudentAttendanceCalendar } from '../attendance/StudentAttendanceCalendar';
 
 export const StudentDashboard: React.FC = () => {
   const { students, exams } = useDatabase();
@@ -233,6 +234,14 @@ export const StudentDashboard: React.FC = () => {
           </div>
         </div>
       </div>
+
+      {/* Student Attendance Calendar */}
+      <StudentAttendanceCalendar
+        studentId={currentStudent.id || 'std_2026_001'}
+        studentName={currentStudent.name}
+        rollNo={currentStudent.rollNo}
+        initialAttendanceRate={currentStudent.attendanceRate}
+      />
     </div>
   );
 };
