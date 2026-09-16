@@ -2,7 +2,7 @@ name: Deploy Frontend to GitHub Pages
 
 on:
   push:
-    branches: [master]
+    branches: [master, sih-2026-genova, sih-2026-sih26037]
     paths:
       - 'apps/web/**'
       - '.github/workflows/deploy-pages.yml'

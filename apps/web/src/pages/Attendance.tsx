@@ -78,13 +78,7 @@ export const Attendance: React.FC = () => {
     });
   };
 
-  const studentLogs = [
-    { date: '2026-07-08', subject: 'Data Structures', status: 'Present', time: '09:00 AM' },
-    { date: '2026-07-07', subject: 'Theory of Computation', status: 'Present', time: '09:00 AM' },
-    { date: '2026-07-06', subject: 'Data Structures', status: 'Absent', time: '09:00 AM' },
-    { date: '2026-07-03', subject: 'Technical Writing', status: 'Present', time: '02:00 PM' },
-    { date: '2026-07-02', subject: 'Machine Learning', status: 'Present', time: '02:00 PM' },
-  ];
+
 
   if (!isStaff) {
     const currentStudent = students[0] || {
@@ -212,82 +206,55 @@ export const Attendance: React.FC = () => {
         </CardHeader>
 
         <CardContent className="p-0">
-          {isStaff ? (
-            <Table>
-              <TableHeader>
-                <TableRow>
-                  <TableHead>Student</TableHead>
-                  <TableHead>Roll Number</TableHead>
-                  <TableHead>Overall Rate</TableHead>
-                  <TableHead>AI Status</TableHead>
-                  <TableHead className="text-right">Action</TableHead>
-                </TableRow>
-              </TableHeader>
-              <TableBody>
-                {filteredStudents.map((s) => {
-                  const isPresent = attendanceSheet[s.id];
-                  return (
-                    <TableRow key={s.id}>
-                      <TableCell>
-                        <div className="flex items-center gap-3">
-                          <Avatar name={s.name} />
-                          <div>
-                            <span className="font-semibold text-xs text-slate-900 dark:text-slate-100 block">{s.name}</span>
-                            <span className="text-[10px] text-slate-400">{s.email}</span>
-                          </div>
+          <Table>
+            <TableHeader>
+              <TableRow>
+                <TableHead>Student</TableHead>
+                <TableHead>Roll Number</TableHead>
+                <TableHead>Overall Rate</TableHead>
+                <TableHead>AI Status</TableHead>
+                <TableHead className="text-right">Action</TableHead>
+              </TableRow>
+            </TableHeader>
+            <TableBody>
+              {filteredStudents.map((s) => {
+                const isPresent = attendanceSheet[s.id];
+                return (
+                  <TableRow key={s.id}>
+                    <TableCell>
+                      <div className="flex items-center gap-3">
+                        <Avatar name={s.name} />
+                        <div>
+                          <span className="font-semibold text-xs text-slate-900 dark:text-slate-100 block">{s.name}</span>
+                          <span className="text-[10px] text-slate-400">{s.email}</span>
                         </div>
-                      </TableCell>
-                      <TableCell className="text-xs font-mono">{s.rollNo}</TableCell>
-                      <TableCell>
-                        <span className={`text-xs font-bold ${s.attendanceRate >= 75 ? 'text-emerald-500' : 'text-rose-500'}`}>
-                          {s.attendanceRate}%
-                        </span>
-                      </TableCell>
-                      <TableCell>
-                        <Badge variant={isPresent ? 'success' : 'danger'} className="text-[10px]">
-                          {isPresent ? 'Verified Present' : 'Absent'}
-                        </Badge>
-                      </TableCell>
-                      <TableCell className="text-right">
-                        <Button
-                          size="sm"
-                          variant={isPresent ? 'outline' : 'primary'}
-                          onClick={() => toggleStatus(s.id)}
-                        >
-                          Toggle {isPresent ? 'Absent' : 'Present'}
-                        </Button>
-                      </TableCell>
-                    </TableRow>
-                  );
-                })}
-              </TableBody>
-            </Table>
-          ) : (
-            <Table>
-              <TableHeader>
-                <TableRow>
-                  <TableHead>Date</TableHead>
-                  <TableHead>Subject</TableHead>
-                  <TableHead>Time Slot</TableHead>
-                  <TableHead className="text-right">Status</TableHead>
-                </TableRow>
-              </TableHeader>
-              <TableBody>
-                {studentLogs.map((log, idx) => (
-                  <TableRow key={idx}>
-                    <TableCell className="text-xs">{log.date}</TableCell>
-                    <TableCell className="text-xs font-semibold">{log.subject}</TableCell>
-                    <TableCell className="text-xs">{log.time}</TableCell>
-                    <TableCell className="text-right">
-                      <Badge variant={log.status === 'Present' ? 'success' : 'danger'} className="text-[10px]">
-                        {log.status}
+                      </div>
+                    </TableCell>
+                    <TableCell className="text-xs font-mono">{s.rollNo}</TableCell>
+                    <TableCell>
+                      <span className={`text-xs font-bold ${s.attendanceRate >= 75 ? 'text-emerald-500' : 'text-rose-500'}`}>
+                        {s.attendanceRate}%
+                      </span>
+                    </TableCell>
+                    <TableCell>
+                      <Badge variant={isPresent ? 'success' : 'danger'} className="text-[10px]">
+                        {isPresent ? 'Verified Present' : 'Absent'}
                       </Badge>
                     </TableCell>
+                    <TableCell className="text-right">
+                      <Button
+                        size="sm"
+                        variant={isPresent ? 'outline' : 'primary'}
+                        onClick={() => toggleStatus(s.id)}
+                      >
+                        Toggle {isPresent ? 'Absent' : 'Present'}
+                      </Button>
+                    </TableCell>
                   </TableRow>
-                ))}
-              </TableBody>
-            </Table>
-          )}
+                );
+              })}
+            </TableBody>
+          </Table>
         </CardContent>
       </Card>
     </div>

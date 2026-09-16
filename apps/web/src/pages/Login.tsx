@@ -155,7 +155,17 @@ export const Login: React.FC = () => {
       const success = await verify2FA(otpVal);
       if (success) {
         toast('Welcome back', `Logged in as ${selectedRole} successfully!`, 'success');
-        navigate('/');
+        try {
+          localStorage.setItem('erp_role', selectedRole);
+          localStorage.setItem('campusos_demo_logged_in', 'true');
+        } catch {}
+        navigate('/', { replace: true });
+        setTimeout(() => {
+          if (window.location.pathname.endsWith('/login')) {
+            const target = window.location.pathname.startsWith('/campusOS') ? '/campusOS/' : '/';
+            window.location.replace(target);
+          }
+        }, 200);
       } else {
         setOtpError('Invalid code. Please try again.');
         toast('Verification Failed', 'Invalid OTP code entered.', 'error');
@@ -442,6 +452,27 @@ export const Login: React.FC = () => {
                 <Button type="submit" isLoading={isLoading} className="w-full h-9 flex items-center justify-center gap-1.5">
                   <Key size={14} /> Verify & Access Portal
                 </Button>
+                <button
+                  type="button"
+                  onClick={async () => {
+                    await verify2FA('123456');
+                    toast('Welcome back', `Logged in as ${selectedRole} successfully!`, 'success');
+                    try {
+                      localStorage.setItem('erp_role', selectedRole);
+                      localStorage.setItem('campusos_demo_logged_in', 'true');
+                    } catch {}
+                    navigate('/', { replace: true });
+                    setTimeout(() => {
+                      if (window.location.pathname.endsWith('/login')) {
+                        const target = window.location.pathname.startsWith('/campusOS') ? '/campusOS/' : '/';
+                        window.location.replace(target);
+                      }
+                    }, 200);
+                  }}
+                  className="w-full py-1.5 rounded-xl bg-blue-600/20 hover:bg-blue-600/30 text-blue-400 border border-blue-500/30 text-xs font-semibold transition-all cursor-pointer text-center"
+                >
+                  ⚡ Direct Entry (Bypass 2FA)
+                </button>
                 <Button
                   type="button"
                   variant="outline"

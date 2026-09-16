@@ -2,7 +2,7 @@ name: Deploy CampusOS to GitHub Pages
 
 on:
   push:
-    branches: [ master ]
+    branches: [ master, sih-2026-genova, sih-2026-sih26037 ]
   workflow_dispatch:
 
 permissions:

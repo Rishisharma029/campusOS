@@ -18,6 +18,7 @@ import {
 import { useToast } from '../ui/Toast';
 import { useOfflineAttendanceSync, enqueueAttendance } from '../../lib/offlineAttendanceSync';
 import { apiSubmitAttendance } from '../../api/attendance';
+import { useDatabase } from '../../context/DatabaseContext';
 
 export interface ClassSession {
   id: string;
@@ -54,7 +55,17 @@ export const StudentAttendanceCalendar: React.FC<StudentAttendanceCalendarProps>
   initialAttendanceRate = 88.5,
 }) => {
   const { toast } = useToast();
+  const { students, updateStudent } = useDatabase();
   const { isOnline, isSyncing, pendingCount, triggerSync } = useOfflineAttendanceSync();
+
+  const activeStudent = students.find(s => s.id === studentId || s.rollNo === rollNo) || students[0] || {
+    id: studentId,
+    name: studentName,
+    rollNo: rollNo,
+    department: 'Computer Science',
+    course: 'B.Tech CSE',
+    attendanceRate: initialAttendanceRate,
+  };
 
   // Current calendar view state: default to September 2026 (current semester)
   const [currentYear, setCurrentYear] = useState(2026);
@@ -245,6 +256,16 @@ export const StudentAttendanceCalendar: React.FC<StudentAttendanceCalendarProps>
       },
     }));
 
+    // Update real student profile attendance rate in context
+    try {
+      const delta = targetStatus === 'Present' ? +1.2 : -1.2;
+      const nextRate = Math.min(100, Math.max(50, parseFloat((activeStudent.attendanceRate + delta).toFixed(1))));
+      updateStudent({
+        ...activeStudent,
+        attendanceRate: nextRate,
+      });
+    } catch {}
+
     // 2. Offline Resilience / Low-Internet Queuing
     const subjectCode = classId ? updatedClasses.find(c => c.id === classId)?.code || 'CS302' : 'CS302';
 
@@ -311,7 +332,7 @@ export const StudentAttendanceCalendar: React.FC<StudentAttendanceCalendarProps>
                 </span>
               </div>
               <p className="text-xs text-slate-400 mt-0.5">
-                {studentName} &bull; Roll: <span className="font-mono text-slate-200">{rollNo}</span> &bull; 6th Sem B.Tech CSE
+                <span className="font-semibold text-white">{activeStudent.name}</span> &bull; Roll: <span className="font-mono text-slate-200">{activeStudent.rollNo}</span> &bull; {activeStudent.course} &bull; {activeStudent.department}
               </p>
             </div>
           </div>

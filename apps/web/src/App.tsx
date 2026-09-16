@@ -98,6 +98,13 @@ const RoleRoute: React.FC<{ children: React.ReactNode; allowedRoles: UserRole[];
   return <>{children}</>;
 };
 
+const getBasename = () => {
+  if (typeof window === 'undefined') return '/';
+  if (window.location.pathname.startsWith('/campusOS')) return '/campusOS';
+  if (window.location.hostname.endsWith('github.io')) return '/campusOS';
+  return '/';
+};
+
 function App() {
   return (
     <ErrorBoundary>
@@ -108,7 +115,7 @@ function App() {
               <DatabaseProvider>
                 <RealtimeProvider>
                   <ToastProvider>
-                    <BrowserRouter basename={window.location.hostname.endsWith('github.io') ? '/campusOS' : '/'}>
+                    <BrowserRouter basename={getBasename()}>
                       <Suspense fallback={<PageSkeleton />}>
                         <Routes>
                           {/* Public Auth Gateway */}
@@ -328,6 +335,7 @@ function App() {
                             {/* Catch-all redirect to Dashboard */}
                             <Route path="*" element={<Navigate to="/" replace />} />
                           </Route>
+                          <Route path="*" element={<Navigate to="/" replace />} />
                         </Routes>
                       </Suspense>
                     </BrowserRouter>
