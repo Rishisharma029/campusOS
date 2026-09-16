@@ -47,7 +47,7 @@ export const CareerCopilot: React.FC = () => {
         id: 'welcome-msg',
         sender: 'copilot',
         timestamp: 'Just now',
-        text: `Hello **${initialContext.studentName}**! I am your **CampusOS AI Career Copilot**, directly synchronized with your institutional portfolio and verifiable telemetry.
+        text: `Hello **${initialContext.studentName}**! I am your **GENOVA AI Career Copilot**, directly synchronized with your institutional portfolio and verifiable telemetry.
 
 Unlike generic chatbots, every recommendation I provide is mathematically grounded in your **${initialContext.overallReadiness}% Career Readiness**, your **${initialContext.verifiedSkillsCount} Verified Skills**, and live industry hiring benchmarks.
 
@@ -143,7 +143,7 @@ Select one of the strategic questions below or ask any question about your caree
             </span>
           </div>
           <h1 className="text-2xl sm:text-3xl font-black tracking-tight text-white flex items-center gap-3">
-            CampusOS AI Career Copilot
+            GENOVA AI Career Copilot
           </h1>
           <p className="text-sm text-slate-300 mt-1 max-w-2xl">
             Hyper-personalized, evidence-based career steering. Zero generic responses — every insight is cross-referenced with your verified institutional transcripts and enterprise hiring benchmarks.
@@ -221,7 +221,7 @@ Select one of the strategic questions below or ask any question about your caree
           <div className="text-lg font-black text-slate-900 dark:text-white mt-0.5">
             {activeProfile.verifiedProjectsCount} Repos
           </div>
-          <div className="text-[11px] text-slate-500">CampusOS & Autonomous</div>
+          <div className="text-[11px] text-slate-500">GENOVA AI & Autonomous</div>
         </div>
 
         <div className="p-3.5 rounded-xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 shadow-xs">
@@ -302,7 +302,7 @@ Select one of the strategic questions below or ask any question about your caree
               {/* Message Header */}
               <div className="flex items-center justify-between gap-4 text-xs">
                 <span className={`font-bold ${msg.sender === 'user' ? 'text-indigo-100' : 'text-indigo-600 dark:text-indigo-400'}`}>
-                  {msg.sender === 'user' ? 'You (Rishi Sharma)' : 'CampusOS AI Career Copilot'}
+                  {msg.sender === 'user' ? 'You (Rishi Sharma)' : 'GENOVA AI Career Copilot'}
                 </span>
                 <span className={`text-[10px] ${msg.sender === 'user' ? 'text-indigo-200' : 'text-slate-400'}`}>
                   {msg.timestamp}

@@ -191,7 +191,7 @@ export const CareerSkills: React.FC = () => {
             Student Skill Intelligence & AI Assessment Engine
           </h1>
           <p className="mt-2 text-sm md:text-base text-slate-300 leading-relaxed">
-            The heart of CampusOS: comprehensive academic profile, verified technical & soft competencies, proof-of-work engineering repositories, and interactive AI assessment questionnaires.
+            The heart of GENOVA AI: comprehensive academic profile, verified technical & soft competencies, proof-of-work engineering repositories, and interactive AI assessment questionnaires.
           </p>
 
           <div className="mt-6 grid grid-cols-2 sm:grid-cols-4 gap-3 text-xs font-medium">

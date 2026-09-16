@@ -181,7 +181,7 @@ export const CareerPortfolio: React.FC = () => {
       setClaimTitle('Smart India Hackathon 2026 Winner (Problem SIH26044)');
       setClaimIssuer('Ministry of Education & AICTE, Govt. of India');
       setClaimCategory('Hackathon');
-      setClaimDetails('Ranked 1st nationwide for building the complete CampusOS enterprise employability & internship operating system.');
+      setClaimDetails('Ranked 1st nationwide for building the complete GENOVA AI enterprise employability & internship operating system.');
     }
   };
 
@@ -626,13 +626,13 @@ export const CareerPortfolio: React.FC = () => {
           </div>
 
           <div className="space-y-3 pt-1">
-            {/* 1. CampusOS */}
+            {/* 1. GENOVA AI */}
             <div className="p-3.5 rounded-xl bg-slate-50 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-800 flex items-start justify-between gap-3">
               <div className="space-y-1">
                 <div className="flex items-center gap-2">
                   <span className="text-emerald-500 font-extrabold text-sm">✓</span>
                   <h4 className="text-sm font-extrabold text-slate-900 dark:text-slate-100">
-                    CampusOS
+                    GENOVA AI
                   </h4>
                   <span className="text-[10px] px-2 py-0.5 rounded-full bg-emerald-500/10 text-emerald-600 border border-emerald-500/20 font-bold font-mono">
                     VERIFIED
@@ -660,7 +660,7 @@ export const CareerPortfolio: React.FC = () => {
               </div>
 
               <button
-                onClick={() => handleOpenProof('CampusOS', 'Project Proof', 'University Senate Audit', '0xPRJ-CAMPUSOS-8419A', 'Sep 2026', 'Production Grade • 100% CI/CD Pass', 'GitHub Actions Automated Test Rig + Faculty Capstone Jury Audit', 'Academic Verified', 'Aug 2026', '100% Tamper-Proof')}
+                onClick={() => handleOpenProof('GENOVA AI', 'Project Proof', 'University Senate Audit', '0xPRJ-GENOVA-8419A', 'Sep 2026', 'Production Grade • 100% CI/CD Pass', 'GitHub Actions Automated Test Rig + Faculty Capstone Jury Audit', 'Academic Verified', 'Aug 2026', '100% Tamper-Proof')}
                 className="px-2.5 py-1 rounded-lg text-[11px] font-bold text-blue-600 dark:text-blue-400 bg-blue-500/10 hover:bg-blue-500/20 border border-blue-500/20 cursor-pointer shrink-0 flex items-center gap-1"
               >
                 <ShieldCheck size={12} />
@@ -1517,7 +1517,7 @@ export const CareerPortfolio: React.FC = () => {
             </div>
 
             <div className="p-2.5 rounded-xl bg-white/5 border border-white/10 text-[10px] font-mono text-cyan-300 break-all">
-              https://campusos.genova.ai/verify/{portfolio.passportHash.slice(0, 16)}
+              https://verify.genova.ai/verify/{portfolio.passportHash.slice(0, 16)}
             </div>
 
             <button

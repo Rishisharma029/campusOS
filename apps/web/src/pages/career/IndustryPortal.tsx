@@ -175,7 +175,7 @@ export const IndustryPortal: React.FC = () => {
     setOpportunities(InternshipMarketplaceEngine.getOpportunities());
     setIsPostModalOpen(false);
     toast(
-      'Opportunity Published to CampusOS',
+      'Opportunity Published to GENOVA AI',
       `${newOpp.role} listed in Centralized Marketplace. Ready for AI Matching.`,
       'success'
     );
@@ -706,7 +706,7 @@ export const IndustryPortal: React.FC = () => {
                 Industry Skill Taxonomy & Benchmark Standards
               </h3>
               <p className="text-xs text-slate-500 mt-0.5">
-                Define standardized criteria and weights for candidate role matching across CampusOS.
+                Define standardized criteria and weights for candidate role matching across GENOVA AI.
               </p>
             </div>
             <button

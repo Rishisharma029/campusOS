@@ -205,10 +205,10 @@ export const LandIntelligencePlaceholder: React.FC = () => {
               <div className="p-4 rounded-xl bg-slate-50 dark:bg-slate-800/60 border border-slate-200 dark:border-slate-700/80 space-y-1.5">
                 <div className="flex items-center gap-2 text-emerald-600 dark:text-emerald-400 font-bold text-xs">
                   <Globe size={16} />
-                  <span>CampusOS Micro-Frontend Bridge</span>
+                  <span>GENOVA AI Micro-Frontend Bridge</span>
                 </div>
                 <p className="text-xs text-slate-500 dark:text-slate-400 leading-relaxed">
-                  Zero-latency embedding and Web Component protocol bridge allowing BhoomiLens to run directly inside CampusOS.
+                  Zero-latency embedding and Web Component protocol bridge allowing BhoomiLens to run directly inside GENOVA AI.
                 </p>
               </div>
             </div>

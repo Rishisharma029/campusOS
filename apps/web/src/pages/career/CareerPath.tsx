@@ -413,7 +413,7 @@ export const CareerPath: React.FC = () => {
                     </div>
                     <div>
                       <span className="text-[10px] font-bold text-blue-600 uppercase tracking-wider">
-                        CAMPUSOS RECOMMENDATION
+                        GENOVA AI RECOMMENDATION
                       </span>
                       <h3 className="text-base font-extrabold text-slate-900 dark:text-slate-100">
                         Best Next Action

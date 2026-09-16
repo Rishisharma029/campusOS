@@ -18,7 +18,7 @@ export const AIChatbot: React.FC<AIChatbotProps> = ({ isOpen, onClose }) => {
   const [messages, setMessages] = useState<Message[]>([
     {
       sender: 'ai',
-      text: 'Hello! I am CampusOS AI, your smart administrative assistant. Ask me anything about student dropout risks, fee analysis, timetable generation, or campus facility occupancies.',
+      text: 'Hello! I am GENOVA AI, your smart autonomous university assistant. Ask me anything about student dropout risks, fee analysis, timetable generation, or campus facility occupancies.',
       timestamp: 'Just now',
     },
   ]);
@@ -117,7 +117,7 @@ export const AIChatbot: React.FC<AIChatbotProps> = ({ isOpen, onClose }) => {
           </div>
           <div>
             <h2 className="text-sm font-bold text-slate-800 dark:text-slate-205 font-display flex items-center gap-1">
-              CampusOS Assistant <Sparkles size={12} className="text-amber-500 fill-amber-500" />
+              GENOVA AI Assistant <Sparkles size={12} className="text-amber-500 fill-amber-500" />
             </h2>
             <p className="text-[10px] text-emerald-500 font-medium flex items-center gap-1">
               <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" /> AI Engine Online

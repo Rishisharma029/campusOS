@@ -283,7 +283,7 @@ export class DecisionIntelligenceEngine {
     }
 
     return {
-      response: `CampusOS Decision Intelligence Engine is ready. Try asking:\n• *"Which department has the highest absenteeism?"*\n• *"Why?"*\n• *"Suggest solutions."*\n• *"Predict next semester's admissions."*\n• *"Which classrooms are underutilized?"*\n• *"How should we optimize the timetable?"*`
+      response: `GENOVA AI Decision Intelligence Engine is ready. Try asking:\n• *"Which department has the highest absenteeism?"*\n• *"Why?"*\n• *"Suggest solutions."*\n• *"Predict next semester's admissions."*\n• *"Which classrooms are underutilized?"*\n• *"How should we optimize the timetable?"*`
     };
   }
 }

@@ -77,7 +77,7 @@ export const AnalyticsHub: React.FC = () => {
               </div>
               <div>
                 <h1 className="text-xl font-extrabold text-white font-display tracking-tight flex items-center gap-2">
-                  CampusOS Predictive Analytics Engine
+                  GENOVA AI Predictive Analytics Engine
                   {isReadOnly && (
                     <span className="text-[10px] px-2.5 py-0.5 rounded-full bg-amber-500/20 text-amber-300 border border-amber-500/30 flex items-center gap-1 font-mono">
                       <Lock size={10} /> Read-Only Student View

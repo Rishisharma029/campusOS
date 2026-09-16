@@ -305,7 +305,7 @@ export const DEFAULT_STUDENT_PROFILE: StudentSkillProfile = {
     { id: 'ts-6', name: 'PyTorch & TensorRT Inference', category: 'Machine Learning', level: 92, verified: true, verifiedBy: 'NVIDIA DLI Certificate', confidenceScore: 93 },
     { id: 'ts-cv', name: 'OpenCV', category: 'Machine Learning', level: 78, verified: true, verifiedBy: 'Computer Vision Lab', confidenceScore: 80 },
     { id: 'ts-ml', name: 'ML', category: 'Machine Learning', level: 85, verified: true, verifiedBy: 'AI Assessment v2', confidenceScore: 88 },
-    { id: 'ts-7', name: 'TypeScript / React 19 / Vite', category: 'Software Engineering', level: 96, verified: true, verifiedBy: 'CampusOS Codebase Core', confidenceScore: 97 },
+    { id: 'ts-7', name: 'TypeScript / React 19 / Vite', category: 'Software Engineering', level: 96, verified: true, verifiedBy: 'GENOVA AI Codebase Core', confidenceScore: 97 },
     { id: 'ts-8', name: 'CAN Bus & Microcontroller Telemetry', category: 'Systems & Hardware', level: 84, verified: false, confidenceScore: 80 },
   ],
   softSkills: [
@@ -343,11 +343,11 @@ export const DEFAULT_STUDENT_PROFILE: StudentSkillProfile = {
     },
     {
       id: 'proj-3',
-      title: 'CampusOS Autonomous Agent Swarm Core',
+      title: 'GENOVA AI Autonomous Agent Swarm Core',
       description: 'Architected distributed multi-agent layer orchestrating academic copilots, zero-trust telemetry, and administrative dispatch tools.',
       role: 'Full-Stack Systems Architect',
       techStack: ['React 19', 'TypeScript', 'Tailwind v4', 'ADK', 'Gemini'],
-      repoUrl: 'https://github.com/genova/campusos-web',
+      repoUrl: 'https://github.com/genova/genova-ai-web',
       verified: true,
       highlight: 'Powers live university operations with sub-50ms client responsiveness.'
     }

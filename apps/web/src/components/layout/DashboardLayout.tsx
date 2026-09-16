@@ -50,7 +50,7 @@ export const DashboardLayout: React.FC = () => {
         <div className="bg-gradient-to-r from-blue-900 via-indigo-900 to-purple-900 text-white text-xs px-4 py-2 flex items-center justify-between z-40 border-b border-blue-500/30">
           <div className="flex items-center gap-2">
             <Wifi size={14} className="text-emerald-400 animate-pulse" />
-            <span><strong>CampusOS PWA Mode:</strong> App ready for offline use. Simulated push notifications & biometric login active.</span>
+            <span><strong>GENOVA AI PWA Mode:</strong> App ready for offline use. Simulated push notifications & biometric login active.</span>
           </div>
           <button onClick={() => setPwaBannerVisible(false)} className="text-slate-400 hover:text-white">
             <X size={14} />
@@ -87,7 +87,7 @@ export const DashboardLayout: React.FC = () => {
       >
         <Bot size={24} className="animate-pulse" />
         <span className="max-w-0 overflow-hidden group-hover:max-w-xs transition-all duration-300 text-xs font-bold whitespace-nowrap">
-          Ask CampusOS AI
+          Ask GENOVA AI
         </span>
       </button>
 

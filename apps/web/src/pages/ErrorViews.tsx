@@ -76,7 +76,7 @@ export const ErrorViews: React.FC = () => {
             <div>
               <h2 className="text-xl font-bold font-display text-slate-800 dark:text-slate-100">System Maintenance</h2>
               <p className="text-xs text-slate-450 mt-2 leading-relaxed">
-                CampusOS is currently performing planned database schema migrations. Back-up operations are underway.
+                GENOVA AI is currently performing planned database schema migrations. Back-up operations are underway.
               </p>
             </div>
             <p className="text-[9px] text-slate-400 font-bold bg-slate-100 dark:bg-slate-850 px-2 py-0.5 rounded">

@@ -121,10 +121,10 @@ Eligibility:
   {
     id: 'jd-fullstack-ai',
     title: 'Full Stack AI Platform Engineer',
-    company: 'CampusOS Core Engineering',
+    company: 'GENOVA AI Core Engineering',
     domain: 'Enterprise AI & Distributed Systems',
     rawText: `Role: Full Stack AI Platform Engineer
-Company: CampusOS Engineering Core
+Company: GENOVA AI Engineering Core
 Location: Remote / Flexible
 Compensation: ₹16 - 22 LPA / ₹55,000 Monthly Stipend
 
@@ -462,7 +462,7 @@ export class AIRecruiterEngine {
       // Remedial Recommendations
       const remedialRecommendations: string[] = [];
       if (missingRequired.length > 0) {
-        remedialRecommendations.push(`Enroll in CampusOS training rig for ${missingRequired.slice(0, 2).join(', ')}.`);
+        remedialRecommendations.push(`Enroll in GENOVA AI training rig for ${missingRequired.slice(0, 2).join(', ')}.`);
       }
       if (missingPreferred.length > 0) {
         remedialRecommendations.push(`Recommended optional upskilling in ${missingPreferred.slice(0, 2).join(', ')}.`);

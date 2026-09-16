@@ -108,7 +108,7 @@ export const Sidebar: React.FC<SidebarProps> = ({ isOpen, onToggle }) => {
               </span>
             </div>
             <span className="text-[10px] text-slate-400 dark:text-slate-500 truncate mt-0.5 font-medium">
-              CampusOS • {currentRole}
+              GENOVA AI • {currentRole}
             </span>
           </div>
 
@@ -258,7 +258,7 @@ export const Sidebar: React.FC<SidebarProps> = ({ isOpen, onToggle }) => {
 
         <button
           type="button"
-          aria-label="Logout from CampusOS"
+          aria-label="Logout from GENOVA AI"
           onClick={() => logout()}
           className="w-full flex items-center gap-3 px-3 py-2 rounded-xl text-xs text-slate-500 hover:bg-red-50 dark:hover:bg-red-900/20 hover:text-red-500 dark:hover:text-red-400 transition-colors cursor-pointer overflow-hidden"
         >

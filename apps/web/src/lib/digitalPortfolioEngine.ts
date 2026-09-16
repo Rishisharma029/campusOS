@@ -326,17 +326,17 @@ export const PORTFOLIO_DATA: DigitalPortfolioData = {
   projects: [
     {
       id: 'proj-campusos',
-      title: 'CampusOS',
+      title: 'GENOVA AI',
       category: 'Autonomous Multi-Agent ERP Platform',
       description: 'Enterprise institutional operating system orchestrating multi-agent copilots, zero-trust telemetry, real-time campus digital twin, and skill intelligence.',
       techStack: ['React 19', 'TypeScript', 'Tailwind v4', 'ADK', 'Gemini'],
-      repoUrl: 'https://github.com/genova/campusos',
+      repoUrl: 'https://github.com/Rishisharma029/campusOS',
       liveUrl: 'http://localhost:5173',
       stars: 342,
       verified: true,
       verifiedBy: 'GENOVA University Senate & Production Deployment Audit',
       verifiedAt: 'Sep 2026',
-      verificationHash: '0xPRJ-CAMPUSOS-8419A',
+      verificationHash: '0xPRJ-GENOVA-8419A',
       highlight: 'Live across university operations with sub-50ms responsive interactions.'
     },
     {

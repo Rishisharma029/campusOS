@@ -118,7 +118,7 @@ export const IndustrySkillMapping: React.FC = () => {
     setRoles(updatedRoles);
     setSelectedRoleId(newRole.id);
     setIsCreateRoleModalOpen(false);
-    toast('Role Standardized', `CampusOS converted "${newRole.title}" into canonical skill taxonomy.`, 'success');
+    toast('Role Standardized', `GENOVA AI converted "${newRole.title}" into canonical skill taxonomy.`, 'success');
   };
 
   // Export Cohort Shortlist
@@ -140,7 +140,7 @@ export const IndustrySkillMapping: React.FC = () => {
     const url = window.URL.createObjectURL(blob);
     const a = document.createElement('a');
     a.href = url;
-    a.download = `CampusOS_Shortlist_${currentRole.title.replace(/[^a-zA-Z0-9]/g, '_')}.csv`;
+    a.download = `GENOVA_AI_Shortlist_${currentRole.title.replace(/[^a-zA-Z0-9]/g, '_')}.csv`;
     a.click();
     window.URL.revokeObjectURL(url);
     toast('Shortlist Exported', `Downloaded candidate roster for ${currentRole.title}.`, 'success');
@@ -159,7 +159,7 @@ export const IndustrySkillMapping: React.FC = () => {
             Industry Skill Mapping & Cohort Comparison
           </h1>
           <p className="mt-2 text-sm md:text-base text-slate-300 leading-relaxed">
-            Industries define required and preferred competencies. CampusOS converts them into standardized institutional profiles, then dynamically benchmarks every student across the university cohort against them.
+            Industries define required and preferred competencies. GENOVA AI converts them into standardized institutional profiles, then dynamically benchmarks every student across the university cohort against them.
           </p>
 
           {/* Quick Metrics Counter */}
@@ -237,7 +237,7 @@ export const IndustrySkillMapping: React.FC = () => {
             </span>
           </div>
           <div className="flex items-center gap-1.5 text-xs text-slate-500 font-mono">
-            <span>CampusOS Hash:</span>
+            <span>GENOVA AI Hash:</span>
             <strong className="text-blue-600 dark:text-blue-400">{comparisonData.standardizedProfile.profileHash}</strong>
           </div>
         </div>
@@ -479,7 +479,7 @@ export const IndustrySkillMapping: React.FC = () => {
                 Standardized Profile for {currentRole.title}
               </h3>
               <p className="text-xs text-slate-500 mt-0.5">
-                CampusOS transforms raw industry recruiter inputs into measurable institutional competencies with strict pass benchmarks.
+                GENOVA AI transforms raw industry recruiter inputs into measurable institutional competencies with strict pass benchmarks.
               </p>
             </div>
             <div className="text-xs font-mono bg-slate-100 dark:bg-slate-800 px-3 py-1.5 rounded-lg border border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-300">
@@ -757,7 +757,7 @@ export const IndustrySkillMapping: React.FC = () => {
                   Define Industry Role Benchmark
                 </h3>
                 <p className="text-xs text-slate-500">
-                  CampusOS will convert these requirements into a standardized skill profile.
+                  GENOVA AI will convert these requirements into a standardized skill profile.
                 </p>
               </div>
               <button

@@ -1,5 +1,5 @@
 """
-GENOVA CampusOS AI — Initial Database Seeder
+GENOVA AI ERP — Initial Database Seeder
 Seeds baseline users (Admin, Rishi Sharma as Student), Student profiles,
 and core operational data into the SQLite / PostgreSQL database.
 """
@@ -37,8 +37,12 @@ async def seed_database():
         else:
             print("Admin user already exists.")
 
-        # Seed Demo Portals (admin@campusos.org, student@campusos.org, industry@campusos.org)
+        # Seed Demo Portals (genova.ai & campusos.org)
         demo_accounts = [
+            ("admin@genova.ai", "AdminPassword@123", "GENOVA System Administrator", "Admin"),
+            ("student@genova.ai", "StudentPassword@123", "Demo Student", "Student"),
+            ("industry@genova.ai", "IndustryPassword@123", "Demo Industry Partner", "Industry Portal"),
+            ("faculty@genova.ai", "FacultyPassword@123", "Dr. Arindam Sen", "Faculty"),
             ("admin@campusos.org", "AdminPassword@123", "Demo Administrator", "Admin"),
             ("student@campusos.org", "StudentPassword@123", "Demo Student", "Student"),
             ("industry@campusos.org", "IndustryPassword@123", "Demo Industry Partner", "Industry Portal"),

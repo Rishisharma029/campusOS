@@ -21,7 +21,7 @@ export interface MultiAgentRouteResult extends AgentToolResponse {
   agentDescription: string;
 }
 
-export class CampusOSAIOrchestrator {
+export class GenovaAIOrchestrator {
   /**
    * Master Coordinator router to direct user query to specialized agent
    */
@@ -279,3 +279,5 @@ export class CampusOSAIOrchestrator {
     };
   }
 }
+
+export const CampusOSAIOrchestrator = GenovaAIOrchestrator;
