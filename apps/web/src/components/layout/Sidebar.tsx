@@ -230,7 +230,7 @@ export const Sidebar: React.FC<SidebarProps> = ({ isOpen, onToggle }) => {
               {innovationModules.map((mod) =>
                 renderNavLink(
                   mod,
-                  mod.name.includes('Land') ? 'bg-emerald-400' : 'bg-cyan-400'
+                  'bg-emerald-400'
                 )
               )}
             </div>
