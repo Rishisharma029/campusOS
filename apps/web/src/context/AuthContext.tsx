@@ -31,9 +31,10 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   
   // Tab-persistent session state
   const [isAuthenticated, setIsAuthenticated] = useState<boolean>(() => {
-    const hasActive = sessionStorage.getItem('auth_active') === 'true';
+    const isStaticDeploy = typeof window !== 'undefined' && (window.location.hostname.endsWith('github.io') || window.location.pathname.startsWith('/campusOS'));
+    const hasActive = sessionStorage.getItem('auth_active') === 'true' || localStorage.getItem('campusos_demo_logged_in') === 'true';
     const hasToken = !!sessionStorage.getItem('access_token') || !!localStorage.getItem('refresh_token');
-    const isDemo = sessionStorage.getItem('auth_mode') === 'demo';
+    const isDemo = sessionStorage.getItem('auth_mode') === 'demo' || localStorage.getItem('campusos_demo_logged_in') === 'true' || isStaticDeploy;
     if (hasActive && !hasToken && !isDemo) {
       // Clean up orphaned auth flags from invalidated sessions
       sessionStorage.removeItem('auth_active');
@@ -46,7 +47,12 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const [user, setUser] = useState<{ username: string; role: UserRole } | null>(() => {
     try {
       const saved = sessionStorage.getItem('auth_user');
-      return saved ? JSON.parse(saved) : null;
+      if (saved) return JSON.parse(saved);
+      const savedRole = localStorage.getItem('erp_role') as UserRole;
+      if (savedRole) {
+        return { username: 'Admin', role: savedRole };
+      }
+      return null;
     } catch {
       sessionStorage.removeItem('auth_user');
       return null;
@@ -167,7 +173,12 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       
       setIsAuthenticated(true);
       sessionStorage.setItem('auth_active', 'true');
-      sessionStorage.setItem('auth_user', JSON.stringify(user));
+      sessionStorage.setItem('auth_mode', 'demo');
+      try {
+        localStorage.setItem('campusos_demo_logged_in', 'true');
+      } catch {}
+      const fallbackUser = user || { username: 'Admin', role: ((typeof localStorage !== 'undefined' && localStorage.getItem('erp_role')) as UserRole) || 'Admin' };
+      sessionStorage.setItem('auth_user', JSON.stringify(fallbackUser));
       return true;
     }
     return false;
@@ -183,6 +194,12 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       // ALWAYS clear all tokens and session flags — guaranteed cleanup
       // whether API call succeeded, failed, or user was in demo mode.
       clearTokens();
+      try {
+        localStorage.removeItem('campusos_demo_logged_in');
+      } catch {}
+      sessionStorage.removeItem('auth_active');
+      sessionStorage.removeItem('auth_mode');
+      sessionStorage.removeItem('auth_user');
       setIsAuthenticated(false);
       setUser(null);
       setIsSessionWarningOpen(false);
