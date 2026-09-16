@@ -24,7 +24,6 @@ interface RealtimeContextType {
   todayAttendanceRate: number;
   liveNotifications: LiveNotification[];
   emergencyAlerts: EmergencyAlert[];
-  studentMoodScore: number; // 0 - 100
   aiAlerts: string[];
   triggerEmergencySOS: (type: 'Security' | 'Medical' | 'Fire', location: string) => void;
   resolveEmergencySOS: (id: string) => void;
@@ -37,7 +36,6 @@ export const RealtimeProvider: React.FC<{ children: React.ReactNode }> = ({ chil
   const [isConnected] = useState(true);
   const [activeClassesCount, setActiveClassesCount] = useState(42);
   const [todayAttendanceRate, setTodayAttendanceRate] = useState(94.2);
-  const [studentMoodScore, setStudentMoodScore] = useState(88);
 
   const [liveNotifications, setLiveNotifications] = useState<LiveNotification[]>([
     {
@@ -84,7 +82,6 @@ export const RealtimeProvider: React.FC<{ children: React.ReactNode }> = ({ chil
   useEffect(() => {
     const interval = setInterval(() => {
       setTodayAttendanceRate(prev => Math.min(99.9, Math.max(90, +(prev + (Math.random() * 0.4 - 0.2)).toFixed(1))));
-      setStudentMoodScore(prev => Math.min(98, Math.max(70, Math.round(prev + (Math.random() * 2 - 1)))));
     }, 10000);
     return () => clearInterval(interval);
   }, []);
@@ -121,7 +118,6 @@ export const RealtimeProvider: React.FC<{ children: React.ReactNode }> = ({ chil
         todayAttendanceRate,
         liveNotifications,
         emergencyAlerts,
-        studentMoodScore,
         aiAlerts,
         triggerEmergencySOS,
         resolveEmergencySOS,
@@ -139,7 +135,6 @@ const fallbackRealtimeContext: RealtimeContextType = {
   todayAttendanceRate: 0,
   liveNotifications: [],
   emergencyAlerts: [],
-  studentMoodScore: 0,
   aiAlerts: [],
   triggerEmergencySOS: () => {},
   resolveEmergencySOS: () => {},
