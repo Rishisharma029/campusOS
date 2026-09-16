@@ -26,7 +26,11 @@ export const Login: React.FC = () => {
 
   const [visualMode, setVisualMode] = useState<'3d' | 'smooth'>(() => {
     try {
-      return (localStorage.getItem('campusos_visual_mode') as '3d' | 'smooth') || '3d';
+      if (typeof window !== 'undefined') {
+        return (localStorage.getItem('genova_visual_mode') as '3d' | 'smooth') ||
+               (localStorage.getItem('campusos_visual_mode') as '3d' | 'smooth') || '3d';
+      }
+      return '3d';
     } catch {
       return '3d';
     }
@@ -36,6 +40,7 @@ export const Login: React.FC = () => {
     const next = visualMode === '3d' ? 'smooth' : '3d';
     setVisualMode(next);
     try {
+      localStorage.setItem('genova_visual_mode', next);
       localStorage.setItem('campusos_visual_mode', next);
     } catch {}
     toast('Display Mode', next === 'smooth' ? 'High-Performance 60FPS mode active.' : '3D Interactive Scene active.', 'info');
@@ -149,11 +154,12 @@ export const Login: React.FC = () => {
     
     setIsLoading(true);
     try {
-      const success = await verify2FA(otpVal);
+      const success = await verify2FA(effectiveOtp);
       if (success) {
         toast('Welcome back', `Logged in as ${selectedRole} successfully!`, 'success');
         try {
           localStorage.setItem('erp_role', selectedRole);
+          localStorage.setItem('genova_demo_logged_in', 'true');
           localStorage.setItem('campusos_demo_logged_in', 'true');
         } catch {}
         navigate('/', { replace: true });
@@ -202,12 +208,12 @@ export const Login: React.FC = () => {
 
         <div className="flex items-center justify-between gap-3 relative z-10 pointer-events-auto">
           <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-xl bg-blue-600 flex items-center justify-center shadow-lg font-black text-white text-xl font-display tracking-tight">
-              C
+            <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-cyan-500 via-blue-600 to-indigo-600 flex items-center justify-center shadow-lg font-black text-white text-xl font-display tracking-tight ring-1 ring-white/20">
+              G
             </div>
             <div>
-              <h1 className="text-lg font-bold font-display tracking-tight m-0">CampusOS</h1>
-              <p className="text-[10px] text-blue-400 font-semibold tracking-wider uppercase">ERP portal v2</p>
+              <h1 className="text-lg font-bold font-display tracking-tight m-0">GENOVA AI</h1>
+              <p className="text-[10px] text-blue-400 font-semibold tracking-wider uppercase">Autonomous Higher Education ERP v2</p>
             </div>
           </div>
 
@@ -239,12 +245,12 @@ export const Login: React.FC = () => {
             The Operating System for Modern Education.
           </h2>
           <p className="text-xs text-slate-300 leading-relaxed drop-shadow-sm max-w-sm">
-            CampusOS unifies academic directories, smart analytics predictive engines, timetabling networks, and library borrows in a single, responsive canvas.
+            GENOVA AI unifies academic directories, predictive neural networks, smart timetabling engines, and career intelligence in a single, responsive canvas.
           </p>
         </div>
 
         <div className="relative z-10 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 text-xs text-slate-400 border-t border-slate-800/80 pt-6 pointer-events-auto">
-          <span>© 2026 CampusOS Inc.</span>
+          <span>© 2026 GENOVA AI Inc.</span>
           <span className="flex items-center gap-1.5 font-medium text-emerald-400">
             <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" /> All Systems Operational
           </span>
@@ -371,12 +377,12 @@ export const Login: React.FC = () => {
                 <button
                   type="button"
                   onClick={async () => {
-                    setUsername('admin@campusos.org');
+                    setUsername('admin@genova.ai');
                     setPassword('AdminPassword@123');
                     setSelectedRole('Admin');
                     setIsLoading(true);
                     try {
-                      await login('admin@campusos.org', 'AdminPassword@123', 'Admin', true);
+                      await login('admin@genova.ai', 'AdminPassword@123', 'Admin', true);
                       toast('MFA Provisioned', 'Demo code: 123456 (or any 6 digits).', 'info');
                       setStep('twofactor');
                     } catch (e) {
@@ -392,12 +398,12 @@ export const Login: React.FC = () => {
                 <button
                   type="button"
                   onClick={async () => {
-                    setUsername('student@campusos.org');
+                    setUsername('student@genova.ai');
                     setPassword('StudentPassword@123');
                     setSelectedRole('Student');
                     setIsLoading(true);
                     try {
-                      await login('student@campusos.org', 'StudentPassword@123', 'Student', true);
+                      await login('student@genova.ai', 'StudentPassword@123', 'Student', true);
                       toast('MFA Provisioned', 'Demo code: 123456 (or any 6 digits).', 'info');
                       setStep('twofactor');
                     } catch (e) {
@@ -413,12 +419,12 @@ export const Login: React.FC = () => {
                 <button
                   type="button"
                   onClick={async () => {
-                    setUsername('industry@campusos.org');
+                    setUsername('industry@genova.ai');
                     setPassword('IndustryPassword@123');
                     setSelectedRole('Industry Portal');
                     setIsLoading(true);
                     try {
-                      await login('industry@campusos.org', 'IndustryPassword@123', 'Industry Portal', true);
+                      await login('industry@genova.ai', 'IndustryPassword@123', 'Industry Portal', true);
                       toast('MFA Provisioned', 'Demo code: 123456 (or any 6 digits).', 'info');
                       setStep('twofactor');
                     } catch (e) {
@@ -456,6 +462,7 @@ export const Login: React.FC = () => {
                     toast('Welcome back', `Logged in as ${selectedRole} successfully!`, 'success');
                     try {
                       localStorage.setItem('erp_role', selectedRole);
+                      localStorage.setItem('genova_demo_logged_in', 'true');
                       localStorage.setItem('campusos_demo_logged_in', 'true');
                     } catch {}
                     navigate('/', { replace: true });

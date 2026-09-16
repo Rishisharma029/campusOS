@@ -48,7 +48,7 @@ export const Navbar: React.FC<NavbarProps> = ({
               </span>
               <span className="inline-flex items-center gap-1 px-1.5 py-0.5 rounded text-[10px] font-semibold bg-blue-500/10 text-blue-600 dark:text-blue-400 border border-blue-500/20 shrink-0">
                 <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
-                CampusOS AI
+                AI ERP
               </span>
             </div>
             <span className="text-[10px] font-medium text-slate-500 dark:text-slate-400 tracking-tight hidden sm:inline-block truncate">

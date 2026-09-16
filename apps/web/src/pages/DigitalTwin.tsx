@@ -149,7 +149,7 @@ export const DigitalTwin: React.FC = () => {
               </div>
               <div>
                 <h1 className="text-xl font-extrabold text-white font-display tracking-tight flex items-center gap-2">
-                  CampusOS AI Digital Twin
+                  GENOVA AI Digital Twin
                   <span className="text-[10px] px-2.5 py-0.5 rounded-full bg-cyan-500/20 text-cyan-300 border border-cyan-500/30 font-mono">
                     Live Spatial Telemetry Stream
                   </span>

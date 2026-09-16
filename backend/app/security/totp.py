@@ -11,7 +11,7 @@ def generate_totp_secret() -> str:
     return pyotp.random_base32()
 
 
-def generate_totp_uri(secret: str, user_email: str, issuer: str = "CampusOS ERP") -> str:
+def generate_totp_uri(secret: str, user_email: str, issuer: str = "GENOVA AI ERP") -> str:
     """
     Generate a standard otpauth:// URI for QR code scanning in authenticator apps.
     Compatible with Google Authenticator, Authy, Microsoft Authenticator, etc.

@@ -89,7 +89,7 @@ export const AIIntelligenceHub: React.FC = () => {
         <div className="relative z-10 max-w-3xl">
           <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-semibold bg-purple-500/20 text-purple-300 border border-purple-500/30 mb-3">
             <Brain size={14} />
-            <span>GENOVA CampusOS AI Intelligence Suite</span>
+            <span>GENOVA AI Intelligence Suite</span>
           </div>
           <h1 className="text-2xl md:text-3xl font-extrabold tracking-tight font-display">
             Autonomous Agents & Neural Decision Intelligence

@@ -539,7 +539,7 @@ export const InstitutionIntelligence: React.FC = () => {
                   InstitutionIntelligenceEngine.deployRemedialIntervention(g.id);
                 });
                 setIntelData(InstitutionIntelligenceEngine.getIntelligence());
-                toast('Batch Interventions Deployed', 'CampusOS scheduled automatic remedial sandboxes for all 4 gap areas.', 'success');
+                toast('Batch Interventions Deployed', 'GENOVA AI scheduled automatic remedial sandboxes for all 4 gap areas.', 'success');
               }}
               className="px-3 py-1.5 rounded-xl bg-amber-600 hover:bg-amber-500 text-white font-bold text-xs flex items-center gap-1 cursor-pointer shadow-sm transition-all"
             >

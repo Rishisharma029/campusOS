@@ -133,7 +133,7 @@ export const AIRecruiter: React.FC = () => {
               <div>
                 <div className="flex items-center gap-2">
                   <h1 className="text-xl md:text-2xl font-black text-white tracking-tight font-display">
-                    CampusOS AI Recruiter
+                    GENOVA AI Recruiter
                   </h1>
                   <span className="px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-indigo-500/20 text-indigo-300 border border-indigo-500/30">
                     SIH26044 INTELLIGENCE
@@ -259,7 +259,7 @@ export const AIRecruiter: React.FC = () => {
             <div className="flex items-center justify-between pb-3 border-b border-slate-200 dark:border-slate-800">
               <div>
                 <span className="text-[10px] font-bold text-indigo-500 uppercase tracking-wider">
-                  CampusOS Semantic Parser
+                  GENOVA AI Semantic Parser
                 </span>
                 <h3 className="text-sm font-black text-slate-900 dark:text-white">
                   {requirements.roleTitle}

@@ -32,9 +32,14 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   // Tab-persistent session state
   const [isAuthenticated, setIsAuthenticated] = useState<boolean>(() => {
     const isStaticDeploy = typeof window !== 'undefined' && (window.location.hostname.endsWith('github.io') || window.location.pathname.startsWith('/campusOS'));
-    const hasActive = sessionStorage.getItem('auth_active') === 'true' || localStorage.getItem('campusos_demo_logged_in') === 'true';
+    const hasActive = sessionStorage.getItem('auth_active') === 'true' ||
+                      localStorage.getItem('genova_demo_logged_in') === 'true' ||
+                      localStorage.getItem('campusos_demo_logged_in') === 'true';
     const hasToken = !!sessionStorage.getItem('access_token') || !!localStorage.getItem('refresh_token');
-    const isDemo = sessionStorage.getItem('auth_mode') === 'demo' || localStorage.getItem('campusos_demo_logged_in') === 'true' || isStaticDeploy;
+    const isDemo = sessionStorage.getItem('auth_mode') === 'demo' ||
+                   localStorage.getItem('genova_demo_logged_in') === 'true' ||
+                   localStorage.getItem('campusos_demo_logged_in') === 'true' ||
+                   isStaticDeploy;
     if (hasActive && !hasToken && !isDemo) {
       // Clean up orphaned auth flags from invalidated sessions
       sessionStorage.removeItem('auth_active');
@@ -125,7 +130,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       setUser({ username: res.name || username, role });
       setRole(role);
     } catch (err: any) {
-      if (username.includes('campusos.org') || isDemo) {
+      if (username.includes('genova.ai') || username.includes('campusos.org') || isDemo) {
         console.warn("API login fallback to local demo mode.");
         sessionStorage.setItem('auth_mode', 'demo');
         setUser({ username: username.split('@')[0] || username, role });
@@ -175,6 +180,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       sessionStorage.setItem('auth_active', 'true');
       sessionStorage.setItem('auth_mode', 'demo');
       try {
+        localStorage.setItem('genova_demo_logged_in', 'true');
         localStorage.setItem('campusos_demo_logged_in', 'true');
       } catch {}
       const fallbackUser = user || { username: 'Admin', role: ((typeof localStorage !== 'undefined' && localStorage.getItem('erp_role')) as UserRole) || 'Admin' };
@@ -195,6 +201,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       // whether API call succeeded, failed, or user was in demo mode.
       clearTokens();
       try {
+        localStorage.removeItem('genova_demo_logged_in');
         localStorage.removeItem('campusos_demo_logged_in');
       } catch {}
       sessionStorage.removeItem('auth_active');

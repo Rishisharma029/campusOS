@@ -1,4 +1,4 @@
-// CampusOS v2.0 Prisma Database Schema (~50 Relational Models)
+// GENOVA AI ERP v2.0 Prisma Database Schema (~50 Relational Models)
 datasource db {
   provider = "postgresql"
   url      = env("DATABASE_URL")

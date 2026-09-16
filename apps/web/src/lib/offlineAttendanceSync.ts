@@ -12,11 +12,12 @@ export interface QueuedAttendanceRecord {
   attendance_id?: string;
 }
 
-const STORAGE_KEY = 'campusos_attendance_offline_queue';
+const STORAGE_KEY = 'genova_attendance_offline_queue';
+const LEGACY_STORAGE_KEY = 'campusos_attendance_offline_queue';
 
 export function getOfflineQueue(): QueuedAttendanceRecord[] {
   try {
-    const raw = localStorage.getItem(STORAGE_KEY);
+    const raw = localStorage.getItem(STORAGE_KEY) || localStorage.getItem(LEGACY_STORAGE_KEY);
     return raw ? JSON.parse(raw) : [];
   } catch {
     return [];
@@ -25,7 +26,9 @@ export function getOfflineQueue(): QueuedAttendanceRecord[] {
 
 export function saveOfflineQueue(queue: QueuedAttendanceRecord[]) {
   try {
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(queue));
+    const serialized = JSON.stringify(queue);
+    localStorage.setItem(STORAGE_KEY, serialized);
+    localStorage.setItem(LEGACY_STORAGE_KEY, serialized);
   } catch (err) {
     console.error('Failed to persist offline attendance queue', err);
   }

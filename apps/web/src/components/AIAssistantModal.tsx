@@ -126,7 +126,7 @@ export const AIAssistantModal: React.FC<AIAssistantModalProps> = ({ isOpen, onCl
             </div>
             <div>
               <h3 className="font-bold text-slate-100 flex items-center gap-2 text-base">
-                CampusOS ADK Multi-Agent Orchestrator
+                GENOVA AI Multi-Agent Orchestrator
                 <span className="text-[10px] px-2 py-0.5 rounded-full bg-purple-500/20 text-purple-300 border border-purple-500/30 font-mono">
                   10 Agents & Tool Execution Engine
                 </span>

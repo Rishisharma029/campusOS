@@ -23,7 +23,7 @@ export const DesignSystemDocs: React.FC = () => {
   ];
 
   const typography = [
-    { label: 'Display Header 1', spec: 'Poppins, SemiBold, 24px', sample: 'CampusOS Portal' },
+    { label: 'Display Header 1', spec: 'Poppins, SemiBold, 24px', sample: 'GENOVA AI Portal' },
     { label: 'Display Header 2', spec: 'Poppins, Bold, 20px', sample: 'Smart Digital Twin' },
     { label: 'Body Text', spec: 'Inter, Regular, 14px', sample: 'The core database tracks active students.' },
     { label: 'Muted Caption', spec: 'Inter, Medium, 11px', sample: 'Created At: 2026-07-08T12:15' },
@@ -55,12 +55,12 @@ export const DesignSystemDocs: React.FC = () => {
             </div>
             <CardContent className="p-3.5 space-y-3">
               <div className="flex items-center gap-3">
-                <div className="w-9 h-9 rounded-xl bg-blue-600 flex items-center justify-center shadow font-black text-white text-base">
-                  C
+                <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-cyan-500 via-blue-600 to-indigo-600 flex items-center justify-center shadow font-black text-white text-base">
+                  G
                 </div>
                 <div>
-                  <h4 className="text-xs font-bold text-slate-850 dark:text-slate-200 m-0">CampusOS ERP</h4>
-                  <p className="text-[10px] text-slate-400 mt-0.5">"The Operating System for Modern Education"</p>
+                  <h4 className="text-xs font-bold text-slate-850 dark:text-slate-200 m-0">GENOVA AI ERP</h4>
+                  <p className="text-[10px] text-slate-400 mt-0.5">"Autonomous Higher Education ERP & AI Operating System"</p>
                 </div>
               </div>
               <div className="text-[10px] text-slate-500 dark:text-slate-400 leading-relaxed border-t border-main pt-3">
@@ -197,8 +197,8 @@ return (
                 items={[
                   {
                     id: 'faq1',
-                    title: 'What databases power the CampusOS portal?',
-                    content: 'CampusOS currently runs a highly optimized context-level relational store simulating transactional grids locally. It compiles mock student rows, leaves logs, placement drives, and libraries catalogs.'
+                    title: 'What databases power the GENOVA AI portal?',
+                    content: 'GENOVA AI currently runs a highly optimized context-level relational store simulating transactional grids locally. It compiles mock student rows, leaves logs, placement drives, and libraries catalogs.'
                   },
                   {
                     id: 'faq2',

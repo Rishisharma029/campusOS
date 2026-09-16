@@ -818,7 +818,7 @@ export const CareerOpportunities: React.FC = () => {
                   onChange={(e) => setFormRequiredSkills(e.target.value)}
                   className="w-full px-3 py-2 rounded-lg border border-blue-300 dark:border-blue-700 bg-white dark:bg-slate-800 text-slate-900 dark:text-slate-100 focus:ring-2 focus:ring-blue-500 focus:outline-hidden"
                 />
-                <span className="text-[10px] text-slate-400">CampusOS will match candidates against these skills.</span>
+                <span className="text-[10px] text-slate-400">GENOVA AI will match candidates against these skills.</span>
               </div>
 
               {/* Eligibility & Experience */}

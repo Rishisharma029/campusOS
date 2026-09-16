@@ -4,13 +4,14 @@ from pydantic import Field, model_validator
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
 # Development fallback — clearly labelled insecure; rejected in production.
-_DEV_KEY_MARKER = "campusos-dev-local-secret-key-replace-before-production"
+_DEV_KEY_MARKER = "genova-ai-dev-local-secret-key-replace-before-production"
+_LEGACY_DEV_KEY_MARKER = "campusos-dev-local-secret-key-replace-before-production"
 
 
 class Settings(BaseSettings):
     # ── Identity ─────────────────────────────────────────────────────────────
     API_V1_STR: str = "/api/v1"
-    PROJECT_NAME: str = "CampusOS ERP API"
+    PROJECT_NAME: str = "GENOVA AI ERP API"
 
     # Environment: development | staging | production
     ENVIRONMENT: str = Field("development", validation_alias="ENVIRONMENT")
@@ -45,7 +46,7 @@ class Settings(BaseSettings):
     # Development default: local SQLite via aiosqlite async driver.
     # Production: postgresql+asyncpg://user:pass@host:5432/dbname
     DATABASE_URL: str = Field(
-        "sqlite+aiosqlite:///./campusos.db",
+        "sqlite+aiosqlite:///./genova_ai.db",
         validation_alias="DATABASE_URL",
     )
 
@@ -57,7 +58,7 @@ class Settings(BaseSettings):
         or shorter than 32 characters.
         """
         if self.ENVIRONMENT == "production":
-            if _DEV_KEY_MARKER in self.SECRET_KEY or len(self.SECRET_KEY) < 32:
+            if (_DEV_KEY_MARKER in self.SECRET_KEY or _LEGACY_DEV_KEY_MARKER in self.SECRET_KEY) or len(self.SECRET_KEY) < 32:
                 raise ValueError(
                     "SECRET_KEY must be a cryptographically secure random string "
                     "(≥ 32 characters) when ENVIRONMENT=production. "
