@@ -75,7 +75,6 @@ const CareerCopilot = React.lazy(() => import('./pages/career/CareerCopilot').th
 
 // GENOVA Innovation Standalone Integration Points
 const LandIntelligencePlaceholder = React.lazy(() => import('./pages/innovation/LandIntelligencePlaceholder').then(m => ({ default: m.LandIntelligencePlaceholder })));
-const AutonomousMobilityPlaceholder = React.lazy(() => import('./pages/innovation/AutonomousMobilityPlaceholder').then(m => ({ default: m.AutonomousMobilityPlaceholder })));
 
 const PrivateRoute: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const { isAuthenticated } = useAuth();
@@ -167,7 +166,6 @@ function App() {
 
                             {/* GENOVA Innovation Standalone Integration Points */}
                             <Route path="innovation/land-intelligence" element={<LandIntelligencePlaceholder />} />
-                            <Route path="innovation/autonomous-mobility" element={<AutonomousMobilityPlaceholder />} />
 
                             <Route path="academic-copilot" element={<RoleRoute allowedRoles={['Admin', 'Student', 'Faculty']} routeName="AI Academic Copilot"><AcademicCopilot /></RoleRoute>} />
                             

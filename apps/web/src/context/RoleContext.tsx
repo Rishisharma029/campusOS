@@ -64,7 +64,6 @@ const ALL_MODULES: Record<string, ModuleInfo> = {
 
   // GENOVA INNOVATION
   LandIntelligence: { name: 'BhoomiLens (LIS)', path: '/innovation/land-intelligence', icon: 'Layers', section: 'GENOVA INNOVATION' },
-  AutonomousMobility: { name: 'Autonomous Mobility', path: '/innovation/autonomous-mobility', icon: 'Navigation', section: 'GENOVA INNOVATION' },
 
   // Layer 3: Autonomous Agents & Copilots
   ADKAgents: { name: 'ADK Autonomous Agents', path: '/adk-agents', icon: 'Bot', section: 'Operations', layer: 'Layer 3: Autonomous Agents' },
