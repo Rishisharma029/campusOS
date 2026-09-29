@@ -20,7 +20,7 @@ import { Link } from 'react-router-dom';
 import { StudentAttendanceCalendar } from '../attendance/StudentAttendanceCalendar';
 
 export const StudentDashboard: React.FC = () => {
-  const { students, exams } = useDatabase();
+  const { students, exams, activeClassSession } = useDatabase();
   const { toast } = useToast();
 
   const currentStudent = students[0] || {
@@ -46,6 +46,32 @@ export const StudentDashboard: React.FC = () => {
 
   return (
     <div className="space-y-6 animate-fade-in">
+      {/* Live Classroom Attendance Session Banner (Real-time synchronization with Faculty) */}
+      {activeClassSession && activeClassSession.status === 'IN_PROGRESS' && (
+        <div className="p-4 rounded-2xl bg-gradient-to-r from-emerald-950/80 via-indigo-950/80 to-slate-900 border-2 border-emerald-500/60 shadow-xl shadow-emerald-500/10 flex flex-col sm:flex-row sm:items-center justify-between gap-3 animate-pulse">
+          <div className="flex items-center gap-3">
+            <div className="w-3.5 h-3.5 rounded-full bg-emerald-400 animate-ping shrink-0" />
+            <div>
+              <div className="flex items-center gap-2">
+                <span className="px-2 py-0.5 rounded-full text-[10px] font-black uppercase tracking-wider bg-emerald-500/20 text-emerald-300 border border-emerald-500/40">
+                  Live Attendance Window Active
+                </span>
+                <span className="text-xs font-mono font-bold text-white">
+                  {activeClassSession.code} &bull; {activeClassSession.name}
+                </span>
+              </div>
+              <p className="text-xs text-slate-300 mt-1">
+                Faculty <strong className="text-white">{activeClassSession.faculty}</strong> has opened the lecture attendance window in <strong className="text-white">{activeClassSession.room}</strong>. AI Face Recognition & RFID biometric telemetry are syncing.
+              </p>
+            </div>
+          </div>
+          <div className="shrink-0 flex items-center gap-2 bg-slate-950/70 border border-emerald-500/30 px-3 py-1.5 rounded-xl text-xs font-mono text-emerald-300">
+            <Clock size={14} className="text-emerald-400" />
+            <span>Window auto-closes when class ends</span>
+          </div>
+        </div>
+      )}
+
       {/* Personalized Student AI Briefing */}
       <div className="glass-card p-6 border-indigo-500/40 bg-gradient-to-r from-slate-900 via-indigo-950/40 to-slate-900 shadow-2xl relative overflow-hidden">
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">

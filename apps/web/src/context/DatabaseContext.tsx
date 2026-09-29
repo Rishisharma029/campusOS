@@ -100,6 +100,28 @@ export interface ERPNotification {
   category: 'academic' | 'fee' | 'exam' | 'placement' | 'general';
 }
 
+export interface DailyAttendanceRecord {
+  date: string; // YYYY-MM-DD
+  studentId: string;
+  course: string;
+  status: 'Present' | 'Absent' | 'Late';
+  markedBy: string;
+  timestamp: string;
+}
+
+export interface ActiveClassSession {
+  id: string;
+  name: string;
+  code: string;
+  section: string;
+  room: string;
+  faculty: string;
+  startedAt: string;
+  durationMinutes: number;
+  endTime: string;
+  status: 'IN_PROGRESS' | 'COMPLETED';
+}
+
 interface DatabaseContextType {
   students: Student[];
   addStudent: (s: Omit<Student, 'id'>) => void;
@@ -125,6 +147,20 @@ interface DatabaseContextType {
   addNotification: (n: Omit<ERPNotification, 'id' | 'timestamp' | 'read'>) => void;
   markNotificationRead: (id: string) => void;
   markAllNotificationsRead: () => void;
+  attendanceRecords: Record<string, DailyAttendanceRecord>;
+  markStudentAttendance: (
+    studentId: string,
+    date: string,
+    status: 'Present' | 'Absent' | 'Late',
+    options?: { course?: string; markedBy?: string; timestamp?: string }
+  ) => void;
+  batchMarkAttendance: (
+    records: { studentId: string; date: string; status: 'Present' | 'Absent' | 'Late'; course?: string }[],
+    markedBy?: string
+  ) => void;
+  activeClassSession: ActiveClassSession | null;
+  startClassSession: (session: Omit<ActiveClassSession, 'status' | 'startedAt' | 'endTime'>) => void;
+  endClassSession: () => void;
 }
 
 const DatabaseContext = createContext<DatabaseContextType | undefined>(undefined);
@@ -134,13 +170,13 @@ export const DatabaseProvider: React.FC<{ children: React.ReactNode }> = ({ chil
   const [students, setStudents] = useState<Student[]>([
     {
       id: 'STU001',
-      name: '.Rishi Sharma',
+      name: 'Rishi Sharma',
       email: 'rishi.sharma@university.edu',
       rollNo: '2024CS001',
       department: 'Computer Science',
       course: 'B.Tech CSE',
       year: 4,
-      attendanceRate: 94.2,
+      attendanceRate: 86.4,
       feePaid: 150000,
       feeTotal: 180000,
       hostelRoom: 'Block A, Room 304',
@@ -416,6 +452,38 @@ export const DatabaseProvider: React.FC<{ children: React.ReactNode }> = ({ chil
     },
   ]);
 
+  // Real-time Institutional Attendance Records Ledger
+  const [attendanceRecords, setAttendanceRecords] = useState<Record<string, DailyAttendanceRecord>>(() => {
+    const initial: Record<string, DailyAttendanceRecord> = {};
+    const defaultAbsents = ['2026-09-04', '2026-09-11'];
+    const defaultLates = ['2026-09-08', '2026-09-15'];
+
+    for (let day = 1; day <= 30; day++) {
+      const d = new Date(2026, 8, day);
+      if (d.getDay() === 0 || d.getDay() === 6) continue;
+      const dateStr = `2026-09-${String(day).padStart(2, '0')}`;
+      const status: 'Present' | 'Absent' | 'Late' = defaultAbsents.includes(dateStr)
+        ? 'Absent'
+        : defaultLates.includes(dateStr)
+        ? 'Late'
+        : 'Present';
+
+      const rec: DailyAttendanceRecord = {
+        date: dateStr,
+        studentId: 'STU001',
+        course: 'B.Tech CSE',
+        status,
+        markedBy: status === 'Present' ? 'Biometric RFID Turnstile Gate A' : 'Dr. Arindam Sen (Faculty)',
+        timestamp: status === 'Present' ? '08:58 AM' : status === 'Late' ? '09:18 AM' : '09:00 AM',
+      };
+
+      initial[`${dateStr}_STU001`] = rec;
+      initial[`${dateStr}_std_2026_001`] = rec;
+      initial[`${dateStr}_2024CS001`] = rec;
+    }
+    return initial;
+  });
+
   // Handler functions for dynamic operations
   const addStudent = (s: Omit<Student, 'id'>) => {
     const newId = `STU${String(students.length + 1).padStart(3, '0')}`;
@@ -594,6 +662,162 @@ export const DatabaseProvider: React.FC<{ children: React.ReactNode }> = ({ chil
     setNotifications((prev) => prev.map((notif) => ({ ...notif, read: true })));
   };
 
+  // Helper to calculate exact real-time attendance rate for a student given their records
+  const calculateStudentRate = (
+    targetStudentId: string,
+    currentRecords: Record<string, DailyAttendanceRecord>
+  ): number => {
+    let workingDays = 0;
+    let presentDays = 0;
+
+    for (let day = 1; day <= 30; day++) {
+      const d = new Date(2026, 8, day);
+      if (d.getDay() === 0 || d.getDay() === 6) continue;
+      workingDays++;
+
+      const dateStr = `2026-09-${String(day).padStart(2, '0')}`;
+      const rec =
+        currentRecords[`${dateStr}_${targetStudentId}`] ||
+        (targetStudentId === 'STU001' ? currentRecords[`${dateStr}_std_2026_001`] || currentRecords[`${dateStr}_2024CS001`] : undefined);
+
+      if (rec) {
+        if (rec.status === 'Present') presentDays += 1;
+        else if (rec.status === 'Late') presentDays += 0.5;
+        // Absent adds 0
+      } else {
+        // Default: Day 4 & 11 absent, Day 8 & 15 late, others present
+        if (day === 4 || day === 11) {
+          // absent
+        } else if (day === 8 || day === 15) {
+          presentDays += 0.5;
+        } else {
+          presentDays += 1;
+        }
+      }
+    }
+
+    return workingDays > 0 ? parseFloat(((presentDays / workingDays) * 100).toFixed(1)) : 86.4;
+  };
+
+  const markStudentAttendance = (
+    studentId: string,
+    date: string,
+    status: 'Present' | 'Absent' | 'Late',
+    options?: { course?: string; markedBy?: string; timestamp?: string }
+  ) => {
+    const student = students.find((s) => s.id === studentId || s.rollNo === studentId) || students[0];
+    const targetStudentId = student ? student.id : studentId;
+    const nowTime = options?.timestamp || new Date().toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' });
+    const facultyName = options?.markedBy || 'Dr. Arindam Sen (Faculty)';
+
+    const newRecord: DailyAttendanceRecord = {
+      date,
+      studentId: targetStudentId,
+      course: options?.course || student?.course || 'B.Tech CSE',
+      status,
+      markedBy: facultyName,
+      timestamp: nowTime,
+    };
+
+    const nextRecords = {
+      ...attendanceRecords,
+      [`${date}_${targetStudentId}`]: newRecord,
+      [`${date}_STU001`]: targetStudentId === 'STU001' || student?.rollNo === '2024CS001' ? newRecord : attendanceRecords[`${date}_STU001`],
+      [`${date}_std_2026_001`]: targetStudentId === 'STU001' || student?.rollNo === '2024CS001' ? newRecord : attendanceRecords[`${date}_std_2026_001`],
+      [`${date}_2024CS001`]: targetStudentId === 'STU001' || student?.rollNo === '2024CS001' ? newRecord : attendanceRecords[`${date}_2024CS001`],
+    };
+
+    setAttendanceRecords(nextRecords);
+
+    if (student) {
+      const nextRate = calculateStudentRate(targetStudentId, nextRecords);
+
+      setStudents((prev) =>
+        prev.map((st) =>
+          st.id === student.id || st.rollNo === student.rollNo
+            ? { ...st, attendanceRate: nextRate }
+            : st
+        )
+      );
+
+      addNotification({
+        title: status === 'Absent' ? 'Attendance Shortage Alert' : 'Attendance Verified',
+        message: `${facultyName} marked ${student.name} as ${status.toUpperCase()} for ${date} (${newRecord.course}). Live attendance percentage adjusted to ${nextRate}%.`,
+        category: 'academic',
+      });
+    }
+  };
+
+  const batchMarkAttendance = (
+    records: { studentId: string; date: string; status: 'Present' | 'Absent' | 'Late'; course?: string }[],
+    markedBy = 'AI Face Recognition Scanner (Faculty Session)'
+  ) => {
+    const nowTime = new Date().toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' });
+    const updates: Record<string, DailyAttendanceRecord> = {};
+
+    records.forEach((r) => {
+      const rec: DailyAttendanceRecord = {
+        date: r.date,
+        studentId: r.studentId,
+        course: r.course || 'B.Tech CSE',
+        status: r.status,
+        markedBy,
+        timestamp: nowTime,
+      };
+      updates[`${r.date}_${r.studentId}`] = rec;
+      if (r.studentId === 'STU001') {
+        updates[`${r.date}_std_2026_001`] = rec;
+        updates[`${r.date}_2024CS001`] = rec;
+      }
+    });
+
+    const nextRecords = { ...attendanceRecords, ...updates };
+    setAttendanceRecords(nextRecords);
+
+    setStudents((prev) =>
+      prev.map((st) => {
+        const hasUpdate = records.some((r) => r.studentId === st.id || r.studentId === st.rollNo);
+        if (hasUpdate) {
+          const nextRate = calculateStudentRate(st.id, nextRecords);
+          return { ...st, attendanceRate: nextRate };
+        }
+        return st;
+      })
+    );
+  };
+
+  // Live active classroom session state
+  const [activeClassSession, setActiveClassSession] = useState<ActiveClassSession | null>(null);
+
+  const startClassSession = (session: Omit<ActiveClassSession, 'status' | 'startedAt' | 'endTime'>) => {
+    const now = new Date();
+    const endTime = new Date(now.getTime() + session.durationMinutes * 60000);
+    const newSession: ActiveClassSession = {
+      ...session,
+      startedAt: now.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' }),
+      endTime: endTime.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' }),
+      status: 'IN_PROGRESS',
+    };
+    setActiveClassSession(newSession);
+
+    addNotification({
+      title: `Live Class Started: ${session.code}`,
+      message: `${session.name} in ${session.room} is now live. Attendance window opened for students.`,
+      category: 'academic',
+    });
+  };
+
+  const endClassSession = () => {
+    if (activeClassSession) {
+      addNotification({
+        title: `Class Concluded: ${activeClassSession.code}`,
+        message: `${activeClassSession.name} period has concluded. Attendance window automatically locked and committed to ERP ledger.`,
+        category: 'academic',
+      });
+    }
+    setActiveClassSession(null);
+  };
+
   return (
     <DatabaseContext.Provider
       value={{
@@ -621,6 +845,12 @@ export const DatabaseProvider: React.FC<{ children: React.ReactNode }> = ({ chil
         addNotification,
         markNotificationRead,
         markAllNotificationsRead,
+        attendanceRecords,
+        markStudentAttendance,
+        batchMarkAttendance,
+        activeClassSession,
+        startClassSession,
+        endClassSession,
       }}
     >
       {children}
@@ -653,6 +883,12 @@ const fallbackDatabaseContext: DatabaseContextType = {
   addNotification: () => {},
   markNotificationRead: () => {},
   markAllNotificationsRead: () => {},
+  attendanceRecords: {},
+  markStudentAttendance: () => {},
+  batchMarkAttendance: () => {},
+  activeClassSession: null,
+  startClassSession: () => {},
+  endClassSession: () => {},
 };
 
 export const useDatabase = () => {
